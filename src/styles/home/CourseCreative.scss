@@ -1,0 +1,19 @@
+.Course_Creative_container {
+  padding-top: 40px;
+  .Tilte_Course_Creative {
+    font-size: 40px;
+    font-weight: 700;
+    color: #3e2b2b;
+    text-align: center;
+  }
+  .Creative_Content {
+    font-size: 25px;
+    color: #3e2b2b;
+    font-weight: 600;
+  }
+  .col_box {
+    display: flex;
+    gap: 20px;
+    margin-top: 12px;
+  }
+}

@@ -1,0 +1,68 @@
+.hero_Section_Container {
+  width: 100%;
+  background-image: url("../../Assests/images/header_bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 120px;
+  .Hero_Title {
+    font-size: 56px;
+    font-weight: 800;
+    color: white;
+    width: 600px;
+  }
+  .content_hero {
+    width: 500px;
+    color: rgb(237, 221, 221);
+  }
+  @media only screen and (max-width: 600px) {
+    .Hero_Title {
+      width: 335px;
+    }
+    .content_hero {
+      width: 335px;
+    }
+    width: 100%;
+    background-image: url("../../Assests/images/heaer-resposive_bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+  }
+  @media only screen and (max-width: 1024px) {
+    width: 100%;
+
+    padding: 100px;
+  }
+  @media only screen and (max-width: 914px) {
+    width: 100%;
+
+    padding: 135px;
+    .Hero_Title {
+      width: 500px;
+    }
+    .content_hero {
+      width: 400px;
+    }
+  }
+
+  @media only screen and (max-width: 540px) {
+    padding: 20px;
+    .Hero_Title {
+      width: 335px;
+    }
+    .content_hero {
+      width: 335px;
+    }
+  }
+  @media only screen and (max-width: 414px) {
+    .content_hero {
+      width: 335px;
+    }
+  }
+  @media only screen and (max-width: 740px) {
+    .content_hero {
+      width: 335px;
+    }
+  }
+}

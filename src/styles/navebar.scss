@@ -1,0 +1,98 @@
+.Navebar_Container {
+  flex: 1;
+  width: 100%;
+  height: 80px;
+  margin: auto;
+  display: flex;
+  padding: 16px 20px;
+  z-index: 1;
+  position: relative;
+  max-width: 1920px;
+  background-color: #ae5ff9;
+  border-bottom: 2px solid white;
+  min-height: 59px;
+  align-items: center;
+  justify-content: space-between;
+  .Left_Section {
+    gap: 32px;
+    display: flex;
+    align-items: center;
+    .Link_Navigation {
+      font-size: 17px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      &:hover {
+        border-bottom: 1px solid white;
+      }
+    }
+    .Title_Navebar {
+      font-size: 35px;
+      font-weight: 800;
+      line-height: 30px;
+      color: white;
+    }
+  }
+  .MenueIcon {
+    display: none;
+  }
+  .SideBarContainer {
+    display: none;
+  }
+  .Right_Section {
+    display: flex;
+    align-items: center;
+    .SignIn {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+  .Link_Navigation_Container {
+    padding-top: 50px;
+  }
+  .Responsive_Navigation_link {
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #002333;
+    display: block;
+    padding: 16px 0px;
+    border-bottom: solid 1px #dcdee1;
+  }
+  @media only screen and (max-width: 600px) {
+    .Link_Navigation {
+      display: none;
+    }
+    .Left_Section {
+      .Title_Navebar {
+        font-size: 30px;
+      }
+    }
+    .SideBarContainer {
+      display: block;
+      width: 70%;
+      background-color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      transition: left 0.5s ease;
+      padding: 20px;
+    }
+    .MenueIcon {
+      display: block;
+    }
+    .Right_Section {
+      display: flex;
+      align-items: center;
+      .SignIn {
+        display: none;
+      }
+    }
+  }
+}

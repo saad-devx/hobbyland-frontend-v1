@@ -1,0 +1,35 @@
+.Course_Member_Container {
+  width: 100%;
+  background-color: #8528f2;
+  margin: 55px 0px;
+  .margin_top {
+    padding: 100px 0px;
+  }
+  .RatingCard {
+    width: 100%;
+    flex: 1 1 auto;
+    order: 1;
+    display: flex;
+    padding: 24px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 8px;
+    background-color: rgb(0, 255, 132);
+
+    .Rating_cardHeading {
+      color: #8528f2;
+      margin-bottom: 8px;
+      font-size: 36px;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+    .Rating_p {
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+  }
+}
