@@ -47,8 +47,9 @@ function Header() {
             />
           </div>
           <div className="Title_Navebar">
-            SKILL <br />
-            SHARE.
+            HOBBY
+            <br />
+            LAND.
           </div>
           <div className="Link_Navigation">Browse</div>
           <div className="Link_Navigation">Learning Paths</div>
@@ -59,7 +60,9 @@ function Header() {
             Sign In
           </div>
           <div style={{ paddingLeft: "15px" }}>
-            <button className="btn_Green">SignUp</button>
+            <a href="./SIgnupDetail" className="btn_Green">
+              Sign Up
+            </a>
           </div>
         </div>
       </div>

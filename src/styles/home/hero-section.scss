@@ -1,19 +1,25 @@
 .hero_Section_Container {
   width: 100%;
-  background-image: url("../../Assests/images/header_bg.jpg");
+  background-image: linear-gradient(
+      rgba(0, 35, 51, 0.9) 100%,
+      rgba(0, 0, 0, 0.5) 0%
+    ),
+    url("../../Assests/images/header_bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  padding: 120px;
+  padding: 200px;
   .Hero_Title {
     font-size: 56px;
     font-weight: 800;
     color: white;
     width: 600px;
+    line-height: 60px;
   }
   .content_hero {
     width: 500px;
     color: rgb(237, 221, 221);
+    padding-top: 10px;
   }
   @media only screen and (max-width: 600px) {
     .Hero_Title {
@@ -22,12 +28,6 @@
     .content_hero {
       width: 335px;
     }
-    width: 100%;
-    background-image: url("../../Assests/images/heaer-resposive_bg.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    padding: 20px;
   }
   @media only screen and (max-width: 1024px) {
     width: 100%;
@@ -37,7 +37,6 @@
   @media only screen and (max-width: 914px) {
     width: 100%;
 
-    padding: 135px;
     .Hero_Title {
       width: 500px;
     }
@@ -48,6 +47,8 @@
 
   @media only screen and (max-width: 540px) {
     padding: 20px;
+    padding-top: 120px;
+
     .Hero_Title {
       width: 335px;
     }

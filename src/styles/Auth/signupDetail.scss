@@ -1,0 +1,38 @@
+.Container_SignUpDetail {
+  .air3-btn-box {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    background-color: #fff;
+    border: 1px solid #d5e0d5;
+    border-radius: 5px;
+    &:hover {
+      border: 1px solid #003a55;
+    }
+  }
+  .PadingColoumn {
+    padding: 20px 197px 20px 197px;
+  }
+  .Checked {
+    border: 3px solid #003a55 !important;
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 5px;
+  }
+  .Card_Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .login_Href {
+    font-size: 12px;
+    color: #003a55;
+  }
+  @media only screen and (max-width: 992px) {
+    .PadingColoumn {
+      padding: 3px 3px 3px 3px;
+    }
+  }
+}

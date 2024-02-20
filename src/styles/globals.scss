@@ -11,23 +11,129 @@ body {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
   background-color: rgb(0, 255, 132);
-  color: 3e2b2b;
+  color: #3e2b2b;
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;
   font-weight: bold;
   padding: 10px 25px;
-  position: relative;
   text-decoration: none;
   text-align: center;
-  vertical-align: middle;
-  white-space: nowrap;
+
   transition: all 200ms ease-in-out 0s;
-  display: inline-flex;
-  -webkit-box-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  align-items: center;
   cursor: pointer;
   border: none;
+  color: black;
+}
+.btn_Green_Large_Size {
+  font-family: "GT Walsheim Pro", Arial, sans-serif;
+  font-size: 13px;
+  background-color: rgb(0, 255, 132);
+  color: #3e2b2b;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 15px 85px;
+  text-decoration: none;
+  text-align: center;
+
+  transition: all 200ms ease-in-out 0s;
+  cursor: pointer;
+  border: none;
+  color: black;
+}
+.btn_Green_Large_Size_Disabled {
+  font-family: "GT Walsheim Pro", Arial, sans-serif;
+  font-size: 13px;
+  background-color: #d5e0d5;
+  color: #3e2b2b;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 15px 85px;
+  text-decoration: none;
+  text-align: center;
+
+  transition: all 200ms ease-in-out 0s;
+  cursor: pointer;
+  border: none;
+  color: black;
+}
+.row {
+  margin-right: 0px !important;
+}
+.btn_Green_Size_Full {
+  font-family: "GT Walsheim Pro", Arial, sans-serif;
+  font-size: 13px;
+  background-color: rgb(0, 255, 132);
+  color: #3e2b2b;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 15px 0;
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+
+  transition: all 200ms ease-in-out 0s;
+  cursor: pointer;
+  border: none;
+  color: black;
+}
+@media only screen and (max-width: 993px) {
+  .btn_Green_Large_Size_Disabled {
+    width: 100% !important;
+  }
+  .btn_Green_Large_Size {
+    width: 100% !important;
+  }
+}
+.google-button {
+  width: 100%;
+  background-color: #4285f4;
+  color: #fff;
+  height: 50px;
+  padding: 0 5px;
+  display: flex;
+  margin-top: 10px;
+  font-size: 15px;
+  border-radius: 25px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+}
+.Aple-button {
+  width: 100%;
+  color: black;
+  height: 50px;
+  padding: 0 5px;
+  display: flex;
+  margin-top: 10px;
+  font-size: 15px;
+  border-radius: 25px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  border: 2px solid black;
+  align-items: center;
+}
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-select-outlined:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  width: 375px;
+  height: 50px;
+  margin-bottom: 12px;
+}
+@font-face {
+  font-family: "popins";
+  src: url("../Font/Poppins/Poppins-Regular.ttf") format("woff");
+}
+* {
+  font-family: "popins";
 }

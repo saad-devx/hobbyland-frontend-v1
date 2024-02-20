@@ -1,24 +1,30 @@
 .Course_Member_Container {
   width: 100%;
-  background-color: #8528f2;
+  background-color: #002333;
   margin: 55px 0px;
+
+  padding: 0px 0px 30px 0px;
   .margin_top {
     padding: 100px 0px;
   }
+  .Course__Categrios_Heading {
+    font-size: 28px;
+    line-height: 1.43;
+    color: white;
+    text-align: center;
+  }
   .RatingCard {
     width: 100%;
-    flex: 1 1 auto;
-    order: 1;
-    display: flex;
-    padding: 24px;
+    width: 100%;
+    padding: 24px 0px;
     justify-content: center;
     align-items: center;
     text-align: center;
     border-radius: 8px;
-    background-color: rgb(0, 255, 132);
-
+    background-color: #003a55;
+    margin-left: 7px;
     .Rating_cardHeading {
-      color: #8528f2;
+      color: #00ff84;
       margin-bottom: 8px;
       font-size: 36px;
       line-height: 1.25;
@@ -31,5 +37,80 @@
       font-size: 16px;
       line-height: 1.25;
     }
+  }
+  .Categrios_Card {
+    border-radius: 10px;
+    background-color: #003a55;
+  }
+  .Image_Categrios_card {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    width: 100%;
+    height: 200px !important;
+  }
+  .Course_Student {
+    display: flex;
+    font-size: 13px;
+    text-align: initial;
+    align-items: center;
+    line-height: 24px;
+    justify-content: space-between;
+  }
+  .Quantity_Student {
+    font-size: 13px;
+    color: #86979e;
+  }
+  .Card_dsc {
+    color: white;
+    height: 60px;
+    margin: 8px 0px 0px;
+    display: -webkit-box;
+    overflow: hidden;
+    box-sizing: border-box;
+    text-align: left;
+    font-weight: 600;
+    line-height: 1.33;
+    text-decoration: none;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  .Card_location {
+    color: white;
+    text-decoration: none;
+  }
+  .Course_Teacher {
+    padding: 35px 0px 0px 0px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.43;
+    color: white;
+    text-align: center;
+  }
+  .course_Content {
+    color: #fff;
+    margin: auto;
+    max-width: 653px;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 24px;
+    margin-top: 24px;
+  }
+  .Round_Image {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    margin: auto;
+  }
+  .Card_Heading_Teacher {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+  }
+  .Card_Heading_Categrios {
+    font-size: 14px;
+    margin-top: 0;
+    font-weight: 500;
+    color: white;
+    line-height: 1.14;
   }
 }

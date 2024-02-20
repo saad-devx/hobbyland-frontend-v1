@@ -1,0 +1,81 @@
+.Main_Container {
+  margin-top: 35px;
+  .CenterContainer {
+    width: 35%;
+    margin: auto;
+    margin-bottom: 35px !important;
+  }
+  .Heading_of_Signup {
+    font-size: 35px;
+    color: black;
+    text-align: center;
+    font-weight: 600;
+  }
+  .label {
+    font-size: 16px;
+    padding: 0px 0px 3px 3px;
+    color: rgb(59, 57, 57);
+  }
+  .radius {
+    border-radius: 50%;
+  }
+  .Privacy_CHeck {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .ScialButtonBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+  }
+  .Input {
+    width: 100%;
+    height: 45px;
+    padding: 5px 5px 5px 15px;
+    font-size: 14px;
+    border: 1px solid #e4ebe4;
+    outline: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+  }
+  .PasswordInput {
+    border: none;
+    outline: none;
+    width: 80%;
+    background-color: transparent;
+  }
+  .icon {
+    cursor: pointer;
+  }
+  @media only screen and (max-width: 150px) {
+    .ScialButtonBox {
+      display: block;
+    }
+  }
+
+  @media only screen and (max-width: 943px) {
+    .CenterContainer {
+      width: 75% !important;
+    }
+    .ScialButtonBox {
+      display: block;
+    }
+  }
+  .input_box {
+    width: 100%;
+  }
+  @media only screen and (max-width: 419px) {
+    .CenterContainer {
+      width: 100% !important;
+      padding: 0 10px;
+    }
+    .Heading_of_Signup {
+      font-size: 25px;
+    }
+  }
+}
