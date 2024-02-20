@@ -1,0 +1,24 @@
+.Course_Team_Container {
+  padding-top: 160px;
+  padding-bottom: 160px;
+  background-color: #f7faf7;
+  .Heading {
+    margin-bottom: 16px;
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1.26;
+    color: black;
+  }
+  .Content {
+    font-weight: 500;
+    margin-bottom: 40px;
+    padding-right: 64px;
+    font-size: 18px;
+    line-height: 1.55;
+    color: black;
+  }
+  @media only screen and (max-width: 1024px) {
+    padding-top: 35px;
+    padding-bottom: 35px;
+  }
+}

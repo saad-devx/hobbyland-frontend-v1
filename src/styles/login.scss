@@ -1,0 +1,110 @@
+.continar_login {
+  margin-top: 35px;
+
+  .CenterLogin {
+    width: 35%;
+    margin: auto;
+    margin-bottom: 15px;
+    border: 1px solid #d5e0d5;
+    padding: 14px 95px;
+    margin-bottom: 35px !important;
+  }
+
+  .NotYou {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgb(0, 255, 132);
+  }
+  .PrivacyKepLogin {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+  .Heading_of_Signup {
+    font-size: 35px;
+    color: black;
+    text-align: center;
+    font-weight: 600;
+  }
+  .centerText {
+    text-align: center !important;
+  }
+  .ForgetPassword {
+    color: rgb(0, 255, 132);
+  }
+  @media only screen and (max-width: 943px) {
+    .CenterLogin {
+      width: 75% !important;
+      padding: 14px 14px;
+      margin: 10px;
+    }
+  }
+  .PasswordInput {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    width: 100% !important;
+  }
+  .icon {
+    cursor: pointer;
+  }
+  .input_box {
+    width: 100%;
+  }
+  .UpdatePasswordText {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .Top_EmailText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  @media only screen and (max-width: 1429px) {
+    .CenterLogin {
+      padding: 14px 14px;
+    }
+  }
+  .label {
+    font-size: 16px;
+    padding: 0px 0px 3px 3px;
+    color: rgb(59, 57, 57);
+  }
+  .Input {
+    width: 100%;
+    height: 45px;
+    padding: 5px 5px 5px 15px;
+    font-size: 14px;
+    border: 1px solid #e4ebe4;
+    outline: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  .conditionText {
+    color: #b9bfb9;
+  }
+  .radius {
+    border-radius: 50%;
+  }
+  @media only screen and (max-width: 419px) {
+    .CenterLogin {
+      width: 100% !important;
+      padding: 0 10px;
+      padding: 13px 13px;
+      margin: 5px;
+    }
+    .CenterLogin {
+      font-size: 25px;
+    }
+  }
+}
