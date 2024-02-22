@@ -61,7 +61,7 @@ function Header() {
           </div>
           <div style={{ paddingLeft: "15px" }}>
             <a href="./SIgnupDetail" className="btn_Green">
-              Sign Up
+              SignUp
             </a>
           </div>
         </div>
