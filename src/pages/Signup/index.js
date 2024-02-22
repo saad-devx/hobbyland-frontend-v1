@@ -1,9 +1,85 @@
 import { Footer, Header } from "@/Component";
+import { signup } from "@/config/Axiosconfig/AxiosHandle/auth";
 import { Icon } from "@iconify/react";
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import moment from "moment-timezone";
+import { useRouter } from "next/router";
 function Index() {
   const [inputType, setInputType] = useState(true);
+  const [accecptPolicies, setAccecptPolicies] = useState(true);
+
+  const router = useRouter();
+  const { query } = router.query;
+  console.log(query);
+  const Acounttype = query;
+  const [signupData, setSignupData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    firstname: "",
+    lastname: "",
+    timezone: "",
+    account_type: "mentor",
+    accept_policies: accecptPolicies,
+    register_provider: "hobbyland",
+  });
+  const [errors, setErrors] = useState({});
+  const [timezones, setTimezones] = useState([]);
+
+  useEffect(() => {
+    const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const timezoneList = moment.tz.names();
+    setTimezones(timezoneList);
+    setSignupData({ ...signupData, timezone: currentTimezone });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSignupData({ ...signupData, [name]: value });
+  };
+  const SubmitData = async () => {
+    const newErrors = {};
+    console.log(newErrors);
+    if (!signupData.username) {
+      newErrors.username = "Username is required";
+    } else if (signupData.username.length < 4) {
+      newErrors.username = "Username should be at least 8 characters long";
+    } else if (signupData.username.length > 30) {
+      newErrors.password = "Password should be at least 30 characters short";
+    }
+    if (!signupData.email) {
+      newErrors.email = "Email is required";
+    }
+    if (!signupData.password) {
+      newErrors.password = "Password should be greater than 8 characters";
+    } else if (signupData.password.length < 8) {
+      newErrors.password = "Password should be at least 8 characters long";
+    }
+    if (!signupData.firstname) {
+      newErrors.firstname = "firstname is required";
+    }
+
+    if (!signupData.lastname) {
+      newErrors.lastname = "lastname is required";
+    }
+    if (!signupData.timezone) {
+      newErrors.timezone = "timezone is required";
+    }
+    if (!accecptPolicies) {
+      newErrors.accept_policies = "accept_policies is required";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      // Submit the form
+      console.log(signupData);
+      console.log(newErrors);
+      const data = await signup(signupData);
+      console.log(data);
+      router.push("./otp");
+    }
+  };
+
   return (
     <>
       <Header />
@@ -34,26 +110,70 @@ function Index() {
           <div className="d-flex m-auto gap-3 mt-5">
             <div className="w-75">
               <div className="label">Enter Your First Name</div>
-              <input className="Input" placeholder="Your First Name" />
+              <input
+                value={signupData.firstname}
+                onChange={handleChange}
+                className={errors.firstname ? "errTimezoneInput" : "Input"}
+                placeholder="Your First Name"
+                name="firstname"
+              />
+              {errors.firstname ? (
+                <div className="ErrorMessage">{errors.firstname}</div>
+              ) : null}
             </div>
             <div className="w-75">
               <div className="label">Enter Your Last Name</div>
+              <input
+                value={signupData.lastname}
+                onChange={handleChange}
+                className={errors.lastname ? "errTimezoneInput" : "Input"}
+                placeholder="Your Full Name"
+                name="lastname"
+              />
 
-              <input className="Input" placeholder="Your Full Name" />
+              {errors.lastname ? (
+                <div className="ErrorMessage">{errors.lastname}</div>
+              ) : null}
             </div>
           </div>
           <div className="w-100 mt-3">
+            <div className="label">Enter Your Username</div>
+            <input
+              value={signupData.username}
+              onChange={handleChange}
+              className={errors.username ? "errTimezoneInput" : "Input"}
+              placeholder="Your UserName"
+              name="username"
+            />
+
+            {errors.username ? (
+              <div className="ErrorMessage">{errors.username}</div>
+            ) : null}
+          </div>
+          <div className="w-100 mt-3">
             <div className="label">Enter Your Email</div>
-            <input className="Input" placeholder="Your Email" />
+            <input
+              value={signupData.email}
+              onChange={handleChange}
+              className={errors.email ? "errTimezoneInput" : "Input"}
+              placeholder="Your Email"
+              name="email"
+            />
+            {errors.email ? (
+              <div className="ErrorMessage">{errors.email}</div>
+            ) : null}
           </div>
           <div className="w-100 mt-3">
             <div className="label">Enter Your Password</div>
-            <div className="Input">
+            <div className={errors.email ? "errTimezoneInput" : "Input"}>
               <div className="input_box">
                 <input
+                  value={signupData.password}
+                  onChange={handleChange}
                   type={`${inputType ? "password" : ""}`}
                   className="PasswordInput"
                   placeholder="Your Password"
+                  name="password"
                 />
               </div>
               <div className="p-2 ">
@@ -78,31 +198,47 @@ function Index() {
                 )}
               </div>
             </div>
+            {errors.password ? (
+              <div className="ErrorMessage">{errors.password}</div>
+            ) : null}
           </div>
           <div className="w-100 mt-3">
             <div className="label">select Your Country</div>
-            <select className="Input" placeholder="Your Password">
-              <option value="Pakistan">Pakistan</option>
-              <option value="Pakistan">Pakistan</option>
-              <option value="Pakistan">Pakistan</option>
-              <option value="Pakistan">Pakistan</option>
-              <option value="Pakistan">Pakistan</option>
-              <option value="Pakistan">Pakistan</option>
+            <select
+              value={signupData.timezone}
+              className={errors.timezone ? "errTimezoneInput" : "Input"}
+              placeholder="Your Password"
+              name="timezone"
+            >
+              {timezones.map((tz) => (
+                <option key={tz} value={tz}>
+                  {tz}
+                </option>
+              ))}
             </select>
           </div>
+          {errors.timezone ? (
+            <div className="ErrorMessage">{errors.timezone}</div>
+          ) : null}
           <div className="Privacy_CHeck mt-3">
-            <input id="myCheckbox" type="checkbox" />
+            <input
+              id="myCheckbox"
+              type="checkbox"
+              checked={accecptPolicies}
+              onChange={() => {
+                setAccecptPolicies((prevValue) => !prevValue);
+              }}
+            />
 
-            <div>
+            <div className={`${errors.accecptPolicies ? "text" : "text"}`}>
               Send me helpful emails to find rewarding work and job leads.
             </div>
           </div>
           <div className="text-center">
-            <a href="">
-              <button className="btn_Green_Size_Full mt-3">
-                Create Acount
-              </button>
-            </a>
+            <button className="btn_Green_Size_Full mt-3" onClick={SubmitData}>
+              Create Account
+            </button>
+
             <p style={{ fontSize: "12px", marginTop: "10px" }}>
               I Have Already Created Your Acount ?{" "}
               <a href="./login" className="login_Href">

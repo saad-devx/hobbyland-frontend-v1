@@ -1,10 +1,12 @@
 import { Icon } from "@iconify/react";
 import { Fascinate } from "next/font/google";
+import Link from "next/link";
 import React, { useState } from "react";
 
 function SignUpHero() {
   const [student, setStudent] = useState(false);
   const [courseAdministator, setCourseAdministator] = useState(false);
+  const dataToSend = student ? "student" : "mentor";
 
   return (
     <div className="Container_SignUpDetail">
@@ -71,7 +73,7 @@ function SignUpHero() {
         </div>
       </div>
       <div className="text-center p-3">
-        <a href="./Signup">
+        <Link href={`./Signup?query=${dataToSend}`}>
           <button
             disabled={student ? false : courseAdministator ? false : true}
             className={`${
@@ -88,7 +90,8 @@ function SignUpHero() {
               ? "Join as a Administator"
               : "Create Acount"}
           </button>
-        </a>
+        </Link>
+
         <p style={{ fontSize: "12px", marginTop: "10px" }}>
           I Have Already Created Your Acount ?{" "}
           <a href="./login" className="login_Href">

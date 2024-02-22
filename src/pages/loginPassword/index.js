@@ -1,9 +1,28 @@
 import { Footer, Header } from "@/Component";
 import { Icon } from "@iconify/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 function Index() {
   const [inputType, setInputType] = useState(true);
+  const router = useRouter();
+  const { email } = router.query;
+  const [data, setData] = useState({ password: "", email: email });
+  const [error, setError] = useState("");
+
+  const handlePasswordChange = (e) => {
+    setData({ ...data, password: e.target.value });
+  };
+
+  const handleLoginClick = () => {
+    if (data.password.length > 8) {
+      setError("Password must be at least 8 characters long");
+    } else {
+      // Proceed with login
+      console.log(data);
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -13,7 +32,7 @@ function Index() {
           <div className="Heading_of_Signup">Welcome.</div>
           <div className="Top_EmailText">
             <Icon icon="mdi:user" />
-            mshahbazali@gmail.com
+            {email}
           </div>
           <div className="mt-5">
             <div className="Input">
@@ -22,6 +41,8 @@ function Index() {
                   type={`${inputType ? "password" : ""}`}
                   className="PasswordInput"
                   placeholder="Your Password"
+                  value={data.password}
+                  onChange={handlePasswordChange}
                 />
               </div>
               <div className="p-2 ">
@@ -46,6 +67,7 @@ function Index() {
                 )}
               </div>
             </div>
+            {error && <div className="ErrorMessage">{error}</div>}
             <div
               style={{
                 display: "flex",
@@ -62,9 +84,12 @@ function Index() {
               </a>
             </div>
             <div className="text-center">
-              <a href="./loginPassword">
-                <button className="btn_Green_Size_Full mt-3">Login</button>
-              </a>
+              <button
+                className="btn_Green_Size_Full mt-3"
+                onClick={handleLoginClick}
+              >
+                Login
+              </button>
             </div>
             <a className="NotYou" href="./SIgnupDetail">
               Not You ?
