@@ -2,19 +2,22 @@ import { useState } from "react";
 import { Footer, Header } from "@/Component";
 import React from "react";
 import { signupCallback } from "@/config/Axiosconfig/AxiosHandle/auth";
+import axios from "axios";
 
 function Index() {
   const [error, setError] = useState("");
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState();
   const handleSignup = async () => {
-    const data = await signupCallback({ otp: otp }); // Assuming signupCallback is your API function
+    console.log(otp);
 
-    if (!data.success) {
-      setError(data.msg); // Assuming the error message is in response.msg
-      return;
-    }
-
-    // Continue with successful signup process
+    axios
+      .post("http://localhost:8000/api/auth/signup/callback", { otp: otp })
+      .then((res) => {
+        console.log(res.data, "data");
+      })
+      .catch((e) => {
+        console.log(e, "e");
+      });
   };
 
   return (
@@ -27,8 +30,9 @@ function Index() {
           <div className="mt-5">
             <div className="w-100 ">
               <input
+                type="number"
                 onChange={(e) => {
-                  setOtp(e.target.value);
+                  setOtp(parseInt(e.target.value));
                 }}
                 className="Input"
                 placeholder="Otp"

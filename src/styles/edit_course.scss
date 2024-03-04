@@ -1,0 +1,71 @@
+.intent_container {
+  .pera_first {
+    padding-bottom: 4.8rem;
+  }
+  .Heading {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    font-size: 1.6rem;
+  }
+  .Input_box {
+    width: 65%;
+    padding: 10px;
+  }
+  .add_properties {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 12px 0px;
+    color: rgb(0 35 51);
+  }
+}
+.course_structure_container {
+  .Heading {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    font-size: 1.6rem;
+  }
+  .Small_box {
+    width: 65%;
+    padding: 10px;
+  }
+  .Heading_smalll {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    font-size: 18px;
+  }
+}
+.Curriculum_container {
+  .Heading {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    font-size: 1.6rem;
+  }
+  .AddCurriculum {
+    border: 1px solid #6a6f73;
+    background-color: #f7f9fa;
+    margin-top: 6.4rem;
+    padding: 20px;
+  }
+  .Captions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid #6a6f73;
+    background-color: #f7f9fa;
+  }
+  .Captions_ {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid #6a6f73;
+    background-color: #f7f9fa;
+  }
+}

@@ -1,0 +1,30 @@
+.container__ {
+  .main_container_ {
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-top: 35px;
+    .title_Card {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 20px 0;
+    }
+    .desc_Card {
+      font-size: 15px;
+      margin-bottom: 30px;
+    }
+    .card {
+      cursor: pointer;
+      &:hover {
+        background-color: rgb(229 229 229);
+      }
+    }
+  }
+  @media only screen and (max-width: 992px) {
+    .main_container_ {
+      width: 350px;
+    }
+  }
+}

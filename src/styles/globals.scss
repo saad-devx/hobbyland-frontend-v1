@@ -7,11 +7,13 @@ body {
     Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
+
 .btn_Green {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
-  background-color: rgb(0, 255, 132);
-  color: #3e2b2b;
+  background-color: #003a55;
+  color: white;
+
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;
@@ -23,12 +25,62 @@ body {
   transition: all 200ms ease-in-out 0s;
   cursor: pointer;
   border: none;
-  color: black;
+}
+.Outline_Btn {
+  color: #003a55;
+  background-color: white;
+  padding: 10px 30px;
+  border: 1px solid #003a55;
+  outline: none;
+  &:active {
+    background-color: #003a55;
+    color: white;
+    border: 1px solid white;
+  }
+}
+.dark_btn {
+  background-color: #003a55;
+  color: white;
+  border: 1px solid white;
+  padding: 10px 30px;
+  outline: none;
+  &:active {
+    color: #003a55;
+    background-color: white;
+    padding: 10px 30px;
+    border: 1px solid #003a55;
+  }
+}
+.TOP_HEader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  padding: 0px 25px;
+  .Link {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    border: none;
+  }
+  .Profile_box {
+    width: 35px;
+    height: 35px;
+    background-color: #002333;
+    border-radius: 50%;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 }
 .btn_Green_Large_Size {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
-  background-color: rgb(0, 255, 132);
+  background-color: #003a55;
   color: #3e2b2b;
   border-radius: 4px;
   box-sizing: border-box;
@@ -41,13 +93,15 @@ body {
   transition: all 200ms ease-in-out 0s;
   cursor: pointer;
   border: none;
-  color: black;
+  color: white;
 }
+
 .btn_Green_Large_Size_Disabled {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
   background-color: #d5e0d5;
-  color: #3e2b2b;
+  color: white;
+
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;
@@ -61,14 +115,33 @@ body {
   border: none;
   color: black;
 }
+.Header_ {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  height: 5.6rem;
+  align-items: center;
+  padding: 0 2.4rem;
+  border-bottom: 2px solid #003a55;
+  position: relative;
+  z-index: 1010;
+  .title_ {
+    font-size: 35px;
+    font-weight: 800;
+    color: black;
+  }
+}
 .row {
   margin-right: 0px !important;
 }
+
 .btn_Green_Size_Full {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
-  background-color: rgb(0, 255, 132);
-  color: #3e2b2b;
+  background-color: #003a55;
+  color: white;
+
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;
@@ -81,14 +154,14 @@ body {
   transition: all 200ms ease-in-out 0s;
   cursor: pointer;
   border: none;
-  color: black;
 }
+
 .btn_Green_Size_Full_Disabled {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
-  background-color: #d5e0d5;
+  background-color: #003a55;
 
-  color: #3e2b2b;
+  color: white;
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;
@@ -103,14 +176,17 @@ body {
   border: none;
   color: black;
 }
+
 @media only screen and (max-width: 993px) {
   .btn_Green_Large_Size_Disabled {
     width: 100% !important;
   }
+
   .btn_Green_Large_Size {
     width: 100% !important;
   }
 }
+
 .google-button {
   width: 100%;
   background-color: #4285f4;
@@ -125,6 +201,7 @@ body {
   display: flex;
   align-items: center;
 }
+
 .Aple-button {
   width: 100%;
   color: black;
@@ -140,6 +217,7 @@ body {
   border: 2px solid black;
   align-items: center;
 }
+
 :where(.css-dev-only-do-not-override-1xg9z9n).ant-select-outlined:not(
     .ant-select-customize-input
   )
@@ -150,12 +228,21 @@ body {
   height: 50px;
   margin-bottom: 12px;
 }
+
 @font-face {
   font-family: "popins";
   src: url("../Font/Poppins/Poppins-Regular.ttf") format("woff");
 }
+
 * {
   font-family: "popins";
+}
+
+.HoobbyLand_Title {
+  font-size: 40px;
+  font-weight: 900;
+  color: #002333;
+  line-height: 40px;
 }
 
 .errTimezoneInput {
@@ -169,4 +256,105 @@ body {
   display: flex;
   align-items: center;
   gap: 25px;
+}
+
+.label_Input {
+  font-size: 12px;
+  padding: 0px 0px 2px 2px;
+}
+
+.Input {
+  width: 100%;
+  height: 45px;
+  padding: 5px 5px 5px 15px;
+  font-size: 14px;
+  border: 1px solid black;
+  outline: none;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.Input_dark {
+  width: 100%;
+  height: 45px;
+  padding: 5px 5px 5px 15px;
+  font-size: 14px;
+  border: 1px solid #003a55;
+  outline: none;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.Input_Large {
+  width: 100%;
+  height: 85px;
+  padding: 5px 5px 5px 15px;
+  font-size: 14px;
+  border: 1px solid #e4ebe4;
+  outline: none;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-switch .ant-switch-inner {
+  display: block;
+  overflow: hidden;
+  border-radius: 100px;
+  height: 100%;
+  padding-inline-start: 24px;
+  padding-inline-end: 9px;
+  transition: padding-inline-start 0.2s ease-in-out,
+    padding-inline-end 0.2s ease-in-out;
+  background-color: #003a55;
+}
+.card1 {
+  width: 100% !important;
+  background-color: white;
+  box-shadow: 3px 3px 5px 1px rgb(216, 216, 216);
+  padding: 8px;
+  border-radius: 8px;
+  padding: 30px 25px;
+}
+.card2 {
+  width: 100% !important;
+  background-color: white;
+  box-shadow: 3px 3px 5px 1px rgb(216, 216, 216);
+  padding: 8px;
+  border-radius: 8px;
+  padding: 30px 25px;
+  height: 85vh;
+  overflow-y: scroll;
+}
+.chips {
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #003a55;
+  cursor: pointer;
+  border: 1.5px solid #003a55;
+  padding: 0px 25px;
+  .chips_title {
+    font-size: 19px;
+    color: #003a55;
+    font-weight: 700;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .chips {
+    .chips_title {
+      font-size: 15px;
+    }
+  }
+}
+.Icon {
+  font-size: 25px;
+  cursor: pointer;
+  color: #002333;
 }

@@ -1,0 +1,49 @@
+.container_CHeckout {
+  .AnualAndMOnthlybox {
+    padding: 16px;
+    border: 1px solid rgb(220, 222, 225);
+    border-radius: 6px;
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    &:hover {
+      border: 1px solid rgb(0, 255, 132);
+    }
+  }
+  .display_FLex {
+    display: flex;
+    gap: 10px;
+  }
+  .Card_of_rigt_Section {
+    background-color: rgb(232 235 241);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 25px 15px;
+  }
+  .LargeTile {
+    font-size: 38px;
+    font-weight: 600;
+  }
+  .totalAmount {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin: 15px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .Content_ofCard {
+    margin: 15px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .Title {
+    font-size: 23px;
+    font-weight: 600;
+  }
+  @media only screen and (max-width: 992px) {
+    .display_FLex {
+      display: block;
+    }
+  }
+}
