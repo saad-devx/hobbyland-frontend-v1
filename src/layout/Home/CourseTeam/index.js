@@ -20,7 +20,7 @@ function Index() {
               <button className="btn_Green">Learn More.</button>
             </div>
           </div>
-          <div className="col-md-6 mt-3">
+          <div className="col-md-6 mt-3 mb-5">
             <img src="https://static-web-prod.skillshare.com/_next/static/images/skillshare_for_teams-c4a85c8c5a4eef0fee7c493669965f5b.webp" />
           </div>
         </div>

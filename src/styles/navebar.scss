@@ -13,6 +13,7 @@
   min-height: 59px;
   align-items: center;
   justify-content: space-between;
+
   .Left_Section {
     gap: 32px;
     display: flex;
@@ -32,6 +33,24 @@
       line-height: 30px;
       color: white;
     }
+  }
+  .flex_display {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+  }
+  .BottonUserProfile {
+    width: 50px;
+    margin-right: 15px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    font-weight: 600;
   }
   .MenueIcon {
     display: none;
@@ -72,6 +91,11 @@
       .Title_Navebar {
         font-size: 30px;
       }
+    }
+    .flex_display {
+      display: flex;
+      gap: 15px;
+      align-items: center;
     }
     .SideBarContainer {
       display: block;

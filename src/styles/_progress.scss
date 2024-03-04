@@ -1,0 +1,21 @@
+.container_progress {
+    .Skills {
+        width: 160px;
+        height: 160px;
+
+        .Outer {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            box-shadow: 6px 6px 10px -1px rbga(0, 0, 0, 0.15), -6px 6px 10px -1px rgba(225, 255, 255, 0.7);
+            padding: 19px;
+
+            .inner {
+                height: 90px;
+                width: 90px;
+                border-radius: 50%;
+                box-shadow: inset 4px ;
+            }
+        }
+    }
+}

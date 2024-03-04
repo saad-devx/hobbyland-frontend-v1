@@ -1,0 +1,16 @@
+.Settting_Container {
+  width: 100%;
+  .Proper_Container {
+    padding: 20px 75px;
+    .Row {
+      padding: 20px;
+      border-bottom: 1px solid black;
+      display: flex;
+      justify-content: space-between;
+      .title {
+        font-size: 18px;
+        font-weight: 600;
+      }
+    }
+  }
+}

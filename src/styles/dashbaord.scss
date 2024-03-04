@@ -1,0 +1,47 @@
+.container__dashbaord {
+  width: 100%;
+  .TOP_HEader {
+    height: 85px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    padding: 0px 25px;
+    .Link {
+      text-decoration: none;
+      color: black;
+      font-size: 20px;
+      border: none;
+    }
+    .Profile_box {
+      width: 35px;
+      height: 35px;
+      background-color: #002333;
+      border-radius: 50%;
+      display: flex;
+      color: white;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+  .Card_Design {
+    padding: 0px 10px 10px 10px;
+    border: 0.4px solid black;
+    cursor: pointer;
+    img {
+      width: 70%;
+      margin: auto;
+    }
+    .title {
+      font-size: 15px;
+      color: #002333;
+      font-weight: 600;
+    }
+    .desc {
+      font-size: 13px;
+    }
+  }
+}

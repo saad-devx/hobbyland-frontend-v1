@@ -1,13 +1,24 @@
 import "@/styles/globals.scss";
 import "@/styles/navebar.scss";
+import "@/styles/adminProfileQuestion.scss";
 import "@/styles/Signup.scss";
+import "@/styles/edit_course.scss";
+import "@/styles/TwoStepVarification.scss";
+import "@/styles/profileQuestion.scss";
+import "@/styles/Addcourse.scss";
+import "@/styles/sidebare.scss";
+import "@/styles/setting.scss";
+import "@/styles/dashbaord.scss";
+import "@/styles/_progress.scss";
 import "@/styles/login.scss";
 import "@/styles/Footer.scss";
 import "@/styles/home/hero-section.scss";
+import "@/styles/home/productCard.scss";
 import "@/styles/home/CourseCreative.scss";
 import "@/styles/home/CourseMember.scss";
+import "@/styles/home/CourseMember.scss";
 import "@/styles/home/Features.scss";
-import "@/styles/home/CourseTeam.scss";
+import "@/styles/checkout/index.scss";
 import "@/styles/Auth/signupDetail.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 

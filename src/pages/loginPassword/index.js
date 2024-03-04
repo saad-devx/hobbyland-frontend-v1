@@ -21,6 +21,7 @@ function Index() {
       // Proceed with login
       console.log(data);
       console.log(error);
+      router.push("./Two-step-verfication");
     }
   };
 
