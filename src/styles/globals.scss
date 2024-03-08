@@ -26,24 +26,28 @@ body {
   cursor: pointer;
   border: none;
 }
+
 .Outline_Btn {
   color: #003a55;
   background-color: white;
   padding: 10px 30px;
   border: 1px solid #003a55;
   outline: none;
+
   &:active {
     background-color: #003a55;
     color: white;
     border: 1px solid white;
   }
 }
+
 .dark_btn {
   background-color: #003a55;
   color: white;
   border: 1px solid white;
   padding: 10px 30px;
   outline: none;
+
   &:active {
     color: #003a55;
     background-color: white;
@@ -51,18 +55,21 @@ body {
     border: 1px solid #003a55;
   }
 }
+
 .TOP_HEader {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 20px;
   padding: 0px 25px;
+
   .Link {
     text-decoration: none;
     color: black;
     font-size: 20px;
     border: none;
   }
+
   .Profile_box {
     width: 35px;
     height: 35px;
@@ -77,6 +84,22 @@ body {
     cursor: pointer;
   }
 }
+
+.Postion_Bottom {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 1.6rem 2.4rem;
+  background: #fff;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08), 0 -4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .btn_Green_Large_Size {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
@@ -95,6 +118,31 @@ body {
   border: none;
   color: white;
 }
+
+.Outline_large_btn {
+  font-family: "GT Walsheim Pro", Arial, sans-serif;
+  font-size: 13px;
+  border: 1px solid #003a55 !important;
+  margin-top: 10px;
+  color: #003a55;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 15px 85px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 200ms ease-in-out 0s;
+  cursor: pointer;
+  border: none;
+
+  &:active {
+    background-color: #002333;
+    color: white;
+  }
+}
+
+.Input_large {}
 
 .btn_Green_Large_Size_Disabled {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
@@ -115,6 +163,7 @@ body {
   border: none;
   color: black;
 }
+
 .Header_ {
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -126,12 +175,14 @@ body {
   border-bottom: 2px solid #003a55;
   position: relative;
   z-index: 1010;
+
   .title_ {
     font-size: 35px;
     font-weight: 800;
     color: black;
   }
 }
+
 .row {
   margin-right: 0px !important;
 }
@@ -218,10 +269,7 @@ body {
   align-items: center;
 }
 
-:where(.css-dev-only-do-not-override-1xg9z9n).ant-select-outlined:not(
-    .ant-select-customize-input
-  )
-  .ant-select-selector {
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
   border: 1px solid #d9d9d9;
   background: #ffffff;
   width: 375px;
@@ -275,6 +323,7 @@ body {
   align-items: center;
   gap: 25px;
 }
+
 .Input_dark {
   width: 100%;
   height: 45px;
@@ -287,12 +336,13 @@ body {
   align-items: center;
   gap: 25px;
 }
+
 .Input_Large {
   width: 100%;
   height: 85px;
   padding: 5px 5px 5px 15px;
   font-size: 14px;
-  border: 1px solid #e4ebe4;
+  border: 1px solid black;
   outline: none;
   border-radius: 5px;
   display: flex;
@@ -311,6 +361,7 @@ body {
     padding-inline-end 0.2s ease-in-out;
   background-color: #003a55;
 }
+
 .card1 {
   width: 100% !important;
   background-color: white;
@@ -319,6 +370,7 @@ body {
   border-radius: 8px;
   padding: 30px 25px;
 }
+
 .card2 {
   width: 100% !important;
   background-color: white;
@@ -329,6 +381,7 @@ body {
   height: 85vh;
   overflow-y: scroll;
 }
+
 .chips {
   width: 100%;
   height: 50px;
@@ -340,12 +393,14 @@ body {
   cursor: pointer;
   border: 1.5px solid #003a55;
   padding: 0px 25px;
+
   .chips_title {
     font-size: 19px;
     color: #003a55;
     font-weight: 700;
   }
 }
+
 @media only screen and (max-width: 1024px) {
   .chips {
     .chips_title {
@@ -353,8 +408,79 @@ body {
     }
   }
 }
+
 .Icon {
   font-size: 25px;
   cursor: pointer;
   color: #002333;
+}
+
+.Top_Bare {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  height: 5.6rem;
+  padding: 0 2.4rem;
+  align-items: center;
+  z-index: 1010;
+  flex-wrap: wrap;
+
+  .title_ {
+    font-size: 26px;
+    font-weight: 800;
+    color: black;
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 989px) {
+    margin-top: 65px;
+
+    .title_ {
+      font-size: 16px;
+    }
+
+    .active {
+      font-size: 16px !important;
+    }
+  }
+
+  .active {
+    font-size: 26px;
+    font-weight: 800;
+    color: black;
+    cursor: pointer;
+    border-bottom: 2px solid #003a55;
+  }
+}
+
+.bottom_not {
+  height: 120px;
+}
+
+.TOP_HEader {
+  height: 85px;
+  gap: 20px;
+  padding: 0px 25px;
+
+  .Link {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    border: none;
+  }
+
+  .Profile_box {
+    width: 35px;
+    height: 35px;
+    background-color: #002333;
+    border-radius: 50%;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 }

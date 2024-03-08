@@ -3,17 +3,7 @@ import { SideBar } from "@/Component";
 
 function AdminLayout({ children }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "1.3rem",
-        width: "100%",
-        height: "100vh",
-        position: "fixed",
-        top: "0",
-        overflowY: "scroll",
-      }}
-    >
+    <div className="layot_admin">
       <SideBar />
 
       {children}
