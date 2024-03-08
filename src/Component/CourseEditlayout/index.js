@@ -45,10 +45,6 @@ function Index() {
       path: "/Course-Edit/Pricing",
     },
     {
-      title: "Promotions",
-      path: "/Course-Edit/Promotion",
-    },
-    {
       title: "Course messages",
       path: "/Course-Edit/Course-Massage",
     },

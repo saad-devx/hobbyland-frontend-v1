@@ -68,4 +68,26 @@
     border: 1px solid #6a6f73;
     background-color: #f7f9fa;
   }
+  .Small_box {
+    width: 65%;
+    padding: 10px;
+  }
+}
+.course_landing_container {
+  .Small_box {
+    width: 65%;
+    padding: 10px;
+  }
+  .Add_cours_Images {
+    width: 100%;
+    border: 1px solid #6a6f73;
+    background-color: #f7f9fa;
+    height: 300px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

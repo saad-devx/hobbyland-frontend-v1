@@ -1,6 +1,6 @@
 .sideBare_main {
   height: 100%;
-  position: fixed;
+
   .border_Circle {
     width: 40px;
     cursor: pointer;
@@ -15,9 +15,9 @@
     top: 20px;
     left: 20px;
 
-    .MenueBare {
-    }
+    .MenueBare {}
   }
+
   .SideBare__container {
     width: 275px;
     background-color: #002333;
@@ -58,7 +58,7 @@
   .SideBarePosition {
     width: 275px;
     background-color: #002333;
-    position: absolute;
+
     top: 0px;
     left: 0px;
     border-top-right-radius: 10px;
@@ -104,6 +104,7 @@
     background-color: #002333;
     border-top-right-radius: 10px;
     height: 100% !important;
+    position: absolute;
     border-bottom-right-radius: 10px;
     padding: 20px;
 
@@ -136,15 +137,23 @@
     }
   }
 }
+
 .User_profile_Container {
   width: 22%;
+
   // position: fixed;
+  @media only screen and (max-width: 1024px) {
+    width: 30%;
+  }
+
   .SideBare {
     width: 100%;
+
     &::-webkit-scrollbar {
       width: 10px;
       background-color: #002333;
     }
+
     padding: 10px;
     overflow-y: scroll;
     background-color: #002333;
@@ -167,16 +176,19 @@
       font-size: 23px;
       color: black;
       margin-bottom: 10px;
+
       .InputNone {
         display: none;
       }
     }
+
     .Heading {
       font-size: 22px;
       font-weight: 600;
       color: white;
       text-align: center;
     }
+
     .desc {
       font-size: 15px;
       color: black;
@@ -185,6 +197,7 @@
 
       padding: 10px;
     }
+
     .Button {
       width: 100%;
       height: 50px;
@@ -194,10 +207,26 @@
       align-items: center;
       justify-content: center;
       color: white;
+
       &:active {
         background-color: white;
         color: black;
       }
     }
+  }
+}
+
+.layot_admin {
+  display: flex;
+  height: 100vh;
+  overflow-y: scroll;
+  padding-bottom: 20px !important;
+}
+
+.width_main_ {
+  width: 75px;
+
+  @media only screen and (max-width:990px) {
+    width: 0px;
   }
 }
