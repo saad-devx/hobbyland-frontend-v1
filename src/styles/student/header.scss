@@ -1,0 +1,30 @@
+.Conatiner_Student_Header {
+  .Box {
+    width: 100%;
+    background-color: white;
+    padding: 20px;
+    padding: 10px 10px;
+    img {
+      width: 500px;
+      mix-blend-mode: darken;
+    }
+    .margin_top {
+      margin-top: 120px;
+    }
+  }
+  .img_box {
+  }
+  @media only screen and (max-width: 1003px) {
+    .img_box {
+      display: none;
+    }
+  }
+  @media only screen and (max-width: 500px) {
+    .margin_top {
+      margin-top: 35px !important;
+    }
+    .Box {
+      padding: 20px 3px;
+    }
+  }
+}

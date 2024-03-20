@@ -9,7 +9,9 @@ function Header() {
   const [openSideBar, setOpenSideBar] = useState(false);
   const [token, setToken] = useState(true);
   const router = useRouter();
-
+  const handleFaverioteCLick = () => {
+    router.push("favourite");
+  };
   return (
     <>
       {token ? (
@@ -62,21 +64,38 @@ function Header() {
             </div>
             <div className="Right_Section">
               <div className="flex_display">
-                <div>
-                  <Icon
-                    fontSize={25}
-                    icon="ic:baseline-notifications"
-                    color="white"
-                  />
+                <div
+                  onClick={() => {
+                    router.push("addtocard");
+                  }}
+                  style={{ position: "relative", cursor: "pointer" }}
+                >
+                  <div>
+                    <Icon
+                      fontSize={25}
+                      icon="iconoir:add-to-cart"
+                      color="white"
+                    />
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "-14px",
+                      right: "-20px",
+                      width: "25px",
+                      height: "25px",
+                      backgroundColor: "white",
+                      borderRadius: "100%",
+                      display: "flex",
+                      cursor: "pointer",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    4
+                  </div>
                 </div>
-                <div>
-                  <Icon
-                    fontSize={25}
-                    icon="iconoir:add-to-cart"
-                    color="white"
-                  />
-                </div>
-                <div>
+                <div onClick={handleFaverioteCLick}>
                   <Icon
                     fontSize={25}
                     icon="icon-park-outline:like"
@@ -148,15 +167,15 @@ function Header() {
             <div className="Link_Navigation">Learning Paths</div>
           </div>
           <div className="Right_Section">
-            <div className="SignIn">
+            <button className="SignIn">
               <Icon color="white" icon="zondicons:network" />
               Sign In
-            </div>
-            <div style={{ paddingLeft: "15px" }}>
-              <a href="./SIgnupDetail" className="btn_Green">
+            </button>
+            <button style={{ paddingLeft: "15px" }}>
+              <a href="./SIgnupDetail" className="btn_Header_Green">
                 SignUp
               </a>
-            </div>
+            </button>
           </div>
         </div>
       )}

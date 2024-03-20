@@ -11,6 +11,9 @@
   .Input_box {
     width: 65%;
     padding: 10px;
+    @media only screen and (max-width: 990px) {
+      width: 100%;
+    }
   }
   .add_properties {
     display: flex;
@@ -30,14 +33,18 @@
   .Small_box {
     width: 65%;
     padding: 10px;
-  }
-  .Heading_smalll {
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: 0;
-    font-size: 18px;
+    @media only screen and (max-width: 990px) {
+      width: 100%;
+    }
   }
 }
+.Heading_smalll {
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+  font-size: 18px;
+}
+
 .Curriculum_container {
   .Heading {
     font-weight: 700;
@@ -71,12 +78,18 @@
   .Small_box {
     width: 65%;
     padding: 10px;
+    @media only screen and (max-width: 990px) {
+      width: 100%;
+    }
   }
 }
 .course_landing_container {
   .Small_box {
     width: 65%;
     padding: 10px;
+    @media only screen and (max-width: 990px) {
+      width: 100%;
+    }
   }
   .Add_cours_Images {
     width: 100%;

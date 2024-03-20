@@ -1,10 +1,11 @@
 .Navebar_Container {
   flex: 1;
   width: 100%;
-
+  z-index: 1;
   height: 80px;
   margin: auto;
   display: flex;
+
   padding: 16px 20px;
   z-index: 1;
   max-width: 1920px;
@@ -105,6 +106,7 @@
       position: fixed;
       top: 0;
       left: 0;
+      z-index: 1;
       transition: left 0.5s ease;
       padding: 20px;
     }

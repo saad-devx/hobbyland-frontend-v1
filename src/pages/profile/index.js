@@ -8,12 +8,11 @@ function Index() {
 
   return (
     <div>
-      <Header />
       <ProfileLayout>
-        <div className="w-100">
-          <h3 className="my-3 fw-bold">Update Profile</h3>
+        <div className="profile_Container">
           <div className="container">
             <div className="row">
+              <h3 className="my-3 mx-3 fw-bold mt-5">Update Profile</h3>
               <div className="col-md-6 my-3">
                 <div>
                   <div className="label">Full Name</div>
@@ -65,11 +64,10 @@ function Index() {
               margin: "20px 35px 0px 20px",
             }}
           >
-            <button className="btn_Green">Save</button>
+            <button className="btn_Green mb-3">Save</button>
           </div>
         </div>
       </ProfileLayout>
-      <Footer />
     </div>
   );
 }

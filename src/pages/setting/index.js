@@ -6,11 +6,10 @@ import { Switch } from "antd";
 function Index() {
   return (
     <div>
-      <Header />
       <ProfileLayout>
         <div className="Settting_Container">
-          <h3 className="my-3 fw-bold">Setting</h3>
           <div className="Proper_Container">
+            <h3 className="my-3 mx-5 fw-bold mt-5">Setting</h3>
             <div className="Row">
               <div className="title">Two Step Varification </div>
               <div className="">
@@ -21,7 +20,6 @@ function Index() {
           </div>
         </div>
       </ProfileLayout>
-      <Footer />
     </div>
   );
 }

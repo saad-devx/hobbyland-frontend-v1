@@ -2,9 +2,14 @@ import { Footer } from "@/Component";
 import AdminLayout from "@/layout/AdminLayount";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 function Index() {
+  const route = useRouter();
+  const handleCLick = () => {
+    route.push("Course-Edit/Intended-learning");
+  };
   return (
     <div>
       <AdminLayout>
@@ -24,6 +29,22 @@ function Index() {
             <div className="py-5">
               <div className="py-3">
                 <div className="text-center mb-3">Are You Ready to Begin?</div>
+                <div onClick={handleCLick} className="my-5 Card_Course">
+                  <div className="d-flex">
+                    <img
+                      src="https://png.pngtree.com/png-vector/20191120/ourmid/pngtree-training-course-online-computer-chat-flat-color-icon-vector-png-image_2007114.jpg"
+                      height={"100%"}
+                      width="40%"
+                    />
+
+                    <div>
+                      <div className="fw-bold  mt-3">Title</div>
+                      <div>First Course</div>
+                      <div className="fw-bold  mt-5">Draft</div>
+                      <div>Public</div>
+                    </div>
+                  </div>
+                </div>
                 <div className="text-center px-3">
                   <Link href="./create-course">
                     <button className="btn_Green_Large_Size mt-3">

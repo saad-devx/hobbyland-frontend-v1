@@ -9,6 +9,12 @@ function SideBare() {
       path: "./Dashboard",
     },
     {
+      title: "Analytics",
+      Icon: "mdi:analytics",
+      path: "/Analytics",
+    },
+
+    {
       title: "Create Corse",
       Icon: "solar:course-up-bold",
       path: "/create-course",
