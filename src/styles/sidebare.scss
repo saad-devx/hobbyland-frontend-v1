@@ -15,7 +15,8 @@
     top: 20px;
     left: 20px;
 
-    .MenueBare {}
+    .MenueBare {
+    }
   }
 
   .SideBare__container {
@@ -24,10 +25,11 @@
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     padding: 10px;
+    z-index: 1;
     height: 100% !important;
     position: absolute;
-    transition: all ease-in-out 1s;
-
+    transition: margin-left 0.35s, margin-right 0.35s, box-shadow 0.075s,
+      transform 0.15s, width 0.35s, z-index 0s ease 0.35s;
     .SideBare__title {
       font-size: 40px;
       font-weight: 800;
@@ -65,8 +67,8 @@
     border-bottom-right-radius: 10px;
     padding: 10px;
     height: 100% !important;
-
-    transition: all ease-in-out 1s;
+    transition: margin-left 0.35s, margin-right 0.35s, box-shadow 0.075s,
+      transform 0.15s, width 0.35s, z-index 0s ease 0.35s;
 
     .SideBare__title {
       font-size: 40px;
@@ -104,10 +106,10 @@
     background-color: #002333;
     border-top-right-radius: 10px;
     height: 100% !important;
-    position: absolute;
     border-bottom-right-radius: 10px;
     padding: 20px;
-
+    transition: margin-left 0.35s, margin-right 0.35s, box-shadow 0.075s,
+      transform 0.15s, width 0.35s, z-index 0s ease 0.35s;
     .SideBare__title {
       font-size: 40px;
       font-weight: 800;
@@ -139,19 +141,19 @@
 }
 
 .User_profile_Container {
-  width: 22%;
-
-  // position: fixed;
-  @media only screen and (max-width: 1024px) {
-    width: 30%;
-  }
-
+  width: auto;
   .SideBare {
-    width: 100%;
+    width: 300px;
 
     &::-webkit-scrollbar {
       width: 10px;
       background-color: #002333;
+    }
+
+    @media only screen and (max-width: 990px) {
+      position: absolute;
+      transition: margin-left 0.35s, margin-right 0.35s, box-shadow 0.075s,
+        transform 0.15s, width 0.35s, z-index 0s ease 0.35s;
     }
 
     padding: 10px;
@@ -220,13 +222,15 @@
   display: flex;
   height: 100vh;
   overflow-y: scroll;
-  padding-bottom: 20px !important;
 }
-
+.profile_Container {
+  height: 100vh;
+  overflow-y: scroll;
+}
 .width_main_ {
   width: 75px;
 
-  @media only screen and (max-width:990px) {
+  @media only screen and (max-width: 990px) {
     width: 0px;
   }
 }

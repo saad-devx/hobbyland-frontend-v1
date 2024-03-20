@@ -1,0 +1,34 @@
+.AddTOCardContainer {
+  .card_main {
+    width: 100%;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    position: relative;
+    cursor: pointer;
+    border-top: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    .Images {
+      width: 250px;
+      height: 100%;
+    }
+    .postion_absolute {
+      position: absolute;
+      right: 0px;
+      bottom: 0px;
+      cursor: pointer;
+    }
+  }
+  .Right_card_main {
+    background-color: #eee8e1;
+    padding: 25px;
+    border-radius: 8px;
+    height: 100%;
+  }
+  @media only screen and (max-width: 687px) {
+    .Images {
+      display: none !important;
+    }
+  }
+}
