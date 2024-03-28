@@ -23,7 +23,7 @@ function Index() {
       setErr("Please enter OTP");
     } else {
       try {
-        const response = await changepasswordotp();
+        const response = await changepasswordotp(obj);
         if (response) {
           setSuccess(response.data.msg);
           setError("");
