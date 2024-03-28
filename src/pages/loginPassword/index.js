@@ -1,5 +1,6 @@
 import { Footer, Header } from "@/Component";
 import { Login } from "@/config/Axiosconfig/AxiosHandle/auth";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
@@ -35,6 +36,7 @@ function Index() {
           setErrors("");
           console.log(response.data.payload);
           localStorage.setItem("Acces__teken", response.data.payload);
+
           router.push("/StudentHome");
         }
       } catch (error) {

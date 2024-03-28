@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import Home from "./Home";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { data } from "autoprefixer";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -9,11 +11,19 @@ export default function Index() {
   const [token, setToken] = useState(false);
   const [loading, setLoading] = useState(true); // New state for loading indicator
   const Router = useRouter();
-
+  // const fetchData = async () => {
+  //   try {
+  //     const data = await FetchMe();
+  //     if (data) {
+  //       console.log(data);
+  //     }
+  //   } catch (e) {}
+  // };
   useEffect(() => {
     const payload = localStorage.getItem("Acces__teken");
     if (payload) {
       setToken(true);
+      // fetchData();
       Router.push("/StudentHome");
     } else {
       setToken(false);

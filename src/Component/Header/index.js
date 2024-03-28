@@ -15,8 +15,12 @@ function Header() {
       const response = await FetchMe();
       if (response) {
         console.log(response);
+
+        // alert("he data");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     const payload = localStorage.getItem("Acces__teken");
