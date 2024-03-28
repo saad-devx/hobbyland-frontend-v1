@@ -4,7 +4,10 @@ import React from "react";
 
 import axios from "axios";
 import { Icon } from "@iconify/react";
-import { SignupCallback } from "@/config/Axiosconfig/AxiosHandle/auth";
+import {
+  SignupCallback,
+  changepasswordotp,
+} from "@/config/Axiosconfig/AxiosHandle/auth";
 import { useRouter } from "next/router";
 
 function Index() {
@@ -20,18 +23,19 @@ function Index() {
       setErr("Please enter OTP");
     } else {
       try {
-        const response = await SignupCallback(obj);
+        const response = await changepasswordotp();
         if (response) {
-          console.log(response);
           setSuccess(response.data.msg);
           setError("");
+          console.log(response);
           setTimeout(() => {
             router.push("./login");
           }, 1000);
         }
       } catch (error) {
-        console.error("Error", error);
         setError(error.response.data.msg ? error.response.data.msg : null);
+        setSuccess("");
+        console.log(error);
       }
     }
   };
@@ -41,7 +45,7 @@ function Index() {
       <Header />
       <div className="continar_login">
         <div className="CenterLogin">
-          <div className="Heading_of_Signup">Acount Create Otp.</div>
+          <div className="Heading_of_Signup">Password CHnage Otp</div>
           {error && (
             <div
               style={{

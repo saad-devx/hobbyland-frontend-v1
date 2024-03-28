@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@canvasjs/react-charts": "^1.0.2",
+    "@chakra-ui/react": "^2.8.2",
     "antd": "^5.14.1",
     "antd-img-crop": "^4.21.0",
     "apexcharts": "^3.47.0",

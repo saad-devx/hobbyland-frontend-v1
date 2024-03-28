@@ -78,7 +78,6 @@ function Index() {
           </div>
         </div>
       </AdminLayout>
-      <Footer />
     </div>
   );
 }

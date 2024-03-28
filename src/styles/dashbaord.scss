@@ -46,16 +46,16 @@
     border: 0.4px solid black;
     cursor: pointer;
     img {
-      width: 70%;
-      margin: auto;
+      width: 70% !important;
+      margin: auto !important;
     }
     .title {
-      font-size: 15px;
-      color: #002333;
-      font-weight: 600;
+      font-size: 15px !important;
+      color: #002333 !important;
+      font-weight: 600 !important;
     }
     .desc {
-      font-size: 13px;
+      font-size: 13px !important;
     }
   }
 }

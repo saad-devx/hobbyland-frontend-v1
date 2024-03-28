@@ -7,7 +7,10 @@ function Index() {
   return (
     <div>
       <ProfileLayout>
-        <div className="Settting_Container">
+        <div
+          style={{ width: "100%", height: "100%", overflowY: "scroll" }}
+          className="Settting_Container"
+        >
           <div className="Proper_Container">
             <h3 className="my-3 mx-5 fw-bold mt-5">Setting</h3>
             <div className="Row">

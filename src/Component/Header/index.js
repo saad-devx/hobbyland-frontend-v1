@@ -1,14 +1,32 @@
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 // import { Button } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Header() {
   const [openSideBar, setOpenSideBar] = useState(false);
-  const [token, setToken] = useState(true);
+  const [token, setToken] = useState(false);
   const router = useRouter();
+  const fecthMeData = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        console.log(response);
+      }
+    } catch (error) {}
+  };
+  useEffect(() => {
+    const payload = localStorage.getItem("Acces__teken");
+    if (payload) {
+      setToken(true);
+      fecthMeData();
+    } else {
+      false;
+    }
+  });
   const handleFaverioteCLick = () => {
     router.push("favourite");
   };
@@ -63,6 +81,10 @@ function Header() {
               <div className="Link_Navigation">My Learning</div>
             </div>
             <div className="Right_Section">
+              <div className="Input_serch">
+                <input className="Input_serch" placeholder="Search..." />
+                <button className="btn_Green">Search</button>
+              </div>
               <div className="flex_display">
                 <div
                   onClick={() => {
@@ -113,7 +135,12 @@ function Header() {
               </div>
             </div>
           </div>
-          <div className=""></div>
+          <div className="content_input">
+            <div className="Input_serch">
+              <input className="Input_serch" placeholder="Search..." />
+              <button className="btn_Green">Search</button>
+            </div>
+          </div>
         </>
       ) : (
         <div className="Navebar_Container">

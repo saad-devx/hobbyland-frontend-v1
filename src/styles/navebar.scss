@@ -1,14 +1,12 @@
 .Navebar_Container {
   flex: 1;
-  width: 100%;
-  z-index: 1;
+  width: 100% !important;
   height: 80px;
   margin: auto;
   display: flex;
-
   padding: 16px 20px;
   z-index: 1;
-  max-width: 1920px;
+  max-width: 100%;
   background-color: #003a55;
   border-bottom: 2px solid white;
   min-height: 59px;
@@ -62,6 +60,20 @@
   .Right_Section {
     display: flex;
     align-items: center;
+    .Input_serch {
+      width: 400px;
+      margin-right: 20px;
+      border: none;
+      outline: none;
+      background-color: white;
+      @media only screen and (max-width: 1321px) {
+        display: none;
+      }
+      padding: 5px;
+      display: flex;
+      justify-content: space-between;
+      border-radius: 8px;
+    }
     .SignIn {
       display: flex;
       align-items: center;
@@ -119,6 +131,28 @@
       .SignIn {
         display: none;
       }
+    }
+  }
+}
+.content_input {
+  display: none;
+}
+@media only screen and (max-width: 1321px) {
+  .content_input {
+    display: block;
+    background-color: #002333;
+    padding: 10px;
+    text-align: center;
+    .Input_serch {
+      width: 80%;
+      margin-right: 20px;
+      border: none;
+      outline: none;
+      background-color: white;
+      padding: 5px;
+      display: flex;
+      justify-content: space-between;
+      border-radius: 8px;
     }
   }
 }

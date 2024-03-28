@@ -39,6 +39,11 @@ function SideBare() {
       Icon: "akar-icons:question-fill",
       path: "/Resources",
     },
+    {
+      title: "Massage",
+      Icon: "subway:massage-1",
+      path: "/Message_Teacher",
+    },
   ];
   const [sidebare, setSidebare] = useState(true);
   const [sidebarePosition, setSidebarePosition] = useState(true);

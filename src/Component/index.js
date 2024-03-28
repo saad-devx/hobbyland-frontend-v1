@@ -9,6 +9,7 @@ import Montly_Chart from "./Graph/Montly_Chart";
 import Daily_Activity from "./Graph/Daily_Activity";
 import Card from "./Card/index.js";
 import Addtocard from "./Addtocard/index";
+import MassageSidebare from "./MassageSidebare/index";
 
 export {
   Header,
@@ -22,4 +23,5 @@ export {
   Daily_Activity,
   Card,
   Addtocard,
+  MassageSidebare,
 };

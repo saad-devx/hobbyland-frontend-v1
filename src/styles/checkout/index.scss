@@ -29,8 +29,8 @@
     border-bottom: 1px solid black;
     margin: 15px;
     padding-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
+    display: flex !important;
+    justify-content: space-between !important;
   }
   .Content_ofCard {
     margin: 15px;

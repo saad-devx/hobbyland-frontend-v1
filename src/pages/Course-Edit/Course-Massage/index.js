@@ -6,7 +6,7 @@ function index() {
   return (
     <div>
       <CourseLayout>
-        <div className="w-100 Curriculum_container">
+        <div style={{ width: "100%" }} className="w-100 Curriculum_container">
           <div className="Header_">
             <div className="title_">Course messages</div>
           </div>

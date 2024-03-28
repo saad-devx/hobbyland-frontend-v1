@@ -1,15 +1,19 @@
 import { Footer, Header } from "@/Component";
-import { ScanQrcode } from "@/config/Axiosconfig/AxiosHandle/verify";
+import { FetchQrcode } from "@/config/Axiosconfig/AxiosHandle/Qrcode";
+
 import QRCode from "qrcode.react";
 import React, { useEffect } from "react";
 
 function Index() {
   const GetData = async () => {
     try {
-      const data = await ScanQrcode(); // Wait for ScanQrcode to complete
-      console.log(data, "dfsdf");
+      const responseData = await FetchQrcode();
+      if (responseData) {
+        console.log(responseData);
+        
+      }
     } catch (error) {
-      console.error("Error fetching QR code data:", error);
+      console.log(error, "err");
     }
   };
 

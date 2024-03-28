@@ -1,7 +1,8 @@
 import { Card, Footer, Header } from "@/Component";
 import data from "@/constant/product";
+import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 
 function Index() {
   const SingleProduct = {
@@ -12,6 +13,15 @@ function Index() {
     videoSource: "abc",
     image: "https://www.wscubetech.com/images/free-video-editing-course.png",
     id: 1,
+  };
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
   };
   const router = useRouter();
   const handleNavigation = () => {
@@ -36,7 +46,65 @@ function Index() {
               </video>
             </div>
           </div>
-          <div className="col-md-6 my-5">
+          <div className="col-md-6 my-5" style={{ position: "relative" }}>
+            <div
+              style={{
+                position: "absolute",
+                right: "0px",
+                top: "30px",
+                cursor: "pointer",
+              }}
+              onMouseEnter={handleMouseEnter}
+            >
+              <Icon
+                icon="iconamoon:menu-kebab-vertical-bold"
+                style={{ fontSize: "20px", color: "rgb(0 58 85)" }}
+              />
+              {isHovered && (
+                <div
+                  onMouseLeave={handleMouseLeave}
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    width: "150px",
+                    left: "-150px",
+                    backgroundColor: "#fff",
+                    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
+                    borderRadius: "5px",
+                    padding: "5px",
+                    zIndex: 999,
+                  }}
+                >
+                  {/* Your menu list items */}
+                  <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                    <li
+                      onClick={() => {
+                        router.push("/massage");
+                      }}
+                      style={{}}
+                    >
+                      Massage
+                    </li>
+                    <li
+                      onClick={() => {
+                        router.push("/massage");
+                      }}
+                      style={{}}
+                    >
+                      Massage
+                    </li>
+                    <li
+                      onClick={() => {
+                        router.push("/massage");
+                      }}
+                      style={{}}
+                    >
+                      Massage
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
             <h2 className="fw-bold mt-5 ">{SingleProduct.title}</h2>
             <div className="fw-bold">Price : {SingleProduct.price}</div>
             <div className="mt-3">{SingleProduct.desc}</div>
@@ -45,7 +113,7 @@ function Index() {
                 onClick={handleNavigation}
                 className="btn_Green_Size_Full"
               >
-                Add To Card{" "}
+                <Icon icon="iconoir:add-to-cart" /> Add To Card
               </button>
             </div>
           </div>

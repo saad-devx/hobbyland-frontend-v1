@@ -13,7 +13,11 @@ body {
   font-size: 13px;
   background-color: #003a55;
   color: white;
-
+  &:active {
+    border: 1px solid #003a55;
+    background-color: white;
+    color: #002333;
+  }
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;

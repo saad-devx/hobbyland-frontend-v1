@@ -4,7 +4,7 @@ function Index() {
   const Acivement = [{}, {}, {}, {}, {}, {}];
   return (
     <AdminLayout>
-      <div className="conatainer_Dasbaord_profile ">
+      <div className="conatainer_Dasbaord_profile w-100 ">
         <div className="">
           <div className="Title">Profile</div>
           <div className="container">

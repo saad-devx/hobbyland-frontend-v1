@@ -85,7 +85,10 @@ function index() {
   return (
     <div>
       <CourseLayout>
-        <div className="w-100 course_landing_container">
+        <div
+          style={{ width: "100%" }}
+          className="w-100 course_landing_container"
+        >
           <div className="Header_">
             <div className="title_">Course landing page</div>
           </div>
