@@ -11,29 +11,17 @@ export default function Index() {
   const [token, setToken] = useState(false);
   const [loading, setLoading] = useState(true); // New state for loading indicator
   const Router = useRouter();
-  // const fetchData = async () => {
-  //   try {
-  //     const data = await FetchMe();
-  //     if (data) {
-  //       console.log(data);
-  //     }
-  //   } catch (e) {}
-  // };
   useEffect(() => {
-    const payload = localStorage.getItem("Acces__teken");
+    const payload = localStorage.getItem("is_logged_in");
     if (payload) {
       setToken(true);
-      // fetchData();
       Router.push("/StudentHome");
     } else {
       setToken(false);
       Router.push("/Home");
     }
-    // Set loading to false after redirecting
     setLoading(false);
   }, []);
-
-  // Conditional rendering based on loading state
   if (loading) {
     return (
       <div

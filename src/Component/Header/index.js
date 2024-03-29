@@ -9,21 +9,22 @@ import React, { useEffect, useState } from "react";
 function Header() {
   const [openSideBar, setOpenSideBar] = useState(false);
   const [token, setToken] = useState(false);
+  const [userdata, serUserdata] = useState({});
   const router = useRouter();
   const fecthMeData = async () => {
     try {
       const response = await FetchMe();
       if (response) {
-        console.log(response);
-
-        // alert("he data");
+        serUserdata({ ...response.data.user });
+        console.log(userdata);
       }
     } catch (error) {
       console.log(error);
+      router.push("/login");
     }
   };
   useEffect(() => {
-    const payload = localStorage.getItem("Acces__teken");
+    const payload = localStorage.getItem("is_logged_in");
     if (payload) {
       setToken(true);
       fecthMeData();
@@ -134,7 +135,7 @@ function Header() {
                   }}
                   className="BottonUserProfile"
                 >
-                  S
+                  {userdata.firstname}
                 </div>
               </div>
             </div>

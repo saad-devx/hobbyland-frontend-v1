@@ -34,10 +34,24 @@ function Index() {
           console.log(response);
           setSuccess(response.data.msg);
           setErrors("");
-          console.log(response.data.payload);
-          localStorage.setItem("Acces__teken", response.data.payload);
 
-          router.push("/StudentHome");
+          function getCookie(name) {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.startsWith(name + "=")) {
+                return cookie.substring(name.length + 1);
+              }
+            }
+            return null;
+          }
+          const isLoggedIn = getCookie("is_logged_in");
+          if (isLoggedIn === "true") {
+            localStorage.setItem("is_logged_in", true);
+            router.push("/StudentHome");
+          } else {
+            localStorage.removeItem("is_logged_in");
+          }
         }
       } catch (error) {
         console.log(error);
