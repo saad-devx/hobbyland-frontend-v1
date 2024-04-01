@@ -16,13 +16,11 @@ function Index() {
     register_provider: "hobbyland",
   });
   const [error, setError] = useState();
-
   const [errors, setErrors] = useState("");
   const [success, setSuccess] = useState("");
   const handlePasswordChange = (e) => {
     setData({ ...data, password: e.target.value });
   };
-
   const handleLoginClick = async () => {
     console.log(data);
     if (!(data.password.length >= 8)) {
@@ -34,7 +32,6 @@ function Index() {
           console.log(response);
           setSuccess(response.data.msg);
           setErrors("");
-
           function getCookie(name) {
             const cookies = document.cookie.split(";");
             for (let i = 0; i < cookies.length; i++) {

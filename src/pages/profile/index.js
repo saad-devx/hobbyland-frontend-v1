@@ -31,8 +31,9 @@ function Index() {
           setFecthmeData({ ...response.data.user });
         }
       } catch (e) {
+        localStorage.setItem("is_logged_in", false);
+
         console.log(e);
-        router.push("/login");
       }
     };
     fetchData();

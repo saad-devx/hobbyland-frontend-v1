@@ -15,12 +15,11 @@ function Header() {
     try {
       const response = await FetchMe();
       if (response) {
-        serUserdata({ ...response.data.user });
         console.log(userdata);
+        serUserdata({ ...response.data.user });
       }
     } catch (error) {
       console.log(error);
-      router.push("/login");
     }
   };
   useEffect(() => {
@@ -131,7 +130,7 @@ function Header() {
                 </div>
                 <div
                   onClick={() => {
-                    router.push("./profile")
+                    router.push("./profile");
                   }}
                   className="BottonUserProfile"
                 >

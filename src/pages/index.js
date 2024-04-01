@@ -11,7 +11,21 @@ export default function Index() {
   const [token, setToken] = useState(false);
   const [loading, setLoading] = useState(true); // New state for loading indicator
   const Router = useRouter();
+  const fecthMeData = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        console.log(userdata);
+      }
+    } catch (error) {
+      console.log(error);
+      localStorage.setItem("is_logged_in", false);
+      setToken(false);
+      Router.push("/Home");
+    }
+  };
   useEffect(() => {
+    fecthMeData();
     const payload = localStorage.getItem("is_logged_in");
     if (payload) {
       setToken(true);
