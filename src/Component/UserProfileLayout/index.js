@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 function Index() {
   const router = useRouter();
   const navigateLink = [
@@ -21,8 +22,21 @@ function Index() {
   const [sidebarePosition, setSidebarePosition] = useState(true);
   const [showSidebare, setShowSidebare] = useState(true);
   const [menue, setMenue] = useState(false);
+  const [fecthmeData, setFecthmeData] = useState({});
 
+  const data = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        setFecthmeData({ ...response.data.user });
+        console.log(fecthmeData);
+      }
+    } catch (e) {
+      router.push("/login");
+    }
+  };
   useEffect(() => {
+    data();
     const handleResize = () => {
       if (window.innerWidth <= 990) {
         setSidebare(true);
@@ -74,13 +88,13 @@ function Index() {
             </div>
           ) : null}
           <div className="User_Profile_Circle">
-            S
+            {fecthmeData && fecthmeData.firstname
+              ? fecthmeData.firstname.charAt(0)
+              : ""}
             <input className="InputNone" type="file" />
           </div>
-          <div className="Heading">Shahbaz ALi</div>
-          <div className="desc">
-            Hey ' I am Shahbaz ali and i am full Stack developer
-          </div>
+          <div className="Heading">{fecthmeData.firstname}</div>
+
           <div className="my-3">
             <div className="p-2">
               {navigateLink.map((e, i) => {

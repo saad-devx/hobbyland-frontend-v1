@@ -7,3 +7,10 @@ export const FetchMe = () => {
   });
   return responseData;
 };
+
+export const UpdateUserProfile = (data) => {
+  const responseData = axios.put(`${BASEURL}user/update`, data, {
+    withCredentials: true,
+  });
+  return responseData;
+};

@@ -131,11 +131,13 @@ function Header() {
                 </div>
                 <div
                   onClick={() => {
-                    router.push("./profile");
+                    router.push("./profile")
                   }}
                   className="BottonUserProfile"
                 >
-                  {userdata.firstname}
+                  {userdata && userdata.firstname
+                    ? userdata.firstname.charAt(0)
+                    : ""}
                 </div>
               </div>
             </div>
