@@ -4,50 +4,16 @@ import { Icon } from "@iconify/react";
 
 function Index() {
   const router = useRouter();
-  const navigateLink = [
-    {
-      title: "Intended learners",
-      path: "/Course-Edit/Intended-learning",
-    },
-    {
-      title: "Course structure",
-      path: "/Course-Edit/CourseStructure",
-    },
-    {
-      title: "Setup & test video",
-      path: "/Course-Edit/SetupTestVideo",
-    },
-  ];
-  const navigateLink2 = [
-    {
-      title: "Film & edit",
-      path: "/Course-Edit/Film-edit",
-    },
-    {
-      title: "Curriculum",
-      path: "/Course-Edit/Curriculum",
-    },
-    {
-      title: "Captions (optional)",
-      path: "/Course-Edit/Captions",
-    },
-    {
-      title: "Accessibility (optional)",
-      path: "/Course-Edit/Accessibility",
-    },
-  ];
+  const navigateLink = [];
+  const navigateLink2 = [];
   const navigateLink3 = [
-    {
-      title: "Course landing page",
-      path: "/Course-Edit/Landing-page",
-    },
     {
       title: "Pricing",
       path: "/Course-Edit/Pricing",
     },
     {
-      title: "Course messages",
-      path: "/Course-Edit/Course-Massage",
+      title: "F&A",
+      path: "/Course-Edit/F&A",
     },
   ];
 
@@ -133,9 +99,7 @@ function Index() {
                   </button>
                 );
               })}
-              <div className="mb-1 mt-5 fs-5 text-white">
-                Create your content
-              </div>
+
               {navigateLink2.map((e, i) => {
                 return (
                   <button
@@ -148,9 +112,7 @@ function Index() {
                   </button>
                 );
               })}
-              <div className="mb-1 mt-5 fs-5 text-white">
-                Publish your course
-              </div>
+
               {navigateLink3.map((e, i) => {
                 return (
                   <button

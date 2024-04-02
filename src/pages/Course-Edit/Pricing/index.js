@@ -1,8 +1,108 @@
 import CourseLayout from "@/layout/CourseLayout";
 import { Icon } from "@iconify/react";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
-function index() {
+function Index() {
+  const router = useRouter();
+  const { data } = router.query;
+  const parsedData = data ? JSON.parse(data) : null;
+  const [formData, setFormData] = useState({
+    plan: "",
+    title: "",
+    description: "",
+    price: "",
+    delivery_time: "",
+    features: [],
+  });
+
+  const [errors, setErrors] = useState({
+    plan: "",
+    title: "",
+    description: "",
+    price: "",
+    delivery_time: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let newValue = value;
+    if (name === "price") {
+      newValue = parseFloat(value);
+    }
+
+    setFormData({
+      ...formData,
+      [name]: newValue,
+    });
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
+  };
+  const handleFeaturesChange = (e) => {
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFormData({
+      ...formData,
+      features: selectedOptions,
+    });
+  };
+
+  const handleSubmit = () => {
+    const { plan, title, description, price, delivery_time, features } =
+      formData;
+    const newErrors = {};
+    if (!plan) {
+      newErrors.plan = "Plan name is required";
+    }
+    if (!title) {
+      newErrors.title = "Plan title is required";
+    }
+    if (!description) {
+      newErrors.description = "Description is required";
+    }
+    if (!price) {
+      newErrors.price = "Price is required";
+    }
+    if (!delivery_time) {
+      newErrors.delivery_time = "Delivery time is required";
+    }
+    if (features.length === 0) {
+      newErrors.features = "At least one feature is required";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    const payload = {
+      plan,
+      title,
+      description,
+      price,
+      delivery_time,
+      features,
+    };
+    console.log(payload);
+    console.log(formData);
+    const obj = {
+      title: parsedData.title,
+      description: parsedData.description,
+      portfolio: parsedData.portfolio,
+      category: parsedData.category,
+      tags: parsedData.tags,
+      pricing: [{ ...formData }],
+      delivery_methods: ["abc", "xyz"],
+    };
+    console.log(obj);
+    router.push({
+      pathname: "/Course-Edit/F&A",
+      query: { data: JSON.stringify(obj) },
+    });
+  };
+
   return (
     <div>
       <CourseLayout>
@@ -19,42 +119,107 @@ function index() {
                 total video length of less than 2 hours. Also, courses with
                 practice tests can not be free.
               </div>
-              <div className="container">
+              <div className=" mt-4">
                 <div className="row">
-                  <div className="col-md-3 mt-3">
-                    <div className="mb-2 fw-bold">Currency</div>
-                    <select className="Input">
-                      <option selected>USD</option>
-                      <option>USD</option>
-                      <option>USD</option>
-                      <option>USD</option>
-                      <option>USD</option>
-                    </select>
+                  <div className="col-md-6 mt-5">
+                    <input
+                      className={`${
+                        errors.plan ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="Enter Your plan name"
+                      name="plan"
+                      value={formData.plan}
+                      onChange={handleChange}
+                    />
+                    {errors.plan && (
+                      <div style={{ color: "red" }}>{errors.plan}</div>
+                    )}
                   </div>
-                  <div className="col-md-3 mt-3">
-                    <div className="mb-2 fw-bold d-flex gap-3 align-items-center">
-                      Price Tier
-                      <Icon
-                        icon="mingcute:warning-fill"
-                        style={{ fontSize: "18px", color: "black" }}
-                      />
-                    </div>
-                    <select className="Input">
-                      <option selected>USD</option>
-                      <option>USD</option>
-                      <option>USD</option>
-                      <option>USD</option>
-                      <option>USD</option>
+                  <div className="col-md-6 mt-5">
+                    <input
+                      className={`${
+                        errors.title ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="Enter Your plan title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                    />
+                    {errors.title && (
+                      <div style={{ color: "red" }}>{errors.title}</div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mt-5">
+                    <input
+                      className={`${
+                        errors.description ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="Enter Your description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                    />
+                    {errors.description && (
+                      <div style={{ color: "red" }}>{errors.description}</div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mt-5">
+                    <input
+                      className={`${
+                        errors.price ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="Enter Your price"
+                      name="price"
+                      type="number"
+                      onChange={handleChange}
+                    />
+                    {errors.price && (
+                      <div style={{ color: "red" }}>{errors.price}</div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mt-5">
+                    <input
+                      className={`${
+                        errors.delivery_time ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="Enter Your delivery time"
+                      name="delivery_time"
+                      value={formData.delivery_time}
+                      onChange={handleChange}
+                    />
+                    {errors.delivery_time && (
+                      <div style={{ color: "red" }}>{errors.delivery_time}</div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mt-5">
+                    <select
+                      // className="Input_dark"
+                      className={`${
+                        errors.features ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="Select features"
+                      name="features"
+                      onChange={handleFeaturesChange}
+                    >
+                      <option value="feature1">Feature 1</option>
+                      <option value="feature2">Feature 2</option>
+                      <option value="feature3">Feature 3</option>
                     </select>
+                    {errors.features && (
+                      <div style={{ color: "red" }}>{errors.features}</div>
+                    )}
                   </div>
                   <div
                     style={{
                       display: "flex",
                       justifyContent: "flex-end",
-                      marginTop: "35px",
+                      alignItems: "center",
+                      marginTop: "20px",
                     }}
                   >
-                    <button className="btn_Green">Save</button>
+                    <button className="btn_Green" onClick={handleSubmit}>
+                      Save
+                    </button>
                   </div>
                 </div>
               </div>
@@ -66,4 +231,4 @@ function index() {
   );
 }
 
-export default index;
+export default Index;
