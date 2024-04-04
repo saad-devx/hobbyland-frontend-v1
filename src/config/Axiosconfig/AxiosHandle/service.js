@@ -11,3 +11,21 @@ export const ServiesCreate = (data) => {
   );
   return responseData;
 };
+
+export const FetchServices = () => {
+  const responseData = axios.get(`${BASEURL}user/mentor/service/get/many`, {
+    withCredentials: true,
+  });
+  return responseData;
+};
+
+export const GetSingleProduct = (id) => {
+  const responseData = axios.get(
+    `${BASEURL}user/mentor/service/get/one?service_id=${id}`,
+    {
+      withCredentials: true,
+    }
+  );
+  console.log(id, "id_");
+  return responseData;
+};

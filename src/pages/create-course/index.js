@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
+import { categrios } from "@/constant/categrios";
 
 function Index() {
   const [step, setStep] = useState(1);
@@ -95,24 +96,15 @@ function Index() {
   };
   const handleImageUrl = (e) => {
     const imageUrl = e.target.value;
-    const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
-    if (!urlPattern.test(imageUrl)) {
-      setError((prevState) => ({
-        ...prevState,
-        portfolio: [
-          { ...prevState.portfolio[0], media_url: "Invalid URL format" },
-        ],
-      }));
-    } else {
-      setData((prevState) => ({
-        ...prevState,
-        portfolio: [{ ...prevState.portfolio[0], media_url: imageUrl }],
-      }));
-      setError((prevState) => ({
-        ...prevState,
-        portfolio: [{ ...prevState.portfolio[0], media_url: "" }],
-      }));
-    }
+
+    setData((prevState) => ({
+      ...prevState,
+      portfolio: [{ ...prevState.portfolio[0], media_url: imageUrl }],
+    }));
+    setError((prevState) => ({
+      ...prevState,
+      portfolio: [{ ...prevState.portfolio[0], media_url: "" }],
+    }));
   };
 
   const handlePortFoliaDescrion = (e) => {
@@ -190,10 +182,11 @@ function Index() {
     }));
   };
   const handleSubmit = () => {
-    Router.push({
-      pathname: "./Course-Edit/Pricing",
-      query: { data: JSON.stringify(data) },
-    });
+    localStorage.removeItem("fAQ");
+    localStorage.removeItem("pricing");
+    const serializedData = JSON.stringify(data);
+    localStorage.setItem("formData", serializedData);
+    Router.push("/Course-Edit/Pricing");
   };
   return (
     <div className="container__">
@@ -339,9 +332,9 @@ function Index() {
                 onChange={handleCategrios}
                 value={data.category}
               >
-                <option value="Mern Stack">Mern Stack</option>
-                <option value="Full Stack">Full Stack</option>
-                <option value="Native">Native</option>
+                {categrios.map((e) => {
+                  return <option value={e.title}>{e.title}</option>;
+                })}
               </select>
               {error.category && (
                 <div className="text-danger">{error.category}</div>

@@ -1,4 +1,5 @@
 import { Footer, Header, SideBar } from "@/Component";
+import { categrios } from "@/constant/categrios";
 import { CourseCard, CourseTeam, HeroSection } from "@/layout/Home";
 import { Card_Section, Student_Header } from "@/layout/Student_portal";
 import { Icon } from "@iconify/react";
@@ -6,40 +7,6 @@ import { useRouter } from "next/router";
 import React from "react";
 
 function Index() {
-  const data = [
-    {
-      title: "Javascript",
-      icon: "ph:code-bold",
-    },
-    {
-      title: "Flutter",
-      icon: "material-symbols:flutter",
-    },
-    {
-      title: "Wordpress",
-      icon: "ic:baseline-wordpress",
-    },
-    {
-      title: "Python",
-      icon: "teenyicons:python-outline",
-    },
-    {
-      title: "Photography",
-      icon: "mdi:photography",
-    },
-    {
-      title: "Artist",
-      icon: "fluent-emoji-high-contrast:artist-palette",
-    },
-    {
-      title: "Song",
-      icon: "streamline:music-folder-song",
-    },
-    {
-      title: "sport",
-      icon: "icon-park-outline:sport",
-    },
-  ];
   const router = useRouter();
   const handleClick = (title) => {
     router.push({
@@ -53,7 +20,7 @@ function Index() {
       <Student_Header />
       <div className="logos my-3  py-3">
         <div className="logo-slider">
-          {data.map((e) => {
+          {categrios.map((e) => {
             return (
               <div
                 onClick={() => {
@@ -78,7 +45,7 @@ function Index() {
           })}
         </div>
         <div className="logo-slider">
-          {data.map((e) => {
+          {categrios.map((e) => {
             return (
               <div
                 onClick={() => {

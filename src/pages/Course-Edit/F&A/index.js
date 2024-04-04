@@ -1,12 +1,11 @@
 import { ServiesCreate } from "@/config/Axiosconfig/AxiosHandle/service";
 import CourseLayout from "@/layout/CourseLayout";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Index() {
   const router = useRouter();
-  const { data } = router.query;
-  const parsedData = data ? JSON.parse(data) : null;
+
   const [formData, setFormData] = useState({
     question: "",
     answer: "",
@@ -43,18 +42,11 @@ function Index() {
       return;
     }
     const obj = {
-      ...parsedData,
       FAQ: [{ ...formData }],
     };
     console.log(obj);
-    try {
-      const data = await ServiesCreate(obj);
-      if (data) {
-        console.log(data);
-      }
-    } catch (error) {
-      console.log(error, "err");
-    }
+    const serializedData = JSON.stringify(obj);
+    localStorage.setItem("fAQ", serializedData);
   };
 
   return (

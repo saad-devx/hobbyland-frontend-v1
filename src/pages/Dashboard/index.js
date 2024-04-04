@@ -1,15 +1,30 @@
 import { Footer } from "@/Component";
+import { FetchServices } from "@/config/Axiosconfig/AxiosHandle/service";
 import AdminLayout from "@/layout/AdminLayount";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function Index() {
   const route = useRouter();
   const handleCLick = () => {
-    route.push("Course-Edit/Intended-learning");
+    route.push("./Course-Edit/Pricing");
   };
+  const [data, setData] = useState([]);
+  const fectchAllservices = async () => {
+    try {
+      const response = await FetchServices();
+      if (response) {
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fectchAllservices();
+  }, []);
   return (
     <div>
       <AdminLayout>
@@ -24,7 +39,14 @@ function Index() {
               <div>
                 <Icon className="Icon" icon="carbon:notification-filled" />
               </div>
-              <div className="Profile_box">S</div>
+              <div
+                onClick={() => {
+                  route.push("/profile");
+                }}
+                className="Profile_box"
+              >
+                S
+              </div>
             </div>
             <div className="py-5">
               <div className="py-3">

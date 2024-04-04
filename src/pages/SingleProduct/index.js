@@ -1,21 +1,45 @@
 import { Card, Footer, Header } from "@/Component";
+import { GetSingleProduct } from "@/config/Axiosconfig/AxiosHandle/service";
 import data from "@/constant/product";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Index() {
-  const SingleProduct = {
-    title: "Video Editing Course",
-    price: "$79.00",
-    desc: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad eadolorem provident natus exercitationem voluptates mollitia quis autsint deleniti labore",
-    location: "Pakistan,karachi",
-    videoSource: "abc",
-    image: "https://www.wscubetech.com/images/free-video-editing-course.png",
-    id: 1,
-  };
+  const [singleData, setSingleData] = useState({
+    _id: "660e7cfc1c7ff1a8ea22f5c5",
+    title:
+      "whatever t ghgfhfghfghfghfghfgh fghfghgh he title isjkhjkhjkhjkfgfdgdfgdf",
+    description: "bla bla bla",
+    portfolio: [
+      {
+        media_url: "https://www.merriam-webster.com/dictionary/portfolio",
+        description: "media deschjkhjkhjkhjkription",
+      },
+    ],
+    category: "as name suggests",
+    tags: ["mern", "react", "nodejs"],
+    pricing: [
+      {
+        plan: "plan name",
+        title: "plan title",
+        description: "bla bla bla",
+        price: 100,
+        delivery_time: "30 days",
+        features: ["features mentor wants to tell"],
+      },
+    ],
+    delivery_methods: ["by-email", "physically", "online-lesson"],
+    FAQ: [
+      {
+        question: "questi",
+        answer: "answer here...",
+      },
+    ],
+  });
   const [isHovered, setIsHovered] = useState(false);
-
+  const [image, setImage] = useState("");
+  const [data, setData] = useState([]);
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -24,9 +48,35 @@ function Index() {
     setIsHovered(false);
   };
   const router = useRouter();
-  const handleNavigation = () => {
-    router.push("/addtocard");
+
+  useEffect(() => {
+    const id = localStorage.getItem("servicesId");
+    if (id) {
+      fetchSingleProduct(id);
+    }
+  }, []);
+
+  const fetchSingleProduct = async (id) => {
+    try {
+      console.log("singleproductdata", id, "gfg");
+      const response = await GetSingleProduct(id);
+      if (response) {
+        console.log(response, "red");
+        setSingleData({ ...response.data.services });
+        console.log(singleData);
+        fetchImage(); // Call this function to fetch image after setting singleData
+      }
+    } catch (error) {
+      console.log(error, "err");
+    }
   };
+
+  const fetchImage = () => {
+    // Here we can directly access singleData properties
+    setImage(singleData.portfolio[0].media_url);
+    console.log(image);
+  };
+
   return (
     <div className="conatiner_single_Product">
       <Header />
@@ -34,16 +84,7 @@ function Index() {
         <div className="row">
           <div className="col-md-6 my-5">
             <div>
-              <video
-                style={{ width: "100%", height: "400px" }}
-                controls
-                poster={SingleProduct.image}
-              >
-                <source
-                  src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                  type="video/mp4"
-                />
-              </video>
+              <img src={image} style={{ width: "100%", height: "400px" }} />
             </div>
           </div>
           <div className="col-md-6 my-5" style={{ position: "relative" }}>
@@ -105,16 +146,13 @@ function Index() {
                 </div>
               )}
             </div>
-            <h2 className="fw-bold mt-5 ">{SingleProduct.title}</h2>
-            <div className="fw-bold">Price : {SingleProduct.price}</div>
-            <div className="mt-3">{SingleProduct.desc}</div>
+            <h2 className="fw-bold mt-5 ">{singleData.title}</h2>
+            <div className="fw-bold">
+              Price : ${singleData.pricing[0].price}
+            </div>
+            <div className="mt-3">{singleData.description}</div>
             <div className="w-100 mt-5">
-              <button
-                onClick={handleNavigation}
-                className="btn_Green_Size_Full"
-              >
-                <Icon icon="iconoir:add-to-cart" /> Add To Card
-              </button>
+              <button className="btn_Green_Size_Full">Add To Card</button>
             </div>
           </div>
         </div>

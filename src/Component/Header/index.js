@@ -15,22 +15,18 @@ function Header() {
     try {
       const response = await FetchMe();
       if (response) {
-        console.log(userdata);
         serUserdata({ ...response.data.user });
+        console.log(userdata);
+        setToken(true);
       }
     } catch (error) {
       console.log(error);
+      setToken(false);
     }
   };
   useEffect(() => {
-    const payload = localStorage.getItem("is_logged_in");
-    if (payload) {
-      setToken(true);
-      fecthMeData();
-    } else {
-      false;
-    }
-  });
+    fecthMeData();
+  }, []);
   const handleFaverioteCLick = () => {
     router.push("favourite");
   };

@@ -1,11 +1,36 @@
 import { Card } from "@/Component";
+import { FetchServices } from "@/config/Axiosconfig/AxiosHandle/service";
 import data from "@/constant/product";
+import { filter } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function Index(props) {
   const router = useRouter();
+  const [courseData, setCourseData] = useState([]);
+  const [findData, setFindData] = useState([]);
+  const FetchAllServices = async () => {
+    try {
+      const response = await FetchServices();
+      if (response) {
+        setCourseData([...response.data.services]);
+        console.log(courseData, "data");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    FetchAllServices();
+  }, []);
 
+  useEffect(() => {
+    const filteredData = courseData.filter(
+      (e) => e.category === props.categrios
+    );
+    setFindData(filteredData);
+  }, [courseData, props.categrios]);
+  console.log(courseData);
   return (
     <div className="Container_Card_Section">
       <div className="my-5">
@@ -14,36 +39,38 @@ function Index(props) {
         <div className="container">
           <div className="row">
             {props.categrios
-              ? data.map((e, i) => {
+              ? findData.map((e, i) => {
                   return (
                     <div className="col-md-4 mt-3 p-2">
                       <div key={i}>
                         <Card
                           title={e.title}
-                          price={e.price}
-                          desc={e.desc}
-                          location={e.location}
-                          videoSource={e.videoSource}
-                          image={e.image}
-                          id={e.id}
+                          price={`$ ${e.pricing[0].price}`}
+                          desc={e.description}
+                          category={e.category}
+                          image={e.portfolio.map((e) => {
+                            return e.media_url;
+                          })}
+                          id={e._id}
                           like={props.islike}
                         />
                       </div>
                     </div>
                   );
                 })
-              : data.map((e, i) => {
+              : courseData.map((e, i) => {
                   return (
                     <div className="col-md-4 mt-3 p-2">
                       <div key={i}>
                         <Card
                           title={e.title}
-                          price={e.price}
-                          desc={e.desc}
-                          location={e.location}
-                          videoSource={e.videoSource}
-                          image={e.image}
-                          id={e.id}
+                          price={`$ ${e.pricing[0].price}`}
+                          desc={e.description}
+                          category={e.category}
+                          image={e.portfolio.map((e) => {
+                            return e.media_url;
+                          })}
+                          id={e._id}
                           like={props.islike}
                         />
                       </div>

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
-import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
+import {
+  FetchMe,
+  UpdateUserProfile,
+} from "@/config/Axiosconfig/AxiosHandle/user";
 function Index() {
   const router = useRouter();
   const navigateLink = [
@@ -23,20 +26,25 @@ function Index() {
   const [showSidebare, setShowSidebare] = useState(true);
   const [menue, setMenue] = useState(false);
   const [fecthmeData, setFecthmeData] = useState({});
+  const [profileImage, setProfileImage] = useState("");
 
-  const data = async () => {
-    try {
-      const response = await FetchMe();
-      if (response) {
-        setFecthmeData({ ...response.data.user });
-        console.log(fecthmeData);
-      }
-    } catch (e) {
-      router.push("/login");
-    }
-  };
   useEffect(() => {
-    data();
+    const fetchData = async () => {
+      try {
+        const response = await FetchMe();
+        if (response) {
+          setFecthmeData({ ...response.data.user });
+          const profileImageUrl = response.data.user.profile_image || "";
+
+          localStorage.setItem("profileimage", profileImageUrl); // Store image URL in local storage
+        }
+      } catch (error) {
+        router.push("/login");
+      }
+    };
+
+    fetchData();
+
     const handleResize = () => {
       if (window.innerWidth <= 990) {
         setSidebare(true);
@@ -47,18 +55,49 @@ function Index() {
         setSidebare(false);
         setShowSidebare(true);
         setMenue(false);
-
         setSidebarePosition(false);
       }
     };
-
-    handleResize(); // Initial check
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    // Retrieve image URL from local storage when the component mounts
+    const storedImageUrl = localStorage.getItem("profileimage");
+    if (storedImageUrl) {
+      setProfileImage(storedImageUrl);
+    }
+  }, []);
+
+  const handleProfileImageClick = () => {
+    document.getElementById("profile-image-input").click();
+  };
+
+  const handleProfileImageChange = async (e) => {
+    const imageFile = e.target.files[0];
+    const imageUrl = URL.createObjectURL(imageFile);
+
+    const updatedData = {
+      ...fecthmeData,
+      profile_image: imageUrl,
+    };
+
+    try {
+      const response = await UpdateUserProfile(updatedData);
+      if (response) {
+        setProfileImage(response.data.user.profile_image);
+        localStorage.setItem("profileimage", response.data.user.profile_image); // Update stored image URL in local storage
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(profileImage);
   return (
     <div className="User_profile_Container">
       {!sidebare ? (
@@ -87,12 +126,42 @@ function Index() {
               />
             </div>
           ) : null}
-          <div className="User_Profile_Circle">
-            {fecthmeData && fecthmeData.firstname
-              ? fecthmeData.firstname.charAt(0)
-              : ""}
-            <input className="InputNone" type="file" />
+          <div
+            className="User_Profile_Circle"
+            onClick={handleProfileImageClick}
+          >
+            <img
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "100%",
+                objectFit: "contain",
+              }}
+              src={profileImage}
+              alt="../"
+            />
+            {/* {fecthmeData.profile_image ? (
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "100%",
+                  objectFit: "contain",
+                }}
+                src={local}
+                alt="Profile"
+              />
+            ) : (
+              <p>{fecthmeData.firstname}</p>
+            )} */}
           </div>
+          <input
+            type="file"
+            id="profile-image-input"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleProfileImageChange}
+          />
           <div className="Heading">{fecthmeData.firstname}</div>
 
           <div className="my-3">

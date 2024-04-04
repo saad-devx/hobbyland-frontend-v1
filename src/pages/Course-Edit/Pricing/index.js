@@ -1,12 +1,10 @@
 import CourseLayout from "@/layout/CourseLayout";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Index() {
   const router = useRouter();
-  const { data } = router.query;
-  const parsedData = data ? JSON.parse(data) : null;
   const [formData, setFormData] = useState({
     plan: "",
     title: "",
@@ -77,6 +75,7 @@ function Index() {
       setErrors(newErrors);
       return;
     }
+
     const payload = {
       plan,
       title,
@@ -87,22 +86,16 @@ function Index() {
     };
     console.log(payload);
     console.log(formData);
+
     const obj = {
-      title: parsedData.title,
-      description: parsedData.description,
-      portfolio: parsedData.portfolio,
-      category: parsedData.category,
-      tags: parsedData.tags,
       pricing: [{ ...formData }],
       delivery_methods: ["abc", "xyz"],
     };
-    console.log(obj);
-    router.push({
-      pathname: "/Course-Edit/F&A",
-      query: { data: JSON.stringify(obj) },
-    });
+    const serializedData = JSON.stringify(obj);
+    localStorage.setItem("pricing", serializedData);
+    console.log(serializedData);
+    router.push("/Course-Edit/F&A");
   };
-
   return (
     <div>
       <CourseLayout>

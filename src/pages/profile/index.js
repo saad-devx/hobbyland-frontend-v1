@@ -6,8 +6,11 @@ import {
   FetchMe,
   UpdateUserProfile,
 } from "@/config/Axiosconfig/AxiosHandle/user";
+import { Icon } from "@iconify/react";
 
 function Index() {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
   const [fecthmeData, setFecthmeData] = useState({});
   const [formData, setFormData] = useState({
@@ -22,22 +25,22 @@ function Index() {
       suffix: "",
     },
   });
+  const fetchData = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        setFecthmeData({ ...response.data.user });
+      }
+    } catch (e) {
+      localStorage.setItem("is_logged_in", false);
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await FetchMe();
-        if (response) {
-          setFecthmeData({ ...response.data.user });
-        }
-      } catch (e) {
-        localStorage.setItem("is_logged_in", false);
-
-        console.log(e);
-      }
-    };
     fetchData();
   }, []);
+
   const handlePhoneNumberChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -48,6 +51,7 @@ function Index() {
       },
     }));
   };
+
   useEffect(() => {
     setFormData({
       firstname: fecthmeData.firstname,
@@ -55,6 +59,10 @@ function Index() {
       email: fecthmeData.email ? fecthmeData.email : "",
       account_type: fecthmeData.account_type ? fecthmeData.account_type : "",
       timezone: fecthmeData.timezone,
+      phone_number: {
+        prefix: "+92",
+        suffix: fecthmeData.phone_number ? fecthmeData.phone_number.suffix : "",
+      },
     });
   }, [fecthmeData]);
 
@@ -65,15 +73,19 @@ function Index() {
       [name]: value,
     });
   };
+
   const handleSubmit = async () => {
     try {
       console.log(formData);
       const response = await UpdateUserProfile(formData);
       if (response) {
         console.log(response);
+        setSuccess("User update Succesfully");
+        // After successful update, you may want to navigate to a different page or display a success message.
       }
     } catch (err) {
       console.log(err, "err");
+      setError(err.response.data.msg ? err.response.data.msg : "");
     }
   };
 
@@ -84,6 +96,46 @@ function Index() {
           <div className="container">
             <div className="row">
               <h3 className="my-3 mx-3 fw-bold mt-5">Update Profile</h3>
+              {error && (
+                <div
+                  style={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                    backgroundColor: "#feefee",
+                    padding: "12px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <Icon
+                    icon="carbon:warning-filled"
+                    style={{ fontSize: "29px", color: "#ee5d50" }}
+                  />
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div
+                  style={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                    backgroundColor: "#e6faf5",
+                    padding: "12px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <Icon
+                    icon="ep:success-filled"
+                    style={{ fontSize: "29px", color: "#01b574" }}
+                  />
+                  {success}
+                </div>
+              )}
               <div className="col-md-6 my-3">
                 <div>
                   <div className="label">Full Name</div>
@@ -150,7 +202,7 @@ function Index() {
 
               <div className="col-md-6 my-3">
                 <div>
-                  <div className="label">Timezon</div>
+                  <div className="label">Timezone</div>
                   <input
                     className="Input"
                     placeholder="Timezone"
@@ -166,6 +218,9 @@ function Index() {
                   <input
                     placeholder="Suffix"
                     // value={formData.phone_number.suffix}
+                    value={
+                      formData.phone_number ? formData.phone_number.suffix : ""
+                    }
                     onChange={handlePhoneNumberChange}
                     name="suffix"
                     className="Input"
