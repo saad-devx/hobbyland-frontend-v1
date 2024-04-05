@@ -107,7 +107,7 @@ function Index() {
         console.log(response);
         router.push("/login");
       }
-    } catch (error) { 
+    } catch (error) {
       console.log(error, "errs");
     }
   };

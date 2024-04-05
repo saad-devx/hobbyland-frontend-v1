@@ -23,11 +23,21 @@ function Index() {
         const response = await SignupCallback(obj);
         if (response) {
           console.log(response);
+          response.data.user.account_type === "mentor"
+            ? () => {
+                console.log("okay");
+                alert("okay");
+              }
+            : () => {
+                setTimeout(() => {
+                  router.push("./login");
+                }, 1000);
+              };
           setSuccess(response.data.msg);
           setError("");
-          setTimeout(() => {
-            router.push("./login");
-          }, 1000);
+          // setTimeout(() => {
+          //   router.push("./login");
+          // }, 1000);
         }
       } catch (error) {
         console.error("Error", error);

@@ -1,5 +1,8 @@
 import { Card, Footer, Header } from "@/Component";
-import { GetSingleProduct } from "@/config/Axiosconfig/AxiosHandle/service";
+import {
+  FetchServices,
+  GetSingleProduct,
+} from "@/config/Axiosconfig/AxiosHandle/service";
 import data from "@/constant/product";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
@@ -38,8 +41,28 @@ function Index() {
     ],
   });
   const [isHovered, setIsHovered] = useState(false);
-  const [image, setImage] = useState("");
   const [data, setData] = useState([]);
+  const [recentdata, setRecentdata] = useState([]);
+  const router = useRouter();
+  const queryid = router.query;
+  console.log(queryid, "quesry");
+  const [addtocard, setAddtocard] = useState([]);
+
+  const handleAddToCart = () => {
+    const existingCartData = JSON.parse(localStorage.getItem("cartData")) || [];
+    const isItemInCart = existingCartData.some(
+      (item) => item._id === singleData._id
+    );
+    if (!isItemInCart) {
+      const updatedCartData = [...existingCartData, singleData];
+      setAddtocard(updatedCartData);
+      localStorage.setItem("cartData", JSON.stringify(updatedCartData));
+    } else {
+      return alert("your data already exist  in the cart");
+    }
+    router.push("./addtocard");
+  };
+
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -47,14 +70,6 @@ function Index() {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
-  const router = useRouter();
-
-  useEffect(() => {
-    const id = localStorage.getItem("servicesId");
-    if (id) {
-      fetchSingleProduct(id);
-    }
-  }, []);
 
   const fetchSingleProduct = async (id) => {
     try {
@@ -69,6 +84,37 @@ function Index() {
       console.log(error, "err");
     }
   };
+
+  useEffect(() => {
+    const id = localStorage.getItem("servicesId");
+    if (id) {
+      fetchSingleProduct(id);
+    }
+  }, [queryid.id]);
+
+  const fetchAllService = async () => {
+    try {
+      const response = await FetchServices();
+      if (response) {
+        console.log(response.data.services);
+        setData([...response.data.services]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllService();
+  }, []);
+
+  useEffect(() => {
+    const filteredData = data.filter(
+      (item) =>
+        item.category === singleData.category && item._id !== singleData._id
+    );
+    setRecentdata(filteredData);
+  }, [singleData]);
 
   return (
     <div className="conatiner_single_Product">
@@ -148,7 +194,9 @@ function Index() {
             </div>
             <div className="mt-3">{singleData.description}</div>
             <div className="w-100 mt-5">
-              <button className="btn_Green_Size_Full">Add To Card</button>
+              <button className="btn_Green_Size_Full" onClick={handleAddToCart}>
+                Add To Cart
+              </button>
             </div>
           </div>
         </div>
@@ -158,18 +206,19 @@ function Index() {
       <div className="my-3">
         <div className="container">
           <div className="row">
-            {data.map((e, i) => {
+            {recentdata.map((e, i) => {
               return (
                 <div key={i} className="col-md-4 mt-3 p-2">
                   <div>
                     <Card
                       title={e.title}
-                      price={e.price}
-                      desc={e.desc}
-                      location={e.location}
-                      videoSource={e.videoSource}
-                      image={e.image}
-                      id={e.id}
+                      price={`$ ${e.pricing[0].price}`}
+                      desc={e.description}
+                      category={e.category}
+                      image={e.portfolio.map((e) => {
+                        return e.media_url;
+                      })}
+                      id={e._id}
                       like={false}
                     />
                   </div>

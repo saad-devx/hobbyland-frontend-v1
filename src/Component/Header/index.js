@@ -29,8 +29,10 @@ function Header() {
 
         if (isLoggedIn) {
           setToken(true);
+          console.log(cookies);
         } else {
           setToken(false);
+          console.log(cookies);
         }
         setToken(true);
       }
@@ -46,6 +48,11 @@ function Header() {
   const handleFaverioteCLick = () => {
     router.push("favourite");
   };
+  const [datalenght, setDatalenght] = useState();
+  useEffect(() => {
+    const cartData = JSON.parse(localStorage.getItem("cartData"));
+    setDatalenght(cartData.length);
+  });
   return (
     <>
       {token ? (
@@ -130,7 +137,7 @@ function Header() {
                       alignItems: "center",
                     }}
                   >
-                    4
+                    {datalenght}
                   </div>
                 </div>
                 <div onClick={handleFaverioteCLick}>
