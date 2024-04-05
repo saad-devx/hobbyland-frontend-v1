@@ -64,17 +64,10 @@ function Index() {
         console.log(response, "red");
         setSingleData({ ...response.data.services });
         console.log(singleData);
-        fetchImage(); // Call this function to fetch image after setting singleData
       }
     } catch (error) {
       console.log(error, "err");
     }
-  };
-
-  const fetchImage = () => {
-    // Here we can directly access singleData properties
-    setImage(singleData.portfolio[0].media_url);
-    console.log(image);
   };
 
   return (
@@ -84,7 +77,10 @@ function Index() {
         <div className="row">
           <div className="col-md-6 my-5">
             <div>
-              <img src={image} style={{ width: "100%", height: "400px" }} />
+              <img
+                src={singleData.portfolio[0].media_url}
+                style={{ width: "100%", height: "400px" }}
+              />
             </div>
           </div>
           <div className="col-md-6 my-5" style={{ position: "relative" }}>

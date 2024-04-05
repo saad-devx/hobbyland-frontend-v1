@@ -4,7 +4,7 @@ import { CourseCard, CourseTeam, HeroSection } from "@/layout/Home";
 import { Card_Section, Student_Header } from "@/layout/Student_portal";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 
 function Index() {
   const router = useRouter();
@@ -14,6 +14,25 @@ function Index() {
       query: { title: title },
     });
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const cookies = document.cookie.split(";");
+      let isLoggedIn = false;
+
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+
+      if (isLoggedIn) {
+      } else {
+        router.push("/login");
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="Student_home">
       <Header />

@@ -11,28 +11,24 @@ export default function Index() {
   const [token, setToken] = useState(false);
   const [loading, setLoading] = useState(true); // New state for loading indicator
   const Router = useRouter();
-  const fecthMeData = async () => {
-    try {
-      const response = await FetchMe();
-      if (response) {
-        console.log(userdata);
-      }
-    } catch (error) {
-      console.log(error);
-      localStorage.setItem("is_logged_in", false);
-      setToken(false);
-      Router.push("/Home");
-    }
-  };
+
   useEffect(() => {
-    fecthMeData();
-    const payload = localStorage.getItem("is_logged_in");
-    if (payload) {
+    const cookies = document.cookie.split(";");
+    let isLoggedIn = false;
+
+    cookies.forEach((cookie) => {
+      const [name, value] = cookie.split("=");
+      if (name.trim() === "is_logged_in" && value.trim() === "true") {
+        isLoggedIn = true;
+      }
+    });
+
+    if (isLoggedIn) {
       setToken(true);
-      Router.push("/StudentHome");
+      Router.push("./StudentHome");
     } else {
       setToken(false);
-      Router.push("/Home");
+      Router.push("./login");
     }
     setLoading(false);
   }, []);

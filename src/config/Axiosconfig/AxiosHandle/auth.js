@@ -34,3 +34,10 @@ export const changepasswordotp = (data) => {
   });
   return responseData;
 };
+
+export const UserLogout = () => {
+  const responseData = axios.patch(`${BASEURL}auth/logout`, {
+    withCredentials: true,
+  });
+  return responseData;
+};

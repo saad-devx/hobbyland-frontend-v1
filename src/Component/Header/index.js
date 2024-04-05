@@ -17,11 +17,27 @@ function Header() {
       if (response) {
         serUserdata({ ...response.data.user });
         console.log(userdata);
+        const cookies = document.cookie.split(";");
+        let isLoggedIn = false;
+
+        cookies.forEach((cookie) => {
+          const [name, value] = cookie.split("=");
+          if (name.trim() === "is_logged_in" && value.trim() === "true") {
+            isLoggedIn = true;
+          }
+        });
+
+        if (isLoggedIn) {
+          setToken(true);
+        } else {
+          setToken(false);
+        }
         setToken(true);
       }
     } catch (error) {
       console.log(error);
       setToken(false);
+      router.push("/login");
     }
   };
   useEffect(() => {

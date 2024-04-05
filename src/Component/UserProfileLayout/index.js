@@ -5,6 +5,7 @@ import {
   FetchMe,
   UpdateUserProfile,
 } from "@/config/Axiosconfig/AxiosHandle/user";
+import { UserLogout } from "@/config/Axiosconfig/AxiosHandle/auth";
 function Index() {
   const router = useRouter();
   const navigateLink = [
@@ -98,6 +99,18 @@ function Index() {
     }
   };
   console.log(profileImage);
+  const handleLogout = async () => {
+    try {
+      console.log(fecthmeData);
+      const response = await UserLogout();
+      if (response) {
+        console.log(response);
+        router.push("/login");
+      }
+    } catch (error) { 
+      console.log(error, "errs");
+    }
+  };
   return (
     <div className="User_profile_Container">
       {!sidebare ? (
@@ -180,12 +193,7 @@ function Index() {
               })}
 
               <div className="my-5">
-                <button
-                  onClick={() => {
-                    router.push("./login");
-                  }}
-                  className="Button"
-                >
+                <button onClick={handleLogout} className="Button">
                   Logout
                 </button>
               </div>

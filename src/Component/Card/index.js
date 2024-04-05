@@ -40,8 +40,7 @@ function Index(props) {
         <div className="fw-bold text-white">Price : {props.price}</div>
         <div className="desc">{props.desc}</div>
         <div className="text-white d-flex gap-3 ">
-          <div></div>
-          <div style={{ fontSize: "15px" }}>{props.category}</div>
+          <div style={{ fontSize: "15px" }}>Categrios : {props.category}</div>
         </div>
       </div>
     </div>

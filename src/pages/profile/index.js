@@ -20,6 +20,7 @@ function Index() {
     account_type: "",
     gender: "Male",
     timezone: "",
+    password: "",
     phone_number: {
       prefix: "+92",
       suffix: "",
@@ -29,6 +30,7 @@ function Index() {
     try {
       const response = await FetchMe();
       if (response) {
+        console.log(response);
         setFecthmeData({ ...response.data.user });
       }
     } catch (e) {
@@ -59,6 +61,7 @@ function Index() {
       email: fecthmeData.email ? fecthmeData.email : "",
       account_type: fecthmeData.account_type ? fecthmeData.account_type : "",
       timezone: fecthmeData.timezone,
+      password: fecthmeData.password,
       phone_number: {
         prefix: "+92",
         suffix: fecthmeData.phone_number ? fecthmeData.phone_number.suffix : "",
@@ -88,7 +91,7 @@ function Index() {
       setError(err.response.data.msg ? err.response.data.msg : "");
     }
   };
-
+  console.log("profile", fecthmeData);
   return (
     <div>
       <ProfileLayout>
