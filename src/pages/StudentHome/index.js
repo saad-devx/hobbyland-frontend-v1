@@ -28,7 +28,7 @@ function Index() {
 
       if (isLoggedIn) {
       } else {
-        router.push("/login");
+        // router.push("/login");
       }
     };
     fetchData();

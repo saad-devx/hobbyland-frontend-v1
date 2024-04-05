@@ -39,7 +39,6 @@ function Header() {
     } catch (error) {
       console.log(error);
       setToken(false);
-      router.push("/login");
     }
   };
   useEffect(() => {
