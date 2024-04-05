@@ -48,10 +48,10 @@ function Header() {
   const handleFaverioteCLick = () => {
     router.push("favourite");
   };
-  const [datalenght, setDatalenght] = useState();
+  const [datalenght, setDatalenght] = useState(0);
   useEffect(() => {
     const cartData = JSON.parse(localStorage.getItem("cartData"));
-    setDatalenght(cartData.length);
+    // setDatalenght(cartData.length);
   });
   return (
     <>
