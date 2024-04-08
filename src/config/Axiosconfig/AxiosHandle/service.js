@@ -29,3 +29,14 @@ export const GetSingleProduct = (id) => {
   console.log(id, "id_");
   return responseData;
 };
+
+export const FindService = (find) => {
+  const responseData = axios.get(
+    `${BASEURL}user/mentor/service/search?query=${find}`,
+    {
+      withCredentials: true,
+    }
+  );
+  console.log(find, "find");
+  return responseData;
+};

@@ -34,11 +34,7 @@ function Index() {
           <div className="row mt-5">
             <div className="col-md-8 p-1">
               {data.map((e, i) => (
-                <div
-                  key={i}
-                  className="card_main"
-                  onClick={() => HandleRoute("/SingleProduct")}
-                >
+                <div key={i} className="card_main">
                   <div className="postion_absolute">
                     <button
                       className="btn_Green"
@@ -72,8 +68,7 @@ function Index() {
                       className="fw-bold d-flex gap-1"
                       style={{ color: "#003a55" }}
                     >
-                      $ {e.pricing.map((e) => e.price)}
-                      <Icon icon="mdi:money-off" />
+                      ${e.pricing.map((e) => e.price)}
                     </div>
                   </div>
                 </div>

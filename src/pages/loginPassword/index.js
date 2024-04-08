@@ -27,6 +27,7 @@ function Index() {
       setError("Please enter your password with at least 8 characters.");
     } else {
       try {
+        console.log(data);
         const response = await Login(data);
         if (response) {
           console.log(response);

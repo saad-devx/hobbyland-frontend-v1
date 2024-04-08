@@ -10,17 +10,16 @@ import React, { useEffect, useState } from "react";
 
 function Index() {
   const [singleData, setSingleData] = useState({
-    _id: "660e7cfc1c7ff1a8ea22f5c5",
-    title:
-      "whatever t ghgfhfghfghfghfghfgh fghfghgh he title isjkhjkhjkhjkfgfdgdfgdf",
-    description: "bla bla bla",
+    _id: "",
+    title: "",
+    description: "",
     portfolio: [
       {
-        media_url: "https://www.merriam-webster.com/dictionary/portfolio",
-        description: "media deschjkhjkhjkhjkription",
+        media_url: "",
+        description: "",
       },
     ],
-    category: "as name suggests",
+    category: "",
     tags: ["mern", "react", "nodejs"],
     pricing: [
       {
@@ -49,18 +48,33 @@ function Index() {
   const [addtocard, setAddtocard] = useState([]);
 
   const handleAddToCart = () => {
-    const existingCartData = JSON.parse(localStorage.getItem("cartData")) || [];
-    const isItemInCart = existingCartData.some(
-      (item) => item._id === singleData._id
-    );
-    if (!isItemInCart) {
-      const updatedCartData = [...existingCartData, singleData];
-      setAddtocard(updatedCartData);
-      localStorage.setItem("cartData", JSON.stringify(updatedCartData));
+    //// checking login
+    const cookies = document.cookie.split(";");
+    let isLoggedIn = false;
+
+    cookies.forEach((cookie) => {
+      const [name, value] = cookie.split("=");
+      if (name.trim() === "is_logged_in" && value.trim() === "true") {
+        isLoggedIn = true;
+      }
+    });
+    if (isLoggedIn) {
+      const existingCartData =
+        JSON.parse(localStorage.getItem("cartData")) || [];
+      const isItemInCart = existingCartData.some(
+        (item) => item._id === singleData._id
+      );
+      if (!isItemInCart) {
+        const updatedCartData = [...existingCartData, singleData];
+        setAddtocard(updatedCartData);
+        localStorage.setItem("cartData", JSON.stringify(updatedCartData));
+      } else {
+        return alert("your data already exist  in the cart");
+      }
+      router.push("./addtocard");
     } else {
-      return alert("your data already exist  in the cart");
+      router.push("./login");
     }
-    router.push("./addtocard");
   };
 
   const handleMouseEnter = () => {
@@ -115,7 +129,7 @@ function Index() {
     );
     setRecentdata(filteredData);
   }, [singleData]);
-
+  console.log(singleData.portfolio[0].media_url);
   return (
     <div className="conatiner_single_Product">
       <Header />

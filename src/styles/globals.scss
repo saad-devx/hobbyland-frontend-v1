@@ -30,6 +30,10 @@ body {
   cursor: pointer;
   border: none;
 }
+.react-calendar {
+  width: 100% !important;
+  position: absolute !important;
+}
 .btn_Header_Green {
   font-family: "GT Walsheim Pro", Arial, sans-serif;
   font-size: 13px;
