@@ -45,7 +45,7 @@ function Index() {
           const isLoggedIn = getCookie("is_logged_in");
           if (isLoggedIn === "true") {
             localStorage.setItem("is_logged_in", true);
-            router.push("/StudentHome");
+            // router.push("/StudentHome");
           } else {
             localStorage.removeItem("is_logged_in");
           }

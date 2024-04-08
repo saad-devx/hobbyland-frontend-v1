@@ -28,22 +28,20 @@ function Index() {
   const [menue, setMenue] = useState(false);
   const [fecthmeData, setFecthmeData] = useState({});
   const [profileImage, setProfileImage] = useState("");
+  const fetchData = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        setFecthmeData({ ...response.data.user });
+        const profileImageUrl = response.data.user.profile_image || "";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await FetchMe();
-        if (response) {
-          setFecthmeData({ ...response.data.user });
-          const profileImageUrl = response.data.user.profile_image || "";
-
-          localStorage.setItem("profileimage", profileImageUrl); // Store image URL in local storage
-        }
-      } catch (error) {
-        router.push("/login");
+        localStorage.setItem("profileimage", profileImageUrl); // Store image URL in local storage
       }
-    };
-
+    } catch (error) {
+      router.push("/login");
+    }
+  };
+  useEffect(() => {
     fetchData();
 
     const handleResize = () => {
