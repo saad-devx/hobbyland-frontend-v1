@@ -28,7 +28,7 @@ export default function Index() {
       Router.push("./StudentHome");
     } else {
       setToken(false);
-      Router.push("./login");
+      Router.push("./StudentHome");
     }
     setLoading(false);
   }, []);
