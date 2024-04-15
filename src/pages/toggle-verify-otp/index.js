@@ -6,13 +6,14 @@ import axios from "axios";
 import { Icon } from "@iconify/react";
 import { SignupCallback } from "@/config/Axiosconfig/AxiosHandle/auth";
 import { useRouter } from "next/router";
+import { ToggleUser2Fa } from "@/config/Axiosconfig/AxiosHandle/Qrcode";
 
 function Index() {
   const [err, setErr] = useState("");
   const [otp, setOtp] = useState();
   const arr = [];
   const [error, setError] = useState("");
-  const obj = { otp: otp };
+  const obj = { totp_code: otp };
   const [success, setSuccess] = useState("");
   const router = useRouter();
   const handleCLick = async () => {
@@ -20,28 +21,12 @@ function Index() {
       setErr("Please enter OTP");
     } else {
       try {
-        const response = await SignupCallback(obj);
+        const response = await ToggleUser2Fa(obj);
         if (response) {
           console.log(response);
-          if (response.data.user.account_type === "mentor") {
-            console.log(response.data.user.account_type);
-            setTimeout(() => {
-              router.push("./mentor-documentation");
-            }, 1000);
-          } else {
-            console.log(response.data.user.account_type);
-
-            setTimeout(() => {
-              router.push("./Two-step-verfication");
-            }, 1000);
-          }
-
-          setSuccess(response.data.msg);
-          setError("");
         }
       } catch (error) {
         console.error("Error", error);
-        setError(error.response.data.msg ? error.response.data.msg : null);
       }
     }
   };
@@ -51,7 +36,7 @@ function Index() {
       <Header />
       <div className="continar_login">
         <div className="CenterLogin">
-          <div className="Heading_of_Signup">Acount Create Otp.</div>
+          <div className="Heading_of_Signup">Toggle Verify Otp</div>
           {error && (
             <div
               style={{
@@ -108,12 +93,9 @@ function Index() {
                 className="btn_Green_Size_Full mt-5"
                 onClick={handleCLick}
               >
-                Signup
+                Verify Otp
               </button>
             </div>
-            <a className="NotYou mt-3" href="./SIgnupDetail">
-              Not You ?
-            </a>
           </div>
         </div>
       </div>

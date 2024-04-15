@@ -1,15 +1,19 @@
 import { Footer, Header } from "@/Component";
+import { MentorDocumentation } from "@/config/Axiosconfig/AxiosHandle/mentor";
+import { Icon } from "@iconify/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function Index() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     document_type: "",
     document_number: "",
     document_name: "",
     issued_by: "",
-    issue_date: new Date(),
+    issue_date: "",
     front_image: "",
     back_image: "",
     additional_details: "",
@@ -17,35 +21,38 @@ function Index() {
   });
 
   const [errors, setErrors] = useState({});
-  const [showCalendar, setShowCalendar] = useState(false);
-
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar);
-  };
-
-  const handleIssueDateSelect = (date) => {
-    console.log(date.toLocaleDateString());
-    setFormData({ ...formData, issue_date: date });
-    setShowCalendar(false);
-  };
-
-  const handleExpirationDateSelect = (date) => {
-    console.log(date.toLocaleDateString());
-    setFormData({ ...formData, expiration_date: date });
-    setShowCalendar(false);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  const handleSubmit = (e) => {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateFormData(formData);
     if (Object.keys(errors).length === 0) {
-      console.log("Form data:", formData);
-      alert("Form submitted successfully!");
+      // console.log("Form data:", formData);
+      // alert("Form submitted successfully!");
+      const data = {
+        documents: [{ ...formData }],
+      };
+      console.log(data);
+      try {
+        const response = await MentorDocumentation(data);
+        if (response) {
+          setSuccess(
+            "Documents submitted for review, please wait for approval."
+          );
+          router.push("./Two-step-verfication");
+
+          setError();
+        }
+      } catch (e) {
+        console.log(e);
+        setSuccess();
+        setError(e.response.data.msg);
+      }
     } else {
       setErrors(errors);
     }
@@ -74,6 +81,12 @@ function Index() {
     if (!data.additional_details) {
       errors.additional_details = "Additional details are required";
     }
+    if (!data.expiration_date) {
+      errors.expiration_date = "Expire Date are required";
+    }
+    if (!data.issue_date) {
+      errors.issue_date = "issue_date are required";
+    }
     // Add more validation rules as needed
     return errors;
   };
@@ -89,6 +102,46 @@ function Index() {
           <p>
             Submit Mentor request then accepted request then mentor position
           </p>
+          {error && (
+            <div
+              style={{
+                marginTop: "20px",
+                marginBottom: "20px",
+                backgroundColor: "#feefee",
+                padding: "12px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <Icon
+                icon="carbon:warning-filled"
+                style={{ fontSize: "29px", color: "#ee5d50" }}
+              />
+              {error}
+            </div>
+          )}
+          {success && (
+            <div
+              style={{
+                marginTop: "20px",
+                marginBottom: "20px",
+                backgroundColor: "#e6faf5",
+                padding: "12px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <Icon
+                icon="ep:success-filled"
+                style={{ fontSize: "29px", color: "#01b574" }}
+              />
+              {success}
+            </div>
+          )}
           <div className="d-flex gap-3">
             <div className="w-75 mt-3">
               <input
@@ -191,41 +244,41 @@ function Index() {
               <p style={{ color: "red" }}>{errors.additional_details}</p>
             )}
           </div>
-          <div className="w-100 mt-3">
-            {/* Input field for issue date */}
-            <p>Issue Date</p>
-            <input
-              className="Input"
-              placeholder="Select Date"
-              onClick={toggleCalendar}
-              value={formData.issue_date.toLocaleDateString()}
-              readOnly
-            />
-            {showCalendar && (
-              <Calendar
-                onChange={handleIssueDateSelect}
-                value={formData.issue_date}
+
+          <div className="d-flex gap-3">
+            <div className="w-75 mt-3">
+              <DatePicker
+                className={`${
+                  errors.expiration_date ? "errTimezoneInput" : "Input"
+                }`}
+                selected={formData.expiration_date}
+                onChange={(date) =>
+                  setFormData({ ...formData, expiration_date: date })
+                }
+                placeholderText="expiration_date"
               />
-            )}
-          </div>
-          <div className="w-100 mt-3">
-            {/* Input field for expiration date */}
-            <p>Expiration Date</p>
-            <input
-              className="Input"
-              placeholder="Select Date"
-              onClick={toggleCalendar}
-              value={formData.expiration_date.toLocaleDateString()}
-              readOnly
-            />
-            {showCalendar && (
-              <Calendar
-                onChange={handleExpirationDateSelect}
-                value={formData.expiration_date}
+              {errors.expiration_date && (
+                <p style={{ color: "red" }}>{errors.expiration_date}</p>
+              )}
+            </div>
+            <div className="w-75 mt-3">
+              <DatePicker
+                className={` w-100 ${
+                  errors.issue_date ? "errTimezoneInput" : "Input"
+                }`}
+                selected={formData.issue_date}
+                onChange={(date) =>
+                  setFormData({ ...formData, issue_date: date })
+                }
+                placeholderText="issue_date"
               />
-            )}
+              {errors.issue_date && (
+                <p style={{ color: "red" }}>{errors.issue_date}</p>
+              )}
+            </div>
           </div>
-          <button onClick={handleSubmit} className="btn_Green_Size_Full">
+
+          <button onClick={handleSubmit} className="btn_Green_Size_Full mt-3">
             Submit
           </button>
         </div>

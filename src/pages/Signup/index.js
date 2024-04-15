@@ -19,7 +19,7 @@ function Index() {
     firstname: "",
     lastname: "",
     timezone: "",
-    account_type: "mentor",
+    account_type: query,
     accept_policies: accecptPolicies,
     register_provider: "hobbyland",
   });

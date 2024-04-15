@@ -345,7 +345,7 @@ body {
 }
 
 .Input {
-  width: 100%;
+  width: 100% !important;
   height: 45px;
   padding: 5px 5px 5px 15px;
   font-size: 14px;
@@ -403,18 +403,6 @@ body {
   display: flex;
   align-items: center;
   gap: 25px;
-}
-
-:where(.css-dev-only-do-not-override-1xg9z9n).ant-switch .ant-switch-inner {
-  display: block;
-  overflow: hidden;
-  border-radius: 100px;
-  height: 100%;
-  padding-inline-start: 24px;
-  padding-inline-end: 9px;
-  transition: padding-inline-start 0.2s ease-in-out,
-    padding-inline-end 0.2s ease-in-out;
-  background-color: #003a55;
 }
 
 .card1 {
@@ -538,4 +526,69 @@ body {
     font-weight: 600;
     cursor: pointer;
   }
+}
+
+//// switch
+/// //
+/* CSS for switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #002333;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #002333;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

@@ -33,6 +33,7 @@ function Index() {
           console.log(response);
           setSuccess(response.data.msg);
           setErrors("");
+          router.push("./StudentHome");
           function getCookie(name) {
             const cookies = document.cookie.split(";");
             for (let i = 0; i < cookies.length; i++) {
@@ -46,7 +47,6 @@ function Index() {
           const isLoggedIn = getCookie("is_logged_in");
           if (isLoggedIn === "true") {
             localStorage.setItem("is_logged_in", true);
-            // router.push("/StudentHome");
           } else {
             localStorage.removeItem("is_logged_in");
           }
