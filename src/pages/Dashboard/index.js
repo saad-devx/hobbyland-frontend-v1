@@ -17,6 +17,9 @@ function Index() {
       const response = await FetchServices();
       if (response) {
         console.log(response);
+        setData([...response.data.services]);
+        console.log(data, "data");
+        console.log(response.data.services);
       }
     } catch (error) {
       console.log(error);
@@ -51,22 +54,36 @@ function Index() {
             <div className="py-5">
               <div className="py-3">
                 <div className="text-center mb-3">Are You Ready to Begin?</div>
-                <div onClick={handleCLick} className="my-5 Card_Course">
-                  <div className="d-flex">
-                    <img
-                      src="https://png.pngtree.com/png-vector/20191120/ourmid/pngtree-training-course-online-computer-chat-flat-color-icon-vector-png-image_2007114.jpg"
-                      height={"100%"}
-                      width="40%"
-                    />
+                {data.map((e, i) => {
+                  return (
+                    <div onClick={handleCLick} className="my-5 Card_Course">
+                      <div className="d-flex">
+                        <img
+                          src={e.portfolio[0].media_url}
+                          height={"100%"}
+                          width="30%"
+                          style={{ marginRight: "20px", objectFit: "cover" }}
+                        />
 
-                    <div>
-                      <div className="fw-bold  mt-3">Title</div>
-                      <div>First Course</div>
-                      <div className="fw-bold  mt-5">Draft</div>
-                      <div>Public</div>
+                        <div>
+                          <div className=" mt-3">
+                            <span className="fw-bold">Title</span>:&nbsp;
+                            {e.title}
+                          </div>
+                          <div className=" mt-1">
+                            <span className="fw-bold">Desc</span>:&nbsp;
+                            {e.description}
+                          </div>
+                          <div className=" mt-1">
+                            <span className="fw-bold">price</span>:&nbsp; $
+                            {e.pricing[0].price}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  );
+                })}
+
                 <div className="text-center px-3">
                   <Link href="./create-course">
                     <button className="btn_Green_Large_Size mt-3">

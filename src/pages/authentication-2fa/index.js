@@ -6,7 +6,7 @@ import axios from "axios";
 import { Icon } from "@iconify/react";
 import { SignupCallback } from "@/config/Axiosconfig/AxiosHandle/auth";
 import { useRouter } from "next/router";
-import { VerifiOtp } from "@/config/Axiosconfig/AxiosHandle/Qrcode";
+import { VerifyOtp } from "@/config/Axiosconfig/AxiosHandle/Qrcode";
 
 function Index() {
   const [err, setErr] = useState("");
@@ -23,13 +23,12 @@ function Index() {
     } else {
       try {
         console.log(obj);
-        const response = await VerifiOtp(otp);
+        const response = await VerifyOtp(otp);
         if (response) {
           console.log(response);
           setSuccess(response.data.msg);
           setError();
-
-          router.push("./setting");
+          router.push("/studentHome");
         }
       } catch (error) {
         setSuccess("");
