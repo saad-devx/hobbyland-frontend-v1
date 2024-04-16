@@ -19,3 +19,10 @@ export const ToggleUser2Fa = (data) => {
   });
   return responseData;
 };
+export const VerifiOtp = (otp) => {
+  const responseData = axios.post(
+    `${BASEURL}2fa/verify-totp?totp_code=${otp}`,
+    { withCredentials: true }
+  );
+  return responseData;
+};

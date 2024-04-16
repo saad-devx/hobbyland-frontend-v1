@@ -32,8 +32,14 @@ function Index() {
         if (response) {
           console.log(response);
           setSuccess(response.data.msg);
+          if (response.data.verify_totp) {
+            router.push("./authentication-2fa");
+          } else {
+            router.push("./StudentHome");
+          }
+
           setErrors("");
-          router.push("./StudentHome");
+
           function getCookie(name) {
             const cookies = document.cookie.split(";");
             for (let i = 0; i < cookies.length; i++) {
@@ -53,7 +59,7 @@ function Index() {
         }
       } catch (error) {
         console.log(error);
-        setErrors(error.response.data.msg ? error.response.data.msg : null);
+        // setErrors(error.response.data.msg ? error.response.data.msg : null);
         setSuccess("");
       }
     }

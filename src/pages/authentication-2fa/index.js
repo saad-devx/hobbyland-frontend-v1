@@ -6,7 +6,7 @@ import axios from "axios";
 import { Icon } from "@iconify/react";
 import { SignupCallback } from "@/config/Axiosconfig/AxiosHandle/auth";
 import { useRouter } from "next/router";
-import { ToggleUser2Fa } from "@/config/Axiosconfig/AxiosHandle/Qrcode";
+import { VerifiOtp } from "@/config/Axiosconfig/AxiosHandle/Qrcode";
 
 function Index() {
   const [err, setErr] = useState("");
@@ -23,7 +23,7 @@ function Index() {
     } else {
       try {
         console.log(obj);
-        const response = await ToggleUser2Fa(obj);
+        const response = await VerifiOtp(otp);
         if (response) {
           console.log(response);
           setSuccess(response.data.msg);
@@ -32,8 +32,8 @@ function Index() {
           router.push("./setting");
         }
       } catch (error) {
-        setError(error.response.data.msg);
         setSuccess("");
+        setError(error.response.data.msg);
         console.error("Error", error);
       }
     }
@@ -44,7 +44,7 @@ function Index() {
       <Header />
       <div className="continar_login">
         <div className="CenterLogin">
-          <div className="Heading_of_Signup">Toggle Verify Otp</div>
+          <div className="Heading_of_Signup">Authentication Verify Otp</div>
           {error && (
             <div
               style={{
