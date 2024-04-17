@@ -3,9 +3,7 @@ import React from "react";
 
 function MassageLayout({ children }) {
   return (
-    <div
-      style={{ display: "flex", gap: "0px", width: "100%", height: "100vh" }}
-    >
+    <div style={{ height: "100vh", display: "flex", gap: "20px" }}>
       <MassageSidebare />
       {children}
     </div>

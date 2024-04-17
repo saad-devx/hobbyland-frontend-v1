@@ -1,20 +1,35 @@
 import React from "react";
 
 function Index() {
-  const data = [{}, {},];
+  const data = [{}, {}];
   return (
-    <div className="Massage_sideBare">
-      <div className="sidebare">
-        <div className="title_sidebare">
-          Hobbly
-          <br />
+    <div className="massage_sideBare">
+      <div>
+        <div className="title_hobblyland">
+          Hobbly <br />
           Land
         </div>
-        <div style={{ margin: "45px 0px" }}>
-          {data.map((e, i) => {
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            gap: "10px",
+            alignItems: "center",
+          }}
+        >
+          <input className="Input mt-3" placeholder="search Here .." />
+
+          <button className="btn_Green mt-3">Search</button>
+        </div>
+        <div className="mt-3">
+          {data.map(() => {
             return (
-              <div className="Chips__">
-                Shahbaz ali <div className="position_absolute">1</div>{" "}
+              <div className="chips_">
+                <div className="circleProfile"></div>
+                <div>
+                  <div className="title_">Shahbaz ALi</div>
+                  <div className="desc">lorem insum dollor and</div>
+                </div>
               </div>
             );
           })}
