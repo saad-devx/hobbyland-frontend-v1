@@ -142,6 +142,18 @@ function Header() {
                     {datalenght}
                   </div>
                 </div>
+                <div
+                  onClick={() => {
+                    router.push("/massage");
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Icon
+                    fontSize={25}
+                    icon="mage:message-dots-round"
+                    color="white"
+                  />
+                </div>
                 <div onClick={handleFaverioteCLick}>
                   <Icon
                     fontSize={25}
