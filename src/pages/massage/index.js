@@ -1,6 +1,6 @@
 import MassageLayout from "@/layout/Massageloyout";
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 
 function Index() {
   const [socket, setSocket] = useState(null);
@@ -9,38 +9,22 @@ function Index() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Connect to the socket server
-    const newSocket = io("http://localhost:8000", {
-      transports: ["websocket", "polling"],
-    });
+    const newSocket = io("ws://localhost:8000");
     setSocket(newSocket);
 
-    // Define event listeners for receiving messages
     newSocket.on("message", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
-    // Log when the socket connection is established
-    newSocket.on("connect", () => {
-      console.log("Socket connected");
-      setError(null); // Clear any previous connection errors
-    });
-
-    // Handle connection errors
-    newSocket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-      setError("Failed to connect to the server. Please try again later.");
-    });
-
-    // Clean up function to disconnect socket when component unmounts
+    // Clean up function to disconnect the socket when component unmounts
     return () => {
       newSocket.disconnect();
+      newSocket.off("message");
     };
   }, []);
 
   const handleMessageSend = () => {
-    // Emit a message event to the server
-    if (socket) {
+    if (socket && newMessage.trim() !== "") {
       socket.emit("message", newMessage);
       setNewMessage("");
     }
@@ -73,7 +57,7 @@ function Index() {
             onChange={(e) => setNewMessage(e.target.value)}
           />
           <button onClick={handleMessageSend} className="btn_Green">
-            Search
+            Send
           </button>
         </div>
         {error && <div style={{ color: "red" }}>{error}</div>}

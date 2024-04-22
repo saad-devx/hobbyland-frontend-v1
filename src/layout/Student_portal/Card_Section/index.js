@@ -29,11 +29,11 @@ function Index(props) {
   }, []);
 
   useEffect(() => {
-    const filteredData = courseData.filter(
-      (e) => e.category === props.categrios
-    );
+    const filteredData = courseData
+      ? courseData
+      : searchData.filter((e) => e.category === props.categrios);
     setFindData(filteredData);
-  }, [courseData, props.categrios]);
+  }, [courseData ? courseData : searchData, props.categrios]);
   console.log(courseData);
   const findServices = async () => {
     try {
@@ -46,7 +46,29 @@ function Index(props) {
       console.log(error);
     }
   };
+  const courseFindSales = async () => {
+    try {
+      const response = await FindService(findservices);
+      if (response) {
+        console.log(response.data.services, "findservices");
+        // Log the value of props.categrios
+        console.log(props.categrios, "props.categrios");
 
+        const filterdata = response.data.services.filter((e) => {
+          return e.category === props.categrios;
+        });
+        console.log(filterdata, "filterdata");
+        setFindData(filterdata);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    courseFindSales();
+  }, [props.categrios]);
+  console.log(findData, "finddata", props.categrios);
   return (
     <div className="Container_Card_Section">
       <div className="my-5">
@@ -54,24 +76,30 @@ function Index(props) {
         <div className="underLine"></div>
         <div className="container my-5">
           <div className="row">
-            <div className="col-md-6 d-flex gap-3">
-              <input
-                onChange={(e) => {
-                  setFindservices(e.target.value);
-                }}
-                className="Input"
-                placeholder="Search here title ..."
-              />
-              <button onClick={findServices} className="btn_Green">
-                Search
-              </button>
-            </div>
+            {props.categrios ? (
+              <div></div>
+            ) : (
+              <div className="col-md-6 d-flex gap-3">
+                <input
+                  onChange={(e) => {
+                    setFindservices(e.target.value);
+                  }}
+                  className="Input"
+                  placeholder="Search here title ..."
+                />
+                <button onClick={findServices} className="btn_Green">
+                  Search
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="container">
           <div className="row">
-            {(searchData.length > 0
+            {(props.categrios
+              ? findData
+              : searchData.length > 0
               ? searchData
               : props.categrios
               ? findData
