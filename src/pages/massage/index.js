@@ -1,3 +1,5 @@
+import { BASECHATURL } from "@/config/Axiosconfig";
+import { CreateRoom } from "@/config/Axiosconfig/AxiosHandle/chat";
 import MassageLayout from "@/layout/Massageloyout";
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
@@ -9,27 +11,23 @@ function Index() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("ws://localhost:8000");
-    setSocket(newSocket);
-
-    newSocket.on("message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+    const socket = io(BASECHATURL, {
+      query: {
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MjBjMGU5MjU4ZDE3OGQ0NWY4ZGQwNiIsInVzZXJuYW1lIjoiYWRtaW5fMTIzIiwiZW1haWwiOiJhZG1pbkBob2JieWxhbmQudGVjaCIsImlhdCI6MTcxMzg2OTA2MCwiZXhwIjoxNzEzODY5MzYwfQ.2u9BpJ8iqdjlnRxoJNaCkIiiwXAooqA09rkDSdsQi-E",
+      },
     });
-
-    // Clean up function to disconnect the socket when component unmounts
-    return () => {
-      newSocket.disconnect();
-      newSocket.off("message");
-    };
   }, []);
-
-  const handleMessageSend = () => {
-    if (socket && newMessage.trim() !== "") {
-      socket.emit("message", newMessage);
-      setNewMessage("");
+  const handleMessageSend = async () => {
+    try {
+      const response = await CreateRoom("66143cee34f9fff9c4ea884f");
+      if (response) {
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
-
   return (
     <div style={{ display: "flex", width: "100%", gap: "0px" }}>
       <MassageLayout />
