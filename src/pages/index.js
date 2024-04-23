@@ -11,7 +11,6 @@ export default function Index() {
   const [token, setToken] = useState(false);
   const [loading, setLoading] = useState(true); // New state for loading indicator
   const Router = useRouter();
-
   useEffect(() => {
     const cookies = document.cookie.split(";");
     let isLoggedIn = false;
@@ -32,6 +31,7 @@ export default function Index() {
     }
     setLoading(false);
   }, []);
+
   if (loading) {
     return (
       <div

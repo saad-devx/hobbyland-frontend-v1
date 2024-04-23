@@ -34,7 +34,28 @@ import "@/styles/home/Features.scss";
 import "@/styles/checkout/index.scss";
 import "@/styles/Auth/signupDetail.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
+import React, { useEffect } from "react";
+import { io } from "socket.io-client";
+import { BASECHATURL } from "@/config/Axiosconfig";
+const FectchAuthSocket = async () => {
+  try {
+    const response = await AuthToken();
+    if (response) {
+      console.log(response, "response");
+      const socket = io(BASECHATURL, {
+        query: {
+          token: response.data.token,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 export default function App({ Component, pageProps }) {
+  useEffect(() => {
+    FectchAuthSocket();
+  }, []);
   return <Component {...pageProps} />;
 }
