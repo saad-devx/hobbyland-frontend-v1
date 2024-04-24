@@ -12,7 +12,7 @@ function Index() {
 
   const handleMessageSend = async () => {
     try {
-      const response = await CreateRoom("66143cee34f9fff9c4ea884f");
+      const response = await CreateRoom("66143c5034f9fff9c4ea8835");
       if (response) {
         console.log(response);
       }
