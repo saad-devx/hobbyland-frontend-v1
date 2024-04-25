@@ -51,7 +51,6 @@ function Index(props) {
       const response = await FindService(findservices);
       if (response) {
         console.log(response.data.services, "findservices");
-        // Log the value of props.categrios
         console.log(props.categrios, "props.categrios");
 
         const filterdata = response.data.services.filter((e) => {
@@ -64,7 +63,6 @@ function Index(props) {
       console.log(e);
     }
   };
-
   useEffect(() => {
     courseFindSales();
   }, [props.categrios]);

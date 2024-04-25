@@ -51,7 +51,6 @@ function Index() {
                 setStudent(true);
                 setReviews(false);
                 setTraficCoversation(false);
-
                 setCourseEngagement(false);
               }}
               className={`${student == true ? "active" : "title_"}`}
@@ -246,7 +245,7 @@ function Index() {
                       }}
                       className="btn_Green_Large_Size"
                     >
-                      Go to instructure Dashboard
+                      Go to instructure Dashboardz
                     </button>
                   </div>
                 </div>

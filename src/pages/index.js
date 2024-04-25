@@ -21,7 +21,6 @@ export default function Index() {
         isLoggedIn = true;
       }
     });
-
     if (isLoggedIn) {
       setToken(true);
       Router.push("./StudentHome");
@@ -31,7 +30,6 @@ export default function Index() {
     }
     setLoading(false);
   }, []);
-
   if (loading) {
     return (
       <div

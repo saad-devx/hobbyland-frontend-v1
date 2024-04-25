@@ -80,7 +80,7 @@ function Index() {
                         </div>
                         <div className="label_Input">US$2.00</div>
                         <div className="label_Input">
-                          (US$24.00 billed annually)
+                         ( (US$24.00 billed annually))
                         </div>
                       </div>
                     </div>

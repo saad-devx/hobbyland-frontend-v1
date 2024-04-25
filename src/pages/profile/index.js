@@ -38,11 +38,9 @@ function Index() {
       console.log(e);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
   const handlePhoneNumberChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -53,7 +51,6 @@ function Index() {
       },
     }));
   };
-
   useEffect(() => {
     setFormData({
       firstname: fecthmeData.firstname,
@@ -84,7 +81,6 @@ function Index() {
       if (response) {
         console.log(response);
         setSuccess("User update Succesfully");
-        // After successful update, you may want to navigate to a different page or display a success message.
       }
     } catch (err) {
       console.log(err, "err");
