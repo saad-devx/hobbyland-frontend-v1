@@ -3,7 +3,7 @@ const { BASECHATURL, BASEURL } = require("..");
 
 export const CreateRoom = (user_id) => {
   const responseData = axios.post(
-    `${BASECHATURL}/room/create?user_id=${user_id}`,
+    `${BASECHATURL}/api/room/create?user_id=${user_id}`,
     {},
     {
       withCredentials: true,

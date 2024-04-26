@@ -59,7 +59,7 @@ function Index() {
         }
       } catch (error) {
         console.log(error);
-        // setErrors(error.response.data.msg ? error.response.data.msg : null);
+        setErrors(error.response.data.msg ? error.response.data.msg : null);
         setSuccess("");
       }
     }

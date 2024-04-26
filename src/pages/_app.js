@@ -40,14 +40,29 @@ import { io } from "socket.io-client";
 import { BASECHATURL } from "@/config/Axiosconfig";
 const FectchAuthSocket = async () => {
   try {
-    const response = await AuthToken();
-    if (response) {
-      console.log(response, "response");
-      const socket = io(BASECHATURL, {
-        query: {
-          token: response.data.token,
-        },
-      });
+    const cookies = document.cookie.split(";");
+    console.log(cookies, "cokiies");
+    let isLoggedIn = false;
+    cookies.forEach((cookie) => {
+      const [name, value] = cookie.split("=");
+      if (name.trim() === "is_logged_in" && value.trim() === "true") {
+        isLoggedIn = true;
+      }
+    });
+    if (isLoggedIn) {
+      const response = await AuthToken();
+      if (response) {
+        console.log(response, "response");
+        console.log(response.data.token, "token");
+        const socket = io(BASECHATURL, {
+          query: {
+            token: response.data.token,
+          },
+        });
+      }
+      console.log("request jarahi he ");
+    } else {
+      console.log("request nhi jarahi he ");
     }
   } catch (error) {
     console.log(error);
