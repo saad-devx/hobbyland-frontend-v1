@@ -49,6 +49,10 @@ body {
     height: 50px;
     border-radius: 50%;
     background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .title_ {
     color: white;
@@ -76,8 +80,12 @@ body {
   .circleProfile {
     width: 50px;
     height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     background-color: white;
+    color: black;
   }
   .title_ {
     color: white;
