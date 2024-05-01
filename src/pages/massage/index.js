@@ -16,21 +16,22 @@ function Index() {
   const [roomid, setRoomid] = useState();
   const router = useRouter();
   const [sendmassage, setSendmassage] = useState();
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [medata, serMedata] = useState();
-  const { id } = router.query;
+  const [allmessage, setAllmessage] = useState([]);
   useEffect(() => {
+    const id = localStorage.getItem("RoomId");
     setRoomid(id);
-    console.log(roomid, "id_room  ");
-  }, [id]);
+  }, []);
   const FetchAllMassage = async () => {
     try {
       const id = localStorage.getItem("RoomId");
       const response = await GetMassage(id);
       if (response) {
         console.log(response, "rrom");
-        setData(response.data);
+        setData([...response.data?.messages]);
         console.log(data, "data");
+        setAllmessage([...response.data?.messages]);
       }
     } catch (e) {
       console.log(e, "errmassage get");
@@ -42,17 +43,18 @@ function Index() {
       if (response) {
         console.log(response, "fetchMedata");
         serMedata(response.data.user);
-        console.log(medata);
+        console.log(medata, "fetcRoom");
       }
     } catch (e) {
       console.log(e);
     }
   };
   useEffect(() => {
-    FetchMedata();
     FetchAllMassage();
+  }, [allmessage]);
+  useEffect(() => {
+    FetchMedata();
   }, []);
-
   const handleMessageSend = async () => {
     console.log(sendmassage);
     if (!sendmassage) {
@@ -62,6 +64,7 @@ function Index() {
       const response = await MessageSend(roomid, sendmassage);
       if (response) {
         console.log(response, "Message Was Sent Succesfully");
+        FetchAllMassage();
       }
     } catch (error) {
       console.log(error);
@@ -75,27 +78,28 @@ function Index() {
           width: "100%",
           backgroundColor: "#f9f9f9",
           position: "relative",
+          height: "100vh",
         }}
       >
-        {id ? (
+        {roomid ? (
           <div className="Header_Top">
-            <div className="circle_box">{id.charAt(0)}</div>
-            <div className="title_">{id}</div>
+            <div className="circle_box">{roomid.charAt(0)}</div>
+            <div className="title_">{roomid}</div>
           </div>
         ) : null}
 
-        {id ? (
+        {roomid ? (
           <div className="MassageBox">
             <div
               style={{
                 width: "100%",
-                backgroundColor: "red",
+                backgroundColor: "",
                 height: "100%",
                 overflow: "auto",
                 padding: "25px",
               }}
             >
-              {data?.messages
+              {data
                 .map((message, index, array) => {
                   if (index === array.length - 1) {
                     return (
@@ -131,6 +135,10 @@ function Index() {
                             fontSize: "15px",
                             paddingLeft: "2px",
                             lineHeight: "18px",
+                            textAlign:
+                              message.author._id == medata._id
+                                ? "right"
+                                : "left",
                           }}
                         >
                           {message.author.firstname}
@@ -143,6 +151,11 @@ function Index() {
                             backgroundColor: "transparent",
                             display: "flex",
                             alignItems: "center",
+
+                            justifyContent:
+                              message.author._id == medata._id
+                                ? "flex-end"
+                                : "flex-start",
                           }}
                         >
                           <span
@@ -165,7 +178,7 @@ function Index() {
           </div>
         ) : null}
 
-        {id ? (
+        {roomid ? (
           <div className="bottom gap-3">
             <input
               placeholder="Enter A Massage"

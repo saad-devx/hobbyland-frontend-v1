@@ -60,9 +60,9 @@ const FectchAuthSocket = async () => {
           },
         });
       }
-      console.log("request jarahi he ");
+      console.log("Request Send");
     } else {
-      console.log("request nhi jarahi he ");
+      console.log("Request Not Send");
     }
   } catch (error) {
     console.log(error);

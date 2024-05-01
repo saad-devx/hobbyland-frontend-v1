@@ -1,4 +1,5 @@
 import { Card, Footer, Header } from "@/Component";
+import { CreateRoom } from "@/config/Axiosconfig/AxiosHandle/chat";
 import {
   FetchServices,
   GetSingleProduct,
@@ -39,6 +40,11 @@ function Index() {
       },
     ],
   });
+  const handleCreateRoom = async () => {
+    const response = await CreateRoom();
+    try {
+    } catch (e) {}
+  };
   const [isHovered, setIsHovered] = useState(false);
   const [data, setData] = useState([]);
   const [recentdata, setRecentdata] = useState([]);
@@ -92,7 +98,7 @@ function Index() {
       if (response) {
         console.log(response, "red");
         setSingleData({ ...response.data.services });
-        console.log(singleData);
+        console.log(singleData, "singledata");
       }
     } catch (error) {
       console.log(error, "err");
@@ -134,8 +140,41 @@ function Index() {
     <div className="conatiner_single_Product">
       <Header />
       <div className="container">
-        <div className="row">
-          <div className="col-md-6 my-5">
+        <div className="row my-5">
+          <div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "15px",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  fontSize: "30px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  borderRadius: "100%",
+                  backgroundColor: "#003a55",
+                  color: "white",
+                }}
+              >
+                M
+              </div>
+              <div>
+                <div style={{ fontSize: "18px" }}>M.Shahbaz Ali ...</div>
+                <div style={{ fontSize: "13px" }}>
+                  dfgdfgdfg sdfgdfgdf dfgdgdfg
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 my-2">
             <div>
               <img
                 src={singleData.portfolio[0].media_url}
@@ -143,7 +182,7 @@ function Index() {
               />
             </div>
           </div>
-          <div className="col-md-6 my-5" style={{ position: "relative" }}>
+          <div className="col-md-6" style={{ position: "relative" }}>
             <div
               style={{
                 position: "absolute",
@@ -174,12 +213,7 @@ function Index() {
                 >
                   {/* Your menu list items */}
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                    <li
-                      onClick={() => {
-                        router.push("/massage");
-                      }}
-                      style={{}}
-                    >
+                    <li onClick={handleCreateRoom} style={{}}>
                       Massage
                     </li>
                     <li
@@ -188,15 +222,7 @@ function Index() {
                       }}
                       style={{}}
                     >
-                      Massage
-                    </li>
-                    <li
-                      onClick={() => {
-                        router.push("/massage");
-                      }}
-                      style={{}}
-                    >
-                      Massage
+                      Active
                     </li>
                   </ul>
                 </div>

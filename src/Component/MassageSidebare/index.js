@@ -20,11 +20,13 @@ function Index() {
   }, []);
   const router = useRouter();
   const handleClick = (id) => {
-    localStorage.setItem("RoomId", id);
-    router.push({
-      pathname: "/massage",
-      query: { id: id },
-    });
+    const oldId = localStorage.getItem("RoomId");
+    if (oldId !== id) {
+      localStorage.removeItem("RoomId");
+      localStorage.setItem("RoomId", id);
+    }
+
+    router.push("/massage");
   };
 
   return (
