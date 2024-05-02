@@ -11,6 +11,7 @@ export const CreateRoom = (user_id) => {
       withCredentials: true,
     }
   );
+  console.log(user_id, "get_integeration_work_id");
   return responseData;
 };
 export const AuthToken = () => {
@@ -40,6 +41,20 @@ export const GetMassage = (id) => {
 export const MessageSend = (id, message) => {
   const responseData = axios.post(
     `${BASECHATURL}/api/message/send`,
+    {
+      room_id: id,
+      message: message,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return responseData;
+};
+
+export const FetchSingleRoom = (id, message) => {
+  const responseData = axios.get(
+    `${BASECHATURL}/api/room/get-one?room_id=<room id here...>`,
     {
       room_id: id,
       message: message,

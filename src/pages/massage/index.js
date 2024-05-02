@@ -12,9 +12,16 @@ import { all } from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import ContentLoader, {
+  Instagram,
+  List,
+  BulletList,
+  Code,
+} from "react-content-loader";
 
 function Index() {
   const router = useRouter();
+  const [loader, setLoader] = useState(true);
   const [sendmassage, setSendmassage] = useState();
   const [data, setData] = useState([]);
   const [medata, serMedata] = useState();
@@ -31,9 +38,19 @@ function Index() {
         setData([...response.data?.messages]);
         console.log(data, "data");
         setAllmessage([response.data?.messages]);
+        setTimeout(() => {
+          setLoader(false);
+        }, 1500);
       }
     } catch (e) {
       console.log(e, "errmassage get");
+    }
+  };
+  const FetchRoom = async () => {
+    try {
+      // const response = await data();
+    } catch (e) {
+      console.log(e);
     }
   };
   const FetchMedata = async () => {
@@ -88,94 +105,106 @@ function Index() {
         ) : null}
 
         {roomid ? (
-          <div className="MassageBox">
-            <div
-              style={{
-                width: "100%",
-                backgroundColor: "",
-                height: "100%",
-                overflow: "auto",
-                padding: "25px",
-              }}
-            >
-              {data
-                .map((message, index, array) => {
-                  if (index === array.length - 1) {
-                    return (
-                      <div className="py-3 m-auto d-flex justify-content-center">
-                        <span
-                          style={{
-                            margin: "auto",
-                            marginTop: "10px",
-                            marginBottom: "20px",
-                            backgroundColor: "#003a55",
-                            color: "white",
-                            padding: "10px",
-                          }}
-                          className="rounded"
-                          key={index}
-                        >
-                          {message.content}
-                        </span>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div
-                        style={{
-                          height: "45px",
-                          width: "100%",
-                          marginTop: "20px",
-                          backgroundColor: "transparent",
-                        }}
-                      >
-                        <p
-                          style={{
-                            fontSize: "15px",
-                            paddingLeft: "2px",
-                            lineHeight: "18px",
-                            textAlign:
-                              message.author._id == medata._id
-                                ? "right"
-                                : "left",
-                          }}
-                        >
-                          {message.author.firstname}
-                        </p>
-                        <div
-                          style={{
-                            width: "100%",
-                            marginTop: "-18px",
-                            height: "35px",
-                            backgroundColor: "transparent",
-                            display: "flex",
-                            alignItems: "center",
-
-                            justifyContent:
-                              message.author._id == medata._id
-                                ? "flex-end"
-                                : "flex-start",
-                          }}
-                        >
-                          <span
+          <>
+            {loader === true ? (
+              <div className="MassageBox d-flex justify-content-center align-items-center">
+                <BulletList />
+              </div>
+            ) : (
+              <div className="MassageBox">
+                <div
+                  style={{
+                    width: "100%",
+                    backgroundColor: "",
+                    height: "100%",
+                    overflow: "auto",
+                    padding: "25px",
+                  }}
+                >
+                  {data
+                    .map((message, index, array) => {
+                      if (index === array.length - 1) {
+                        return (
+                          <div className="py-3 m-auto d-flex justify-content-center">
+                            <span
+                              style={{
+                                margin: "auto",
+                                marginTop: "10px",
+                                marginBottom: "20px",
+                                backgroundColor: "#003a55",
+                                color: "white",
+                                padding: "10px",
+                              }}
+                              className="rounded"
+                              key={index}
+                            >
+                              {message.content}
+                            </span>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div
                             style={{
-                              paddingLeft: "10px",
-                              paddingRight: "20px",
-                              backgroundColor: "#e8f0fe",
+                              height: "45px",
+                              width: "100%",
+                              marginTop: "20px",
+                              backgroundColor: "transparent",
                             }}
-                            className="rounded"
                           >
-                            {message.content}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  }
-                })
-                .reverse()}
-            </div>
+                            <p
+                              style={{
+                                fontSize: "15px",
+                                paddingLeft: "2px",
+                                lineHeight: "18px",
+                                textAlign:
+                                  message.author._id == medata._id
+                                    ? "right"
+                                    : "left",
+                              }}
+                            >
+                              {message.author.firstname}
+                            </p>
+                            <div
+                              style={{
+                                width: "100%",
+                                marginTop: "-18px",
+                                height: "35px",
+                                backgroundColor: "transparent",
+                                display: "flex",
+                                alignItems: "center",
+
+                                justifyContent:
+                                  message.author._id == medata._id
+                                    ? "flex-end"
+                                    : "flex-start",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  paddingLeft: "10px",
+                                  paddingRight: "20px",
+                                  backgroundColor: "#e8f0fe",
+                                }}
+                                className="rounded"
+                              >
+                                {message.content}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })
+                    .reverse()}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div>
+            <Instagram />
           </div>
-        ) : null}
+        )}
 
         {roomid ? (
           <div className="bottom gap-3">

@@ -26,6 +26,7 @@ function Index() {
       query: { id: id },
     });
   };
+  console.log(data, "roomgets");
 
   return (
     <div className="massage_sideBare">
@@ -57,10 +58,14 @@ function Index() {
                 className="chips_"
               >
                 <div className="circleProfile">
+                  {/* {e.members[1].firstname.charAt(0)} */}
                   {e.members[1].firstname.charAt(0)}
                 </div>
                 <div>
                   <div className="title_">{e.members[1].firstname}</div>
+                  <p style={{ color: "white", fontSize: "13px" }}>
+                    {e.last_message.content}
+                  </p>
                 </div>
               </div>
             );

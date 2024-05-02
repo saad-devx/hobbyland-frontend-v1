@@ -59,6 +59,7 @@ function Index() {
         });
       }
     } catch (error) {
+      console.log(error.message);
       console.log(error, "roomcreate err");
     }
   };
@@ -71,7 +72,6 @@ function Index() {
   const [addtocard, setAddtocard] = useState([]);
 
   const handleAddToCart = () => {
-    //// checking login
     const cookies = document.cookie.split(";");
     let isLoggedIn = false;
 

@@ -25,6 +25,7 @@
     "qrcode.react": "^3.1.0",
     "react": "^18",
     "react-calendar": "^4.8.0",
+    "react-content-loader": "^7.0.0",
     "react-datepicker": "^6.7.1",
     "react-dom": "^18",
     "react-google-charts": "^4.0.1",
