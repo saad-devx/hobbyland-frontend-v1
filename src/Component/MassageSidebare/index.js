@@ -10,6 +10,7 @@ function Index() {
       if (response) {
         setData([...response.data.rooms]);
         console.log(data, "data");
+        console.log(data, "room");
       }
     } catch (e) {
       console.log(e, "err");
@@ -20,13 +21,10 @@ function Index() {
   }, []);
   const router = useRouter();
   const handleClick = (id) => {
-    const oldId = localStorage.getItem("RoomId");
-    if (oldId !== id) {
-      localStorage.removeItem("RoomId");
-      localStorage.setItem("RoomId", id);
-    }
-
-    router.push("/massage");
+    router.push({
+      pathname: "/massage",
+      query: { id: id },
+    });
   };
 
   return (

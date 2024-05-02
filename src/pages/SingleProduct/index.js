@@ -11,6 +11,13 @@ import React, { useEffect, useState } from "react";
 
 function Index() {
   const [singleData, setSingleData] = useState({
+    user_id: {
+      _id: "",
+      username: "",
+      email: "",
+      register_provider: "",
+      firstname: "",
+    },
     _id: "",
     title: "",
     description: "",
@@ -41,9 +48,19 @@ function Index() {
     ],
   });
   const handleCreateRoom = async () => {
-    const response = await CreateRoom();
     try {
-    } catch (e) {}
+      console.log(singleData.user_id._id, "id_user");
+      const response = await CreateRoom(singleData.user_id._id);
+      if (response) {
+        console.log(response, "Roomcreate");
+        router.push({
+          pathname: "/massage",
+          query: { id: singleData.user_id._id },
+        });
+      }
+    } catch (error) {
+      console.log(error, "roomcreate err");
+    }
   };
   const [isHovered, setIsHovered] = useState(false);
   const [data, setData] = useState([]);
@@ -98,6 +115,7 @@ function Index() {
       if (response) {
         console.log(response, "red");
         setSingleData({ ...response.data.services });
+        console.log(recentdata.data.services, "oneservice");
         console.log(singleData, "singledata");
       }
     } catch (error) {
@@ -116,7 +134,7 @@ function Index() {
     try {
       const response = await FetchServices();
       if (response) {
-        console.log(response.data.services);
+        console.log(response.data.services, "singleservice");
         setData([...response.data.services]);
       }
     } catch (error) {
@@ -136,6 +154,7 @@ function Index() {
     setRecentdata(filteredData);
   }, [singleData]);
   console.log(singleData.portfolio[0].media_url);
+  console.log(singleData, "singledata");
   return (
     <div className="conatiner_single_Product">
       <Header />
@@ -162,14 +181,17 @@ function Index() {
                   borderRadius: "100%",
                   backgroundColor: "#003a55",
                   color: "white",
+                  textTransform: "uppercase",
                 }}
               >
-                M
+                {singleData.user_id.firstname.charAt(0)}
               </div>
               <div>
-                <div style={{ fontSize: "18px" }}>M.Shahbaz Ali ...</div>
+                <div style={{ fontSize: "18px" }}>
+                  {singleData.user_id.firstname}
+                </div>
                 <div style={{ fontSize: "13px" }}>
-                  dfgdfgdfg sdfgdfgdf dfgdgdfg
+                  {singleData.user_id.email}
                 </div>
               </div>
             </div>

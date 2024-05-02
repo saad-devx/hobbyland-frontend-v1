@@ -8,30 +8,29 @@ import {
 } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import MassageLayout from "@/layout/Massageloyout";
+import { all } from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 function Index() {
-  const [roomid, setRoomid] = useState();
   const router = useRouter();
   const [sendmassage, setSendmassage] = useState();
   const [data, setData] = useState([]);
   const [medata, serMedata] = useState();
   const [allmessage, setAllmessage] = useState([]);
-  useEffect(() => {
-    const id = localStorage.getItem("RoomId");
-    setRoomid(id);
-  }, []);
+  const { id } = router.query;
+  const roomid = id;
+
   const FetchAllMassage = async () => {
     try {
-      const id = localStorage.getItem("RoomId");
-      const response = await GetMassage(id);
+      console.log(roomid, "id");
+      const response = await GetMassage(roomid);
       if (response) {
         console.log(response, "rrom");
         setData([...response.data?.messages]);
         console.log(data, "data");
-        setAllmessage([...response.data?.messages]);
+        setAllmessage([response.data?.messages]);
       }
     } catch (e) {
       console.log(e, "errmassage get");
@@ -51,7 +50,7 @@ function Index() {
   };
   useEffect(() => {
     FetchAllMassage();
-  }, [allmessage]);
+  }, [allmessage, id]);
   useEffect(() => {
     FetchMedata();
   }, []);
