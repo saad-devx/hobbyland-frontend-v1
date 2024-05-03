@@ -58,7 +58,7 @@ function Index() {
           }
         }
       } catch (error) {
-        console.log(error);
+        console.log(error,'er');
         setErrors(error.response ? error.response.data.msg : error.message);
         setSuccess("");
       }
