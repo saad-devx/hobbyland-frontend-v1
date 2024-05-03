@@ -215,10 +215,10 @@ function Header() {
             <div className="Link_Navigation">Learning Paths</div>
           </div>
           <div className="Right_Section">
-            <button className="SignIn">
+            <Link href="/login" className="SignIn">
               <Icon color="white" icon="zondicons:network" />
               Sign In
-            </button>
+            </Link>
             <button style={{ paddingLeft: "15px" }}>
               <a href="./SIgnupDetail" className="btn_Header_Green">
                 Sign Up
