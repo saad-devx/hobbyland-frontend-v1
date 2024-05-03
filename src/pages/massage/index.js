@@ -4,6 +4,7 @@ import {
   CreateRoom,
   FectchRooms,
   GetMassage,
+  GetSingleRoom,
   MessageSend,
 } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
@@ -18,6 +19,7 @@ import ContentLoader, {
   BulletList,
   Code,
 } from "react-content-loader";
+import { Icon } from "@iconify/react";
 
 function Index() {
   const router = useRouter();
@@ -26,6 +28,7 @@ function Index() {
   const [data, setData] = useState([]);
   const [medata, serMedata] = useState();
   const [allmessage, setAllmessage] = useState([]);
+  const [room, setRoom] = useState({});
   const { id } = router.query;
   const roomid = id;
 
@@ -67,10 +70,24 @@ function Index() {
   };
   useEffect(() => {
     FetchAllMassage();
-  }, [allmessage, id]);
+  }, [id, allmessage]);
   useEffect(() => {
     FetchMedata();
   }, []);
+  const GetRoom = async () => {
+    try {
+      const response = await GetSingleRoom(roomid);
+      if (response) {
+        console.log(response.data.room);
+        setRoom({ ...response.data.room });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    GetRoom();
+  }, [id]);
   const handleMessageSend = async () => {
     console.log(sendmassage);
     if (!sendmassage) {
@@ -86,6 +103,7 @@ function Index() {
       console.log(error);
     }
   };
+  console.log(room, "singleRoom");
   return (
     <div style={{ display: "flex", width: "100%", gap: "0px" }}>
       <MassageLayout />
@@ -99,8 +117,17 @@ function Index() {
       >
         {roomid ? (
           <div className="Header_Top">
-            <div className="circle_box">{roomid.charAt(0)}</div>
-            <div className="title_">{roomid}</div>
+            <div className="circle_box">
+              {room.members &&
+                room.members.length > 1 &&
+                room.members[1].firstname.charAt(0)}
+            </div>
+
+            <div className="title_">
+              {room.members &&
+                room.members.length > 1 &&
+                room.members[1].firstname}
+            </div>
           </div>
         ) : null}
 

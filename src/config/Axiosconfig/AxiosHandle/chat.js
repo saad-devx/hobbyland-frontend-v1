@@ -52,13 +52,9 @@ export const MessageSend = (id, message) => {
   return responseData;
 };
 
-export const FetchSingleRoom = (id, message) => {
+export const GetSingleRoom = (id) => {
   const responseData = axios.get(
-    `${BASECHATURL}/api/room/get-one?room_id=<room id here...>`,
-    {
-      room_id: id,
-      message: message,
-    },
+    `${BASECHATURL}/api/room/get-one?room_id=${id}`,
     {
       withCredentials: true,
     }

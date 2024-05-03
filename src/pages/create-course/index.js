@@ -68,7 +68,9 @@ function Index() {
       ...prevState,
       title: e.target.value,
     }));
+    setError((prev) => ({ ...prev, title: "" }));
   };
+
   const step5onCLick = () => {
     if (data.category === "") {
       setError((prevState) => ({
@@ -93,7 +95,9 @@ function Index() {
       ...prevState,
       category: e.target.value,
     }));
+    setError((prev) => ({ ...prev, category: "" }));
   };
+
   const handleImageUrl = (e) => {
     const imageUrl = e.target.value;
 
@@ -101,9 +105,9 @@ function Index() {
       ...prevState,
       portfolio: [{ ...prevState.portfolio[0], media_url: imageUrl }],
     }));
-    setError((prevState) => ({
-      ...prevState,
-      portfolio: [{ ...prevState.portfolio[0], media_url: "" }],
+    setError((prev) => ({
+      ...prev,
+      portfolio: [{ ...prev.portfolio[0], media_url: "" }],
     }));
   };
 
@@ -112,6 +116,10 @@ function Index() {
     setData((prevState) => ({
       ...prevState,
       portfolio: [{ ...prevState.portfolio[0], description: description }],
+    }));
+    setError((prev) => ({
+      ...prev,
+      portfolio: [{ ...prev.portfolio[0], description: "" }],
     }));
   };
   const step4onCLick = () => {
@@ -180,6 +188,7 @@ function Index() {
       ...prevState,
       description: e.target.value,
     }));
+    setError((prev) => ({ ...prev, description: "" }));
   };
   const handleSubmit = () => {
     localStorage.removeItem("fAQ");

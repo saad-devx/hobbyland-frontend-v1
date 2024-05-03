@@ -7,9 +7,11 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 function Header() {
+  const [datalenght, setDatalenght] = useState(0);
   const [openSideBar, setOpenSideBar] = useState(false);
   const [token, setToken] = useState(false);
   const [userdata, serUserdata] = useState({});
+  const [faveroutelenght, setFaveroutelenght] = useState(0);
   const router = useRouter();
   const fecthMeData = async () => {
     try {
@@ -50,10 +52,7 @@ function Header() {
   const handleFaverioteCLick = () => {
     router.push("favourite");
   };
-  const [datalenght, setDatalenght] = useState(0);
-  useEffect(() => {
-    const cartData = JSON.parse(localStorage.getItem("cartData"));
-  });
+
   return (
     <>
       {token ? (
@@ -95,7 +94,12 @@ function Header() {
                   color="white"
                 />
               </div>
-              <div className="Title_Navebar">
+              <div
+                onClick={() => {
+                  router.push("/StudentHome");
+                }}
+                className="Title_Navebar"
+              >
                 HOBBY
                 <br />
                 LAND.
@@ -105,10 +109,6 @@ function Header() {
               <div className="Link_Navigation">My Learning</div>
             </div>
             <div className="Right_Section">
-              <div className="Input_serch">
-                <input className="Input_serch" placeholder="Search..." />
-                <button className="btn_Green">Search</button>
-              </div>
               <div className="flex_display">
                 <div
                   onClick={() => {
@@ -123,23 +123,6 @@ function Header() {
                       color="white"
                     />
                   </div>
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "-14px",
-                      right: "-20px",
-                      width: "25px",
-                      height: "25px",
-                      backgroundColor: "white",
-                      borderRadius: "100%",
-                      display: "flex",
-                      cursor: "pointer",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {datalenght}
-                  </div>
                 </div>
                 <div
                   onClick={() => {
@@ -153,13 +136,19 @@ function Header() {
                     color="white"
                   />
                 </div>
-                <div onClick={handleFaverioteCLick}>
-                  <Icon
-                    fontSize={25}
-                    icon="icon-park-outline:like"
-                    color="white"
-                  />
+                <div
+                  onClick={handleFaverioteCLick}
+                  style={{ position: "relative", cursor: "pointer" }}
+                >
+                  <div>
+                    <Icon
+                      fontSize={25}
+                      icon="icon-park-outline:like"
+                      color="white"
+                    />
+                  </div>
                 </div>
+
                 <div
                   onClick={() => {
                     router.push("./profile");
@@ -171,12 +160,6 @@ function Header() {
                     : ""}
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="content_input">
-            <div className="Input_serch">
-              <input className="Input_serch" placeholder="Search..." />
-              <button className="btn_Green">Search</button>
             </div>
           </div>
         </>
@@ -238,7 +221,7 @@ function Header() {
             </button>
             <button style={{ paddingLeft: "15px" }}>
               <a href="./SIgnupDetail" className="btn_Header_Green">
-                SignUp
+                Sign Up
               </a>
             </button>
           </div>

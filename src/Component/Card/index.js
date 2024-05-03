@@ -4,51 +4,36 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 
 function Index(props) {
-  const [like, setLike] = useState(() => {
-    const storedServices = localStorage.getItem("faveroutedata");
-    if (storedServices) {
-      const parsedServices = JSON.parse(storedServices);
-
-      const existingService = parsedServices.find(
-        (service) => service.id === props.id
-      );
-      if (existingService) {
-        return true;
-      }
-    }
-    return false;
-  });
-
-  console.log(like, "like_");
+  const [like, setLike] = useState(false);
+  const [isFaveroute, setIsFaveroute] = useState([]);
   const router = useRouter();
   const handleClick = (id) => {
     localStorage.setItem("servicesId", id);
     router.push(`/SingleProduct?id=${id}`);
   };
-  const FaverouteAdd = async (id) => {
-    try {
-      console.log(id);
-      const storedServices = localStorage.getItem("faveroutedata");
-      let parsedServices = storedServices ? JSON.parse(storedServices) : [];
-      const existingServiceIndex = parsedServices.findIndex(
-        (service) => service._id === id
-      );
-      if (existingServiceIndex !== -1) {
-        parsedServices.splice(existingServiceIndex, 1);
-        localStorage.setItem("faveroutedata", JSON.stringify(parsedServices));
-        setLike(false);
-      }
-      const response = await GetSingleProduct(id);
-      if (response && response.data) {
-        const serviceData = response.data;
-        parsedServices.push(serviceData);
-        localStorage.setItem("faveroutedata", JSON.stringify(parsedServices));
-        setLike(true);
-        console.log(parsedServices, "services");
-      }
-    } catch (e) {
-      console.log(e);
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    console.log(favorites, "faveroutedata");
+    const index = favorites.findIndex((item) => item._id === props.id);
+    if (index !== -1) {
+      setLike(true);
+    } else {
+      setLike(false); // Set like to false if props.id is not found in favorites
     }
+  }, [isFaveroute]);
+  const toggleLike = () => {
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const index = favorites.findIndex(
+      (item) => item._id === props.AllObject._id
+    );
+    if (index !== -1) {
+      favorites.splice(index, 1);
+    } else {
+      favorites.push(props.AllObject);
+    }
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    const data = JSON.parse(localStorage.getItem("favorites"));
+    setIsFaveroute([...data]);
   };
 
   return (
@@ -59,12 +44,7 @@ function Index(props) {
         src={props.image}
         alt="Product Image"
       />
-      <div
-        className="Heart_ shadow"
-        onClick={() => {
-          FaverouteAdd(props.id);
-        }}
-      >
+      <div className="Heart_ shadow" onClick={toggleLike}>
         {like === true ? (
           <Icon
             icon="mdi:heart"

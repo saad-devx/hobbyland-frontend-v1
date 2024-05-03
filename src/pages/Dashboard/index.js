@@ -1,5 +1,6 @@
 import { Footer } from "@/Component";
 import { FetchServices } from "@/config/Axiosconfig/AxiosHandle/service";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import AdminLayout from "@/layout/AdminLayount";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
@@ -27,6 +28,22 @@ function Index() {
   };
   useEffect(() => {
     fectchAllservices();
+  }, []);
+  const FetchData = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        console.log(response.data.user, "Medata");
+        response.data.user?.account_type == "student"
+          ? route.push("./StudentHome")
+          : null;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    FetchData();
   }, []);
   return (
     <div>
@@ -61,7 +78,7 @@ function Index() {
                         <img
                           src={e.portfolio[0].media_url}
                           height={"100%"}
-                          width="30%"
+                          width="50%"
                           style={{ marginRight: "20px", objectFit: "cover" }}
                         />
 
@@ -71,7 +88,7 @@ function Index() {
                             {e.title}
                           </div>
                           <div className=" mt-1">
-                            <span className="fw-bold">Desc</span>:&nbsp;
+                            <span className="fw-bold">Description</span>:&nbsp;
                             {e.description}
                           </div>
                           <div className=" mt-1">

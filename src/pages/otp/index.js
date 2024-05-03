@@ -41,7 +41,8 @@ function Index() {
         }
       } catch (error) {
         console.error("Error", error);
-        setError(error.response.data.msg ? error.response.data.msg : null);
+        setError(error.response ? error.response.data.msg : error.message);
+        setSuccess();
       }
     }
   };

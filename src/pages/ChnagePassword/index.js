@@ -39,7 +39,8 @@ function Index() {
           }, 1000);
         }
       } catch (error) {
-        setErrors(error.response.data.msg ? error.response.data.msg : null);
+        setErrors(error.response ? error.response.data.msg : error.message);
+
         setSuccess("");
       }
     }

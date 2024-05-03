@@ -89,7 +89,8 @@ function Index() {
         } else {
         }
       } catch (error) {
-        setError(error.response.data.msg ? error.response.data.msg : null);
+
+        setError(error.response ? error.response.data.msg : error.message);
         console.log(error);
         setSuccess("");
         console.log(error);

@@ -38,7 +38,8 @@ function Index() {
         localStorage.setItem("profileimage", profileImageUrl); // Store image URL in local storage
       }
     } catch (error) {
-      router.push("/login");
+      // router.push("/login");
+      console.log(error);
     }
   };
   useEffect(() => {

@@ -4,12 +4,14 @@ import {
   FetchServices,
   GetSingleProduct,
 } from "@/config/Axiosconfig/AxiosHandle/service";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import data from "@/constant/product";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 function Index() {
+  const [medata, setMedata] = useState({});
   const [singleData, setSingleData] = useState({
     user_id: {
       _id: "",
@@ -47,12 +49,27 @@ function Index() {
       },
     ],
   });
+  const FetchGetMe = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        console.log(response.data.user);
+        setMedata({ ...response.data.user });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    FetchGetMe();
+  }, []);
   const handleCreateRoom = async () => {
     try {
       console.log(singleData.user_id._id, "id_user");
       const response = await CreateRoom(singleData.user_id._id);
       if (response) {
         console.log(response, "Roomcreate");
+
         router.push({
           pathname: "/massage",
           query: { id: singleData.user_id._id },
@@ -184,11 +201,11 @@ function Index() {
                   textTransform: "uppercase",
                 }}
               >
-                {singleData.user_id.firstname.charAt(0)}
+                {singleData.user_id?.firstname?.charAt(0)}
               </div>
               <div>
                 <div style={{ fontSize: "18px" }}>
-                  {singleData.user_id.firstname}
+                  {singleData.user_id?.firstname}
                 </div>
                 <div style={{ fontSize: "13px" }}>
                   {singleData.user_id.email}
@@ -205,59 +222,23 @@ function Index() {
             </div>
           </div>
           <div className="col-md-6" style={{ position: "relative" }}>
-            <div
-              style={{
-                position: "absolute",
-                right: "0px",
-                top: "30px",
-                cursor: "pointer",
-              }}
-              onMouseEnter={handleMouseEnter}
-            >
-              <Icon
-                icon="iconamoon:menu-kebab-vertical-bold"
-                style={{ fontSize: "20px", color: "rgb(0 58 85)" }}
-              />
-              {isHovered && (
-                <div
-                  onMouseLeave={handleMouseLeave}
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    width: "150px",
-                    left: "-150px",
-                    backgroundColor: "#fff",
-                    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
-                    borderRadius: "5px",
-                    padding: "5px",
-                    zIndex: 999,
-                  }}
-                >
-                  {/* Your menu list items */}
-                  <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                    <li onClick={handleCreateRoom} style={{}}>
-                      Massage
-                    </li>
-                    <li
-                      onClick={() => {
-                        router.push("/massage");
-                      }}
-                      style={{}}
-                    >
-                      Active
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
             <h2 className="fw-bold mt-5 ">{singleData.title}</h2>
             <div className="fw-bold">
               Price : ${singleData.pricing[0].price}
             </div>
             <div className="mt-3">{singleData.description}</div>
             <div className="w-100 mt-5">
+              {singleData.user_id._id === medata._id ? null : (
+                <button
+                  className="btn_Green_Size_Full_outline mb-3"
+                  onClick={handleCreateRoom}
+                >
+                  Contact With Mentor
+                </button>
+              )}
+
               <button className="btn_Green_Size_Full" onClick={handleAddToCart}>
-                Add To Cart
+                Enrolled Now
               </button>
             </div>
           </div>

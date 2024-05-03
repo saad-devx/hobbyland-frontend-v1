@@ -84,13 +84,17 @@ function Index() {
       }
     } catch (error) {
       console.log(error, "err");
+      alert(error.response ? error.response.data.msg : error.message);
+
       router.push(
         `${
-          error.response.data.feild
-            ? error.response.data.feild === "pricing"
-              ? "/Course-Edit/Pricing"
-              : error.response.data.feild === "FAQ"
-              ? "/Course-Edit/F&A"
+          error.response
+            ? error.response.data.feild
+              ? error.response.data.feild === "pricing"
+                ? "/Course-Edit/Pricing"
+                : error.response.data.feild === "FAQ"
+                ? "/Course-Edit/F&A"
+                : "/Course-Edit/Pricing"
               : "/Course-Edit/Pricing"
             : "/Course-Edit/Pricing"
         }`
@@ -183,7 +187,7 @@ function Index() {
           <div className="mt-3">
             <div>
               <button onClick={HandleCreate} className="btn_Green_Size_Full">
-                Create Your Publish Course
+                Create Your Services
               </button>
             </div>
           </div>

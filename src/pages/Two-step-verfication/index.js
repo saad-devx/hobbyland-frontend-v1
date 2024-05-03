@@ -54,7 +54,8 @@ function Index() {
     } catch (error) {
       // console.log(error.data.msg);
       console.log(error);
-      setErrors(error.response.data.msg);
+      setErrors(error.response ? error.response.data.msg : error.message);
+
       setSuccess();
     }
     // If OTP is entered, continue with the submission
@@ -138,7 +139,14 @@ function Index() {
               </div>
               <div className="Button_Section">
                 <div>
-                  <button className="btn_Green">Cancel</button>
+                  <button
+                    onClick={() => {
+                      router.push("./StudentHome");
+                    }}
+                    className="btn_Green"
+                  >
+                    Skip
+                  </button>
                 </div>
                 <div>
                   <button onClick={handleSubmit} className="btn_Green">

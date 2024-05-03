@@ -32,7 +32,9 @@ function Index() {
           router.push("./setting");
         }
       } catch (error) {
-        setError(error.response.data.msg);
+      
+        setError(error.response ? error.response.data.msg : error.message);
+
         setSuccess("");
         console.error("Error", error);
       }

@@ -26,6 +26,7 @@ function Index() {
       });
     } else {
       console.log("Email is invalid");
+      
     }
   };
   return (

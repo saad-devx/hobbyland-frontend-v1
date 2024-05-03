@@ -80,11 +80,11 @@ function Index() {
       const response = await UpdateUserProfile(formData);
       if (response) {
         console.log(response);
-        setSuccess("User update Succesfully");
+        setSuccess("Profile Updated Succesfully");
       }
-    } catch (err) {
-      console.log(err, "err");
-      setError(err.response.data.msg ? err.response.data.msg : "");
+    } catch (error) {
+      console.log(error, "err");
+      setError(error.response ? error.response.data.msg : error.message);
     }
   };
   console.log("profile", fecthmeData);

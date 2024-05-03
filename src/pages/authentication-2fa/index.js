@@ -32,7 +32,9 @@ function Index() {
         }
       } catch (error) {
         setSuccess("");
-        setError(error.response.data.msg);
+
+        setError(error.response ? error.response.data.msg : error.message);
+
         console.error("Error", error);
       }
     }

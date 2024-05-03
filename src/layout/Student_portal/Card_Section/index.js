@@ -110,6 +110,7 @@ function Index(props) {
                     price={`$ ${e.pricing[0].price}`}
                     desc={e.description}
                     category={e.category}
+                    AllObject={e}
                     image={e.portfolio.map((e) => {
                       return e.media_url;
                     })}

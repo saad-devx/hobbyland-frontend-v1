@@ -1,4 +1,6 @@
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 function SideBare() {
@@ -72,6 +74,24 @@ function SideBare() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
+  }, []);
+  const route = useRouter();
+  const FetchData = async () => {
+    try {
+      const response = await FetchMe();
+      if (response) {
+        console.log(response.data.user, "Medata");
+        if (response.data.user?.account_type === "student") {
+          route.push("/studentHome");
+        } else if (response.data.user?.account_type === "mentor") {
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    FetchData();
   }, []);
   return (
     <div className="width_main_">

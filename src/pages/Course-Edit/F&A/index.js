@@ -2,10 +2,14 @@ import { ServiesCreate } from "@/config/Axiosconfig/AxiosHandle/service";
 import CourseLayout from "@/layout/CourseLayout";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Index() {
   const router = useRouter();
-
+  const [pricing, setPricing] = useState(null);
+  const [fAQ, setFAQ] = useState(null);
+  const [createForm, setCreateForm] = useState(null);
   const [formData, setFormData] = useState({
     question: "",
     answer: "",
@@ -28,6 +32,25 @@ function Index() {
     });
   };
 
+  useEffect(() => {
+    const serializedData = localStorage.getItem("pricing");
+    if (serializedData) {
+      const parsedData = JSON.parse(serializedData);
+      setPricing(parsedData);
+      console.log(pricing, "pricing");
+    }
+    const faqdata = localStorage.getItem("fAQ");
+    if (faqdata) {
+      const faq = JSON.parse(faqdata);
+      setFAQ(faq);
+    }
+    const firstformdata = localStorage.getItem("formData");
+    if (firstformdata) {
+      const firstdata = JSON.parse(firstformdata);
+      setCreateForm(firstdata);
+    }
+  }, []);
+
   const handleSubmit = async () => {
     const { question, answer } = formData;
     const newErrors = {};
@@ -47,10 +70,72 @@ function Index() {
     console.log(obj);
     const serializedData = JSON.stringify(obj);
     localStorage.setItem("fAQ", serializedData);
+    try {
+      const obj = {
+        ...fAQ,
+        ...pricing,
+        ...createForm,
+      };
+      console.log(obj);
+      try {
+        console.log(obj);
+
+        const data = await ServiesCreate(obj);
+        if (data) {
+          console.log(data);
+          toast.success("Services Create Succesfully", {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          setTimeout(() => {
+            router.push("/Dashboard");
+          }, 1500);
+        }
+      } catch (error) {
+        console.log(error, "err");
+        toast.error(
+          error.response
+            ? error.response.data.field + " " + error.response.data.msg
+            : error.message,
+          {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+        setTimeout(() => {
+          router.push(
+            `${
+              error.response
+                ? error.response.data.field
+                  ? error.response.data.field === "pricing"
+                    ? "/Course-Edit/Pricing"
+                    : error.response.data.field === "FAQ"
+                    ? "/Course-Edit/F&A"
+                    : "/Course-Edit/Pricing"
+                  : "/Course-Edit/Pricing"
+                : "/Course-Edit/Pricing"
+            }`
+          );
+        }, 1500);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
     <div>
+      <ToastContainer />
       <CourseLayout>
         <div
           style={{ width: "100%" }}
@@ -107,7 +192,7 @@ function Index() {
                 }}
               >
                 <button className="btn_Green" onClick={handleSubmit}>
-                  Save
+                  Create course
                 </button>
               </div>
             </div>

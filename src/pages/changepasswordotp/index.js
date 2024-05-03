@@ -33,7 +33,8 @@ function Index() {
           }, 1000);
         }
       } catch (error) {
-        setError(error.response.data.msg ? error.response.data.msg : null);
+        setError(error.response ? error.response.data.msg : error.message);
+
         setSuccess("");
         console.log(error);
       }
