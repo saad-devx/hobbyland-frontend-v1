@@ -2,6 +2,7 @@ import { Card, Footer, Header } from "@/Component";
 import { CreateRoom } from "@/config/Axiosconfig/AxiosHandle/chat";
 import {
   FetchServices,
+  FindService,
   GetSingleProduct,
 } from "@/config/Axiosconfig/AxiosHandle/service";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
@@ -149,7 +150,7 @@ function Index() {
 
   const fetchAllService = async () => {
     try {
-      const response = await FetchServices();
+      const response = await FindService("&");
       if (response) {
         console.log(response.data.services, "singleservice");
         setData([...response.data.services]);
@@ -164,11 +165,13 @@ function Index() {
   }, []);
 
   useEffect(() => {
+    console.log(data, "data");
     const filteredData = data.filter(
       (item) =>
         item.category === singleData.category && item._id !== singleData._id
     );
     setRecentdata(filteredData);
+    console.log(recentdata, "map");
   }, [singleData]);
   console.log(singleData.portfolio[0].media_url);
   console.log(singleData, "singledata");
@@ -262,7 +265,6 @@ function Index() {
                         return e.media_url;
                       })}
                       id={e._id}
-                      like={false}
                     />
                   </div>
                 </div>

@@ -3,6 +3,7 @@ import {
   FetchServices,
   FindService,
 } from "@/config/Axiosconfig/AxiosHandle/service";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import data from "@/constant/product";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -11,98 +12,63 @@ function Index(props) {
   const router = useRouter();
   const [courseData, setCourseData] = useState([]);
   const [findData, setFindData] = useState([]);
-  const [findservices, setFindservices] = useState("");
-  const [searchData, setSearchData] = useState([]);
-  const FetchAllServices = async () => {
+  const [medata, setMeData] = useState({});
+  const [token, setToken] = useState(false);
+  const FetchMedata = async () => {
     try {
-      const response = await FetchServices();
+      const response = await FetchMe();
       if (response) {
-        setCourseData([...response.data.services]);
-        console.log(courseData, "data");
+        console.log(response.data.user);
+        setMeData({ ...response.data.user });
+        console.log(medata, "Medata");
+        setToken(true);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (e) {}
+    setToken(false);
   };
-  useEffect(() => {
-    FetchAllServices();
-  }, []);
-
-  useEffect(() => {
-    const filteredData = courseData
-      ? courseData
-      : searchData.filter((e) => e.category === props.categrios);
-    setFindData(filteredData);
-  }, [courseData ? courseData : searchData, props.categrios]);
-  console.log(courseData);
-  const findServices = async () => {
+  const GetService = async () => {
     try {
-      const response = await FindService(findservices);
+      const response = await FindService("&");
       if (response) {
-        console.log(response.data.services);
-        setSearchData([...response.data.services]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const courseFindSales = async () => {
-    try {
-      const response = await FindService(findservices);
-      if (response) {
-        console.log(response.data.services, "findservices");
-        console.log(props.categrios, "props.categrios");
-
-        const filterdata = response.data.services.filter((e) => {
-          return e.category === props.categrios;
-        });
-        console.log(filterdata, "filterdata");
-        setFindData(filterdata);
+        setFindData([...response.data.services]);
+        console.log(findData, "all ervice");
       }
     } catch (e) {
       console.log(e);
     }
   };
+  const FetchMeService = async () => {
+    try {
+      const response = await FetchServices();
+      if (response) {
+        console.log(response.data.services, "g");
+        console.log(response.data.services, "my service");
+        setCourseData([...response.data.services]);
+      }
+    } catch (er) {
+      console.log(er);
+    }
+  };
   useEffect(() => {
-    courseFindSales();
-  }, [props.categrios]);
-  console.log(findData, "finddata", props.categrios);
+    FetchMeService();
+    FetchMedata();
+    GetService();
+  }, []);
+  const MAX_ITEMS = 6;
+  const datamap =
+    courseData.length > 1 ? courseData : findData.slice(0, MAX_ITEMS);
+
   return (
     <div className="Container_Card_Section">
       <div className="my-5">
-        <h1 className="Heading">Course Sales</h1>
+        <h1 className="Heading">
+          {courseData.length > 1 ? "my Course" : "popular Course"}
+        </h1>
         <div className="underLine"></div>
-        <div className="container my-5">
-          <div className="row">
-            {props.categrios ? (
-              <div></div>
-            ) : (
-              <div className="col-md-6 d-flex gap-3">
-                <input
-                  onChange={(e) => {
-                    setFindservices(e.target.value);
-                  }}
-                  className="Input"
-                  placeholder="Search here title ..."
-                />
-                <button onClick={findServices} className="btn_Green">
-                  Search
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
 
         <div className="container">
           <div className="row">
-            {(props.categrios
-              ? findData
-              : searchData.length > 0
-              ? searchData
-              : props.categrios
-              ? findData
-              : courseData
-            ).map((e, i) => {
+            {datamap.map((e, i) => {
               return (
                 <div className="col-md-4 mt-3 p-2" key={i}>
                   <Card

@@ -89,7 +89,7 @@ function Index() {
           })}
         </div>
       </div>
-      <Card_Section islike={false} />
+      <Card_Section />
       <Footer />
     </div>
   );

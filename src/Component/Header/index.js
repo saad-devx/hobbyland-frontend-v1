@@ -12,6 +12,7 @@ function Header() {
   const [token, setToken] = useState(false);
   const [userdata, serUserdata] = useState({});
   const [faveroutelenght, setFaveroutelenght] = useState(0);
+
   const router = useRouter();
   const fecthMeData = async () => {
     try {
@@ -70,13 +71,25 @@ function Header() {
                     color="black"
                   />
                   <div className="Link_Navigation_Container">
-                    <div className="Responsive_Navigation_link">
-                      HobblyLand Business
-                    </div>
-                    <div className="Responsive_Navigation_link">
-                      Teach On HobbyLand
-                    </div>
-                    <div className="Responsive_Navigation_link">
+                    {userdata?.account_type === "student" ? (
+                      <div></div>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          router.push("./Dashboard");
+                        }}
+                        className="Responsive_Navigation_link"
+                      >
+                        Teach On HobbyLand
+                      </div>
+                    )}
+
+                    <div
+                      onClick={() => {
+                        router.push("./StudentHome");
+                      }}
+                      className="Responsive_Navigation_link"
+                    >
                       My Learning
                     </div>
                   </div>
@@ -104,9 +117,27 @@ function Header() {
                 <br />
                 LAND.
               </div>
-              <div className="Link_Navigation">HobbyLand Business</div>
-              <div className="Link_Navigation">Teach On HobblyLand</div>
-              <div className="Link_Navigation">My Learning</div>
+              {userdata?.account_type === "student" ? (
+                <div></div>
+              ) : (
+                <div
+                  onClick={() => {
+                    router.push("./Dashboard");
+                  }}
+                  className="Link_Navigation"
+                >
+                  Teach On HobblyLand
+                </div>
+              )}
+
+              <div
+                onClick={() => {
+                  router.push("/StudentHome");
+                }}
+                className="Link_Navigation"
+              >
+                My Learning
+              </div>
             </div>
             <div className="Right_Section">
               <div className="flex_display">
@@ -156,7 +187,7 @@ function Header() {
                   className="BottonUserProfile"
                 >
                   {userdata && userdata.firstname
-                    ? userdata.firstname.charAt(0)
+                    ? userdata?.firstname?.charAt(0)
                     : ""}
                 </div>
               </div>

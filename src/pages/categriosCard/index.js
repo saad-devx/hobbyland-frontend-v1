@@ -1,17 +1,66 @@
-import { Footer, Header } from "@/Component";
+import { Card, Footer, Header } from "@/Component";
+import { FindService } from "@/config/Axiosconfig/AxiosHandle/service";
 import { Card_Section, Student_Header } from "@/layout/Student_portal";
+import { data } from "autoprefixer";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function Index() {
   const router = useRouter();
+  const [allService, setAllService] = useState([]);
+  const [findData, setFindData] = useState([]);
   const { title } = router.query;
   console.log(title);
+  const findServices = async () => {
+    try {
+      const response = await FindService(title);
+      if (response) {
+        console.log(response.data.services);
+        setAllService([...response.data.services]);
+        console.log(allService, "allservice");
+        const filteredData = allService.filter((e) => e.category === title);
+        setFindData(filteredData);
+        console.log(findData, "data");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    findServices();
+  });
+  console.log(findData);
   return (
     <div>
       <Header />
       <Student_Header />
-      <Card_Section categrios={title} islike={false} />
+
+      <div className="container">
+        <div className="row">
+          <div className="my-5">
+            <h1 className="Heading text-center fw-bold">{title} Categrios</h1>
+            <div className="underLine"></div>
+          </div>
+          {findData.map((e, i) => {
+            return (
+              <div className="col-md-4 mt-3 p-2" key={i}>
+                <Card
+                  title={e.title}
+                  price={`$ ${e.pricing[0].price}`}
+                  desc={e.description}
+                  category={e.category}
+                  AllObject={e}
+                  image={e.portfolio.map((e) => {
+                    return e.media_url;
+                  })}
+                  id={e._id}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <Footer />
     </div>
   );

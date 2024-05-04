@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 
 function Index() {
   const route = useRouter();
+  const [userdata, setUserdata] = useState({});
   const handleCLick = () => {
     route.push("./Course-Edit/Pricing");
   };
@@ -33,6 +34,7 @@ function Index() {
     try {
       const response = await FetchMe();
       if (response) {
+        setUserdata({ ...response.data.user });
         console.log(response.data.user, "Medata");
         response.data.user?.account_type == "student"
           ? route.push("./StudentHome")
@@ -65,7 +67,9 @@ function Index() {
                 }}
                 className="Profile_box"
               >
-                S
+                {userdata && userdata.firstname
+                  ? userdata?.firstname?.charAt(0)
+                  : ""}
               </div>
             </div>
             <div className="py-5">
