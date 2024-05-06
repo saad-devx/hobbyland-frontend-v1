@@ -44,7 +44,7 @@ function SideBare() {
     {
       title: "Massage",
       Icon: "subway:massage-1",
-      path: "/Message_Teacher",
+      path: "/massage",
     },
   ];
   const [sidebare, setSidebare] = useState(true);

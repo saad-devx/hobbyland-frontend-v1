@@ -84,7 +84,7 @@ function Index() {
                 <div>83% off</div>
                 <div className="mt-2">
                   <button
-                    onClick={() => HandleRoute("/checkout")}
+                    onClick={() => HandleRoute("./checkout")}
                     className="btn_Green_Size_Full"
                   >
                     checkout

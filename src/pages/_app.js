@@ -54,6 +54,7 @@ const FectchAuthSocket = async () => {
       if (response) {
         console.log(response, "response");
         console.log(response.data.token, "token");
+        localStorage.setItem("Sockettoken", response.data?.token);
         const socket = io(BASECHATURL, {
           query: {
             token: response.data.token,

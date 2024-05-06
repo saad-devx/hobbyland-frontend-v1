@@ -55,8 +55,10 @@ function Index(props) {
     GetService();
   }, []);
   const MAX_ITEMS = 6;
+  console.log(courseData, "coursedata");
+  console.log(courseData, "coursedata");
   const datamap =
-    courseData.length > 1 ? courseData : findData.slice(0, MAX_ITEMS);
+    courseData.length >= 1 ? courseData : findData.slice(0, MAX_ITEMS);
 
   return (
     <div className="Container_Card_Section">

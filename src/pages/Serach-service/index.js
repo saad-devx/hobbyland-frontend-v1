@@ -27,7 +27,7 @@ function Index() {
       <Header />
       <Student_Header />
       <h1 className="Heading text-center">Find Course</h1>
-      <div className="underLine"></div>
+      <div className="underLine mb-3"></div>
       <div className="container">
         <div className="row">
           {data?.map((e, i) => {

@@ -34,7 +34,11 @@ function SignUpHero() {
                   />
                 </div>
                 <div>
-                  <input checked={student} type="radio" />
+                  <input
+                    checked={student}
+                    className="Radio_acpeter"
+                    type="radio"
+                  />
                 </div>
               </div>
               <div className="mt-3 fs-3">
@@ -62,7 +66,11 @@ function SignUpHero() {
                   />
                 </div>
                 <div>
-                  <input checked={courseAdministator} type="radio" />
+                  <input
+                    checked={courseAdministator}
+                    className="Radio_acpeter"
+                    type="radio"
+                  />
                 </div>
               </div>
               <div className="mt-3 fs-3">

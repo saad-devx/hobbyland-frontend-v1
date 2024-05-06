@@ -620,6 +620,11 @@ body {
 //// switch
 /// //
 /* CSS for switch */
+.icon_din {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
 .switch {
   position: relative;
   display: inline-block;
@@ -680,4 +685,7 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+.Radio_acpeter {
+  accent-color: #002333;
 }

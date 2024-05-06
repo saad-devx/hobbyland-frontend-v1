@@ -30,7 +30,6 @@ function Index() {
     try {
       const response = await FetchMe();
       if (response) {
-        console.log(response);
         setFecthmeData({ ...response.data.user });
       }
     } catch (e) {
@@ -76,10 +75,9 @@ function Index() {
 
   const handleSubmit = async () => {
     try {
-      console.log(formData);
       const response = await UpdateUserProfile(formData);
       if (response) {
-        console.log(response);
+        console.log(response, "profile updated");
         setSuccess("Profile Updated Succesfully");
       }
     } catch (error) {
@@ -87,7 +85,7 @@ function Index() {
       setError(error.response ? error.response.data.msg : error.message);
     }
   };
-  console.log("profile", fecthmeData);
+
   return (
     <div>
       <ProfileLayout>
@@ -215,7 +213,7 @@ function Index() {
                 <div>
                   <div className="label">Phone Number</div>
                   <input
-                    placeholder="Suffix"
+                    placeholder="Phone Number"
                     // value={formData.phone_number.suffix}
                     value={
                       formData.phone_number ? formData.phone_number.suffix : ""

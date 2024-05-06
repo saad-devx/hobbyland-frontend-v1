@@ -40,7 +40,11 @@ function Index() {
                   Search
                 </button>
               </div>
-              {err && <p className="error">{err}</p>}
+              {err && (
+                <p style={{ color: "red" }} className="error">
+                  {err}
+                </p>
+              )}
             </div>
             <div className="col-md-6 ">
               <div className="img_box">

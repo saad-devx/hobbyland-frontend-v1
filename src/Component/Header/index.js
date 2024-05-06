@@ -11,9 +11,26 @@ function Header() {
   const [openSideBar, setOpenSideBar] = useState(false);
   const [token, setToken] = useState(false);
   const [userdata, serUserdata] = useState({});
+  const [fixedNavebare, setFixedNavebare] = useState(false);
   const [faveroutelenght, setFaveroutelenght] = useState(0);
 
   const router = useRouter();
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 135) {
+        setFixedNavebare(true);
+      } else {
+        setFixedNavebare(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array to ensure it only runs once on component mount
+
   const fecthMeData = async () => {
     try {
       const response = await FetchMe();
@@ -58,7 +75,11 @@ function Header() {
     <>
       {token ? (
         <>
-          <div className="Navebar_Container">
+          <div
+            className={`${
+              fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
+            }`}
+          >
             {openSideBar ? (
               <div className="SideBarContainer">
                 <div className="CLoseIcon">
@@ -195,7 +216,11 @@ function Header() {
           </div>
         </>
       ) : (
-        <div className="Navebar_Container">
+        <div
+          className={`${
+            fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
+          }`}
+        >
           {openSideBar ? (
             <div className="SideBarContainer">
               <div className="CLoseIcon">
@@ -208,19 +233,21 @@ function Header() {
                   color="black"
                 />
                 <div className="Link_Navigation_Container">
-                  <div className="Responsive_Navigation_link">Home</div>
-                  <div className="Responsive_Navigation_link">Browse</div>
-                  <div className="Responsive_Navigation_link">
-                    Learning Paths
+                  <div
+                    onClick={() => {
+                      router.push("./SIgnupDetail");
+                    }}
+                    className="Responsive_Navigation_link"
+                  >
+                    HobbyLand Teacher
                   </div>
-                  <div className="Responsive_Navigation_link">
-                    Student Project
-                  </div>
-                  <div className="Responsive_Navigation_link">
-                    Show Live Secission
-                  </div>
-                  <div className="Responsive_Navigation_link">
-                    Shop 1-On-1 Secission
+                  <div
+                    onClick={() => {
+                      router.push("./SIgnupDetail");
+                    }}
+                    className="Responsive_Navigation_link"
+                  >
+                    HobbyLand student
                   </div>
                 </div>
               </div>
@@ -242,11 +269,25 @@ function Header() {
               <br />
               LAND.
             </div>
-            <div className="Link_Navigation">Browse</div>
-            <div className="Link_Navigation">Learning Paths</div>
+            <div
+              onClick={() => {
+                router.push("./SIgnupDetail");
+              }}
+              className="Link_Navigation"
+            >
+              HobblyLand Teacher
+            </div>
+            <div
+              onClick={() => {
+                router.push("./SIgnupDetail");
+              }}
+              className="Link_Navigation"
+            >
+              HobblyLand StudentHome
+            </div>
           </div>
           <div className="Right_Section">
-            <Link href="/login" className="SignIn">
+            <Link href="./login" className="SignIn">
               <Icon color="white" icon="zondicons:network" />
               Sign In
             </Link>

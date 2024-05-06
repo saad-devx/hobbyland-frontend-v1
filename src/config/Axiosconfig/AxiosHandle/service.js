@@ -29,6 +29,16 @@ export const GetSingleProduct = (id) => {
   console.log(id, "id_");
   return responseData;
 };
+export const DeleteService = (id) => {
+  const responseData = axios.delete(
+    `${BASEURL}user/mentor/service/delete?service_id=${id}`,
+    {
+      withCredentials: true,
+    }
+  );
+  console.log(id, "id_");
+  return responseData;
+};
 
 export const FindService = (find) => {
   const responseData = axios.get(

@@ -1,12 +1,16 @@
 import { Footer } from "@/Component";
-import { FetchServices } from "@/config/Axiosconfig/AxiosHandle/service";
+import {
+  DeleteService,
+  FetchServices,
+} from "@/config/Axiosconfig/AxiosHandle/service";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import AdminLayout from "@/layout/AdminLayount";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Index() {
   const route = useRouter();
   const [userdata, setUserdata] = useState({});
@@ -47,8 +51,34 @@ function Index() {
   useEffect(() => {
     FetchData();
   }, []);
+  const handleCourseDelete = async (id) => {
+    console.log(id);
+    try {
+      const response = await DeleteService(id);
+      if (response) {
+        console.log(response);
+        toast.success("Services Delete Succesfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+    } catch (er) {
+      console.log(er);
+    }
+  };
+
   return (
-    <div>
+    <>
+      <ToastContainer />
       <AdminLayout>
         <div className="container__dashbaord">
           <div>
@@ -77,8 +107,20 @@ function Index() {
                 <div className="text-center mb-3">Are You Ready to Begin?</div>
                 {data.map((e, i) => {
                   return (
-                    <div onClick={handleCLick} className="my-5 Card_Course">
-                      <div className="d-flex">
+                    <div className="my-5 Card_Course">
+                      <div className="icon_din">
+                        <div className="d-flex gap-3">
+                          <div
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              handleCourseDelete(e._id);
+                            }}
+                          >
+                            <Icon icon="material-symbols:delete" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex " onClick={handleCLick}>
                         <img
                           src={e.portfolio[0].media_url}
                           height={"100%"}
@@ -169,7 +211,7 @@ function Index() {
           </div>
         </div>
       </AdminLayout>
-    </div>
+    </>
   );
 }
 

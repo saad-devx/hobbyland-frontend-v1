@@ -355,7 +355,10 @@ function Index() {
 
       {step == 1 ? (
         <div className="Bottom">
-          <div>
+          <div></div>
+          <div></div>
+
+          <div clas>
             <button
               onClick={() => {
                 step1onCLick();

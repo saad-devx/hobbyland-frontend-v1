@@ -22,9 +22,6 @@ function Index() {
   const [sidebarePosition, setSidebarePosition] = useState(true);
   const [showSidebare, setShowSidebare] = useState(true);
   const [menue, setMenue] = useState(false);
-  const [pricing, setPricing] = useState(null);
-  const [fAQ, setFAQ] = useState(null);
-  const [createForm, setCreateForm] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,58 +46,7 @@ function Index() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  useEffect(() => {
-    const serializedData = localStorage.getItem("pricing");
-    if (serializedData) {
-      const parsedData = JSON.parse(serializedData);
-      setPricing(parsedData);
-      console.log(pricing, "pricing");
-    }
-    const faqdata = localStorage.getItem("fAQ");
-    if (faqdata) {
-      const faq = JSON.parse(faqdata);
-      setFAQ(faq);
-    }
-    const firstformdata = localStorage.getItem("formData");
-    if (firstformdata) {
-      const firstdata = JSON.parse(firstformdata);
-      setCreateForm(firstdata);
-    }
-  }, []);
-  const HandleCreate = async () => {
-    const obj = {
-      ...fAQ,
-      ...pricing,
-      ...createForm,
-    };
-    console.log(obj);
-    try {
-      console.log(obj);
-      const data = await ServiesCreate(obj);
-      if (data) {
-        console.log(data);
-        alert("Services Create Succesfully");
-        router.push("/Dashboard");
-      }
-    } catch (error) {
-      console.log(error, "err");
-      alert(error.response ? error.response.data.msg : error.message);
 
-      router.push(
-        `${
-          error.response
-            ? error.response.data.feild
-              ? error.response.data.feild === "pricing"
-                ? "/Course-Edit/Pricing"
-                : error.response.data.feild === "FAQ"
-                ? "/Course-Edit/F&A"
-                : "/Course-Edit/Pricing"
-              : "/Course-Edit/Pricing"
-            : "/Course-Edit/Pricing"
-        }`
-      );
-    }
-  };
   return (
     <div className="User_profile_Container">
       {!sidebare ? (
@@ -185,11 +131,7 @@ function Index() {
             </div>
           </div>
           <div className="mt-3">
-            <div>
-              <button onClick={HandleCreate} className="btn_Green_Size_Full">
-                Create Your Services
-              </button>
-            </div>
+            <div></div>
           </div>
         </div>
       ) : menue ? (
