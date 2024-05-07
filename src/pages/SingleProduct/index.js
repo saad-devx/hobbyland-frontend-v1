@@ -52,10 +52,21 @@ function Index() {
   });
   const FetchGetMe = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        console.log(response.data.user);
-        setMedata({ ...response.data.user });
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          console.log(response.data.user);
+          setMedata({ ...response.data.user });
+        }
       }
     } catch (error) {
       console.log(error);
@@ -211,7 +222,7 @@ function Index() {
                   {singleData.user_id?.firstname}
                 </div>
                 <div style={{ fontSize: "13px" }}>
-                  {singleData.user_id.email}
+                  {singleData.user_id?.email}
                 </div>
               </div>
             </div>
@@ -231,7 +242,7 @@ function Index() {
             </div>
             <div className="mt-3">{singleData.description}</div>
             <div className="w-100 mt-5">
-              {singleData.user_id._id === medata._id ? null : (
+              {singleData.user_id?._id === medata?._id ? null : (
                 <button
                   className="btn_Green_Size_Full_outline mb-3"
                   onClick={handleCreateRoom}

@@ -36,13 +36,24 @@ function Index() {
   }, []);
   const FetchData = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        setUserdata({ ...response.data.user });
-        console.log(response.data.user, "Medata");
-        response.data.user?.account_type == "student"
-          ? route.push("./StudentHome")
-          : null;
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          setUserdata({ ...response.data.user });
+          console.log(response.data.user, "Medata");
+          response.data.user?.account_type == "student"
+            ? route.push("./StudentHome")
+            : null;
+        }
       }
     } catch (e) {
       console.log(e);

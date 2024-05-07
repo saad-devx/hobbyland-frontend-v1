@@ -28,9 +28,20 @@ function Index() {
   });
   const fetchData = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        setFecthmeData({ ...response.data.user });
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          setFecthmeData({ ...response.data.user });
+        }
       }
     } catch (e) {
       localStorage.setItem("is_logged_in", false);

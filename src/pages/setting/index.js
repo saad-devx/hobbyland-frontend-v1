@@ -12,10 +12,21 @@ function Index() {
   };
   const fectchdata = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        console.log(response.data.user);
-        setOn(response.data.user.two_fa.enabled);
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          console.log(response.data.user);
+          setOn(response.data.user.two_fa.enabled);
+        }
       }
     } catch (error) {
       console.log(error);

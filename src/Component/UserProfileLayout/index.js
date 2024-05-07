@@ -30,12 +30,23 @@ function Index() {
   const [profileImage, setProfileImage] = useState("");
   const fetchData = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        setFecthmeData({ ...response.data.user });
-        const profileImageUrl = response.data.user.profile_image || "";
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          setFecthmeData({ ...response.data.user });
+          const profileImageUrl = response.data?.user?.profile_image || "";
 
-        localStorage.setItem("profileimage", profileImageUrl); // Store image URL in local storage
+          localStorage.setItem("profileimage", profileImageUrl); // Store image URL in local storage
+        }
       }
     } catch (error) {
       // router.push("/login");

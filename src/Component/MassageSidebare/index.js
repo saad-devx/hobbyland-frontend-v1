@@ -1,4 +1,5 @@
 import { FectchRooms } from "@/config/Axiosconfig/AxiosHandle/chat";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -7,24 +8,48 @@ function Index() {
   const [data, setData] = useState([]);
   const [openSideBare, setOpenSideBare] = useState(true);
   const [open, setOpen] = useState(true);
-  const GetRooms = async () => {
-    try {
-      const response = await FectchRooms();
-      if (response) {
-        setData([...response.data.rooms]);
-        console.log(data, "data");
-        console.log(data, "room");
-      }
-    } catch (e) {
-      console.log(e, "err");
-    }
-  };
+  const [medata, setMedata] = useState({});
+
   useEffect(() => {
+    const FetchmeData = async () => {
+      try {
+        const cookies = document.cookie.split(";");
+        let isLoggedIn = false;
+        cookies.forEach((cookie) => {
+          const [name, value] = cookie.split("=");
+          if (name.trim() === "is_logged_in" && value.trim() === "true") {
+            isLoggedIn = true;
+          }
+        });
+        if (isLoggedIn) {
+          const response = await FetchMe();
+          if (response) {
+            setMedata({ ...response?.data?.user });
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    FetchmeData();
+  }, []);
+
+  useEffect(() => {
+    const GetRooms = async () => {
+      try {
+        const response = await FectchRooms();
+        if (response) {
+          setData([...response.data.rooms]);
+        }
+      } catch (e) {
+        console.log(e, "err");
+      }
+    };
+
     GetRooms();
   }, []);
-  const handleCLick = () => {
-    setOpenSideBare((prev) => !prev);
-  };
+
   const router = useRouter();
   const handleClick = (id) => {
     router.push({
@@ -32,7 +57,7 @@ function Index() {
       query: { id: id },
     });
   };
-  console.log(data, "roomgets");
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 990) {
@@ -43,6 +68,7 @@ function Index() {
         setOpenSideBare(true);
       }
     };
+
     handleResize();
     window.addEventListener("resize", handleResize);
 
@@ -53,9 +79,6 @@ function Index() {
 
   return (
     <>
-      {/* <div className="circleMenue__">
-        <Icon icon="mingcute:arrow-left-fill" color="black" fontSize={"35px"} />
-      </div> */}
       {open === true ? (
         <div
           className={`${
@@ -92,24 +115,31 @@ function Index() {
               <button className="btn_Green mt-3">Search</button>
             </div>
             <div className="mt-3">
-              {data.map((e, i) => {
-                return (
-                  <div
-                    key={i}
-                    onClick={() => {
-                      handleClick(e.last_message.room_id);
-                    }}
-                    className="chips_"
-                  >
-                    <div className="circleProfile">
-                      {/* {e.members[1].firstname.charAt(0)} */}
-                      {e.members[1].firstname.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="title_">{e.members[1].firstname}</div>
-                    </div>
-                  </div>
+              {data.map((room, i) => {
+                const otherMember = room.members?.find(
+                  (member) => member._id !== medata._id
                 );
+
+                if (otherMember) {
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => {
+                        handleClick(room.last_message.room_id);
+                      }}
+                      className="chips_"
+                    >
+                      <div className="circleProfile">
+                        {otherMember.firstname.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="title_">{otherMember.firstname}</div>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
               })}
             </div>
           </div>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 
 function Index() {
   const [data, setData] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0); //
   const router = useRouter();
 
   const HandleRoute = (path) => {
@@ -25,6 +26,17 @@ function Index() {
     localStorage.setItem("cartData", JSON.stringify(updatedCartData)); // Update local storage
   };
 
+  useEffect(() => {
+    if (data.length > 0) {
+      const totalPrice = data.reduce((acc, item) => {
+        return acc + item.pricing.reduce((acc, price) => acc + price.price, 0);
+      }, 0);
+
+      setTotalAmount(totalPrice);
+    } else {
+      setTotalAmount(0);
+    }
+  }, [data]);
   return (
     <div>
       <div className="AddTOCardContainer" style={{ marginTop: "15px" }}>
@@ -60,7 +72,7 @@ function Index() {
                     </div>
                     <div>
                       <h5 className="fw-bold">{e.title}</h5>
-                      <div className="">Desc : {e.description}</div>
+                      <div className="">Description : {e.description}</div>
                     </div>
                   </div>
                   <div>
@@ -77,11 +89,11 @@ function Index() {
             <div className="col-md-4">
               <div className="Right_card_main">
                 <div className="fw-bold">Total:</div>
-                <h2 className="fw-bold text-dark">$38.97</h2>
-                <div>
-                  <del>$224.97</del>
-                </div>
-                <div>83% off</div>
+                <h2 className="fw-bold text-dark">$.{totalAmount}</h2>
+                {/* <div>
+                  <del>{totalAmount}</del>
+                </div> */}
+                <div>0% off</div>
                 <div className="mt-2">
                   <button
                     onClick={() => HandleRoute("./checkout")}

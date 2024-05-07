@@ -58,11 +58,23 @@ function Index() {
   };
   const FetchMedata = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        console.log(response, "fetchMedata");
-        serMedata(response.data.user);
-        console.log(medata, "fetcRoom");
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          console.log(response, "fetchMedata");
+          serMedata(response.data.user);
+          console.log(medata, "fetcRoom");
+        }
+      } else {
       }
     } catch (e) {
       console.log(e);
@@ -104,6 +116,8 @@ function Index() {
     }
   };
   console.log(room, "singleRoom");
+  const otherMember = room.members?.find((member) => member._id !== medata._id);
+
   return (
     <div style={{ display: "flex", width: "100%", gap: "0px" }}>
       <MassageLayout />
@@ -117,17 +131,9 @@ function Index() {
       >
         {roomid ? (
           <div className="Header_Top">
-            <div className="circle_box">
-              {room.members &&
-                room.members.length > 1 &&
-                room.members[1].firstname.charAt(0)}
-            </div>
+            <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
 
-            <div className="title_">
-              {room.members &&
-                room.members.length > 1 &&
-                room.members[1].firstname}
-            </div>
+            <div className="title_">{otherMember?.firstname}</div>
           </div>
         ) : null}
 

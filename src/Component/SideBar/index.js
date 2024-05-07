@@ -78,13 +78,26 @@ function SideBare() {
   const route = useRouter();
   const FetchData = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        console.log(response.data.user, "Medata");
-        if (response.data.user?.account_type === "student") {
-          route.push("/studentHome");
-        } else if (response.data.user?.account_type === "mentor") {
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
         }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          console.log(response.data.user, "Medata");
+          if (response.data.user?.account_type === "student") {
+            route.push("/studentHome");
+          } else if (response.data.user?.account_type === "mentor") {
+          }
+        }
+      } else {
+        route.push("/studentHome");
       }
     } catch (e) {
       console.log(e);

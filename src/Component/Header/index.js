@@ -33,29 +33,41 @@ function Header() {
 
   const fecthMeData = async () => {
     try {
-      const response = await FetchMe();
-      if (response) {
-        console.log(response);
-        serUserdata({ ...response.data.user });
-        console.log(userdata);
-        const cookies = document.cookie.split(";");
-        console.log(cookies, "cokiies");
-        let isLoggedIn = false;
-        cookies.forEach((cookie) => {
-          const [name, value] = cookie.split("=");
-          if (name.trim() === "is_logged_in" && value.trim() === "true") {
-            isLoggedIn = true;
-          }
-        });
-        if (isLoggedIn) {
-          setToken(true);
-          console.log(cookies);
-          console.log(token);
-        } else {
-          setToken(false);
-          console.log(cookies);
-          console.log(token);
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cokiies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
         }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          console.log(response, "fetchme header");
+          serUserdata({ ...response.data.user });
+          console.log(userdata);
+          const cookies = document.cookie.split(";");
+          console.log(cookies, "cokiies");
+          let isLoggedIn = false;
+          cookies.forEach((cookie) => {
+            const [name, value] = cookie.split("=");
+            if (name.trim() === "is_logged_in" && value.trim() === "true") {
+              isLoggedIn = true;
+            }
+          });
+          if (isLoggedIn) {
+            setToken(true);
+            console.log(cookies);
+            console.log(token);
+          } else {
+            setToken(false);
+            console.log(cookies);
+            console.log(token);
+          }
+        }
+      } else {
       }
     } catch (error) {
       console.log(error, "err");
