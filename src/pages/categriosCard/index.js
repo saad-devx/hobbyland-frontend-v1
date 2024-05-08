@@ -1,7 +1,6 @@
 import { Card, Footer, Header } from "@/Component";
 import { FindService } from "@/config/Axiosconfig/AxiosHandle/service";
 import { Card_Section, Student_Header } from "@/layout/Student_portal";
-import { data } from "autoprefixer";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -10,27 +9,33 @@ function Index() {
   const [allService, setAllService] = useState([]);
   const [findData, setFindData] = useState([]);
   const { title } = router.query;
-  console.log(title);
-  const findServices = async () => {
-    try {
-      const response = await FindService(title);
-      if (response) {
-        console.log(response.data.services);
-        setAllService([...response.data.services]);
-        console.log(allService, "allservice");
-        const filteredData = allService.filter((e) => e.category === title);
-        setFindData(filteredData);
-        console.log(findData, "data");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
-    findServices();
-  });
-  console.log(findData);
+    const FetchCategriosServce = async () => {
+      try {
+        const response = await FindService(title);
+        if (response) {
+          console.log(response.data.services);
+          setAllService(response.data.services);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (title) {
+      FetchCategriosServce();
+    }
+  }, [title]);
+
+  useEffect(() => {
+    if (allService.length > 0) {
+      const filteredData = allService.filter((e) => e.category === title);
+      setFindData(filteredData);
+      console.log(findData, "data");
+    }
+  }, [allService, title]);
+
   return (
     <div>
       <Header />
@@ -39,7 +44,7 @@ function Index() {
       <div className="container">
         <div className="row">
           <div className="my-5">
-            <h1 className="Heading text-center fw-bold">{title} Categrios</h1>
+            <h1 className="Heading text-center fw-bold">{title} Categories</h1>
             <div className="underLine"></div>
           </div>
           {findData.map((e, i) => {

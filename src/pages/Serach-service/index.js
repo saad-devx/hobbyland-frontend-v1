@@ -21,7 +21,7 @@ function Index() {
   };
   useEffect(() => {
     FetchFindService();
-  });
+  }, [title]);
   return (
     <div>
       <Header />

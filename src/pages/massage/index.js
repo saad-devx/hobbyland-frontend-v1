@@ -20,102 +20,96 @@ import ContentLoader, {
   Code,
 } from "react-content-loader";
 import { Icon } from "@iconify/react";
+import { useSocket } from "@/config/contextapi/socket";
 
 function Index() {
   const router = useRouter();
   const [loader, setLoader] = useState(true);
-  const [sendmassage, setSendmassage] = useState();
+  const [sendmassage, setSendmassage] = useState("");
   const [data, setData] = useState([]);
-  const [medata, serMedata] = useState();
-  const [allmessage, setAllmessage] = useState([]);
+  const [medata, serMedata] = useState({});
   const [room, setRoom] = useState({});
   const { id } = router.query;
   const roomid = id;
 
-  const FetchAllMassage = async () => {
+  useEffect(() => {
+    // Fetch user data
+    const fetchData = async () => {
+      try {
+        const cookies = document.cookie.split(";");
+        let isLoggedIn = false;
+        cookies.forEach((cookie) => {
+          const [name, value] = cookie.split("=");
+          if (name.trim() === "is_logged_in" && value.trim() === "true") {
+            isLoggedIn = true;
+          }
+        });
+        if (isLoggedIn) {
+          const response = await FetchMe();
+          if (response) {
+            serMedata(response.data.user);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+  const fetchAllMessages = async () => {
     try {
-      console.log(roomid, "id");
+      if (!roomid) return;
       const response = await GetMassage(roomid);
       if (response) {
-        console.log(response, "rrom");
         setData([...response.data?.messages]);
-        console.log(data, "data");
-        setAllmessage([response.data?.messages]);
-        setTimeout(() => {
-          setLoader(false);
-        }, 1500);
-      }
-    } catch (e) {
-      console.log(e, "errmassage get");
-    }
-  };
-  const FetchRoom = async () => {
-    try {
-      // const response = await data();
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const FetchMedata = async () => {
-    try {
-      const cookies = document.cookie.split(";");
-      console.log(cookies, "cokiies");
-      let isLoggedIn = false;
-      cookies.forEach((cookie) => {
-        const [name, value] = cookie.split("=");
-        if (name.trim() === "is_logged_in" && value.trim() === "true") {
-          isLoggedIn = true;
-        }
-      });
-      if (isLoggedIn) {
-        const response = await FetchMe();
-        if (response) {
-          console.log(response, "fetchMedata");
-          serMedata(response.data.user);
-          console.log(medata, "fetcRoom");
-        }
-      } else {
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  useEffect(() => {
-    FetchAllMassage();
-  }, [id, allmessage]);
-  useEffect(() => {
-    FetchMedata();
-  }, []);
-  const GetRoom = async () => {
-    try {
-      const response = await GetSingleRoom(roomid);
-      if (response) {
-        console.log(response.data.room);
-        setRoom({ ...response.data.room });
+        setLoader(false);
       }
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    GetRoom();
-  }, [id]);
+    fetchAllMessages();
+  }, [roomid]);
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      try {
+        if (!roomid) return;
+        const response = await GetSingleRoom(roomid);
+        if (response) {
+          setRoom({ ...response.data.room });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchRoom();
+  }, [roomid]);
+
   const handleMessageSend = async () => {
-    console.log(sendmassage);
-    if (!sendmassage) {
-      return;
-    }
+    if (!sendmassage) return;
     try {
       const response = await MessageSend(roomid, sendmassage);
       if (response) {
-        console.log(response, "Message Was Sent Succesfully");
-        FetchAllMassage();
+        setSendmassage("");
       }
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(room, "singleRoom");
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("message", (data) => {
+        setData((prevData) => [data?.message, ...prevData]);
+        console.log(data);
+      });
+    }
+  }, [socket]);
+  console.log(data);
+
   const otherMember = room.members?.find((member) => member._id !== medata._id);
 
   return (

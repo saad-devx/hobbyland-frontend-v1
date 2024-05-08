@@ -14,3 +14,10 @@ export const UpdateUserProfile = (data) => {
   });
   return responseData;
 };
+
+export const ProfileGetByeId = (data) => {
+  const responseData = axios.get(`${BASEURL}user/get/profile?user_id=${data}`, {
+    withCredentials: true,
+  });
+  return responseData;
+};

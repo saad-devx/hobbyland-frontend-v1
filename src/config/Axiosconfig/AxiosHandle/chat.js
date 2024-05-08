@@ -3,10 +3,12 @@ import { message } from "antd";
 const { default: axios } = require("axios");
 const { BASECHATURL, BASEURL } = require("..");
 
-export const CreateRoom = (user_id) => {
+export const CreateRoom = (user_id, token) => {
   const responseData = axios.post(
     `${BASECHATURL}/api/room/create?user_id=${user_id}`,
-    {},
+    {
+      Token: token,
+    },
     {
       withCredentials: true,
     }

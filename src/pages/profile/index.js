@@ -17,7 +17,7 @@ function Index() {
     firstname: "",
     lastname: "",
     email: "",
-    account_type: "",
+
     gender: "Male",
     timezone: "",
     password: "",
@@ -51,6 +51,7 @@ function Index() {
   useEffect(() => {
     fetchData();
   }, []);
+  console.log(formData);
   const handlePhoneNumberChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -63,6 +64,7 @@ function Index() {
   };
   useEffect(() => {
     setFormData({
+      email: fecthmeData?.email,
       firstname: fecthmeData.firstname,
       lastname: fecthmeData.lastname ? fecthmeData.lastname : "",
       email: fecthmeData.email ? fecthmeData.email : "",
@@ -93,7 +95,7 @@ function Index() {
       }
     } catch (error) {
       console.log(error, "err");
-      setError(error.response ? error.response.data.msg : error.message);
+      setError(error?.response ? error.response?.data?.msg : error?.message);
     }
   };
 
@@ -103,7 +105,7 @@ function Index() {
         <div className="profile_Container">
           <div className="container">
             <div className="row">
-              <h3 className="my-3 mx-3 fw-bold mt-5">Update Profile</h3>
+              <h3 className="my-3 mx-3 fw-bold mt-5">Profile</h3>
               {error && (
                 <div
                   style={{
@@ -168,27 +170,17 @@ function Index() {
                   />
                 </div>
               </div>
+
               <div className="col-md-6 my-3">
                 <div>
                   <div className="label">Email</div>
                   <input
+                    disabled={true}
                     placeholder="Email"
                     className="Input"
                     value={formData.email}
                     onChange={handleInputChange}
                     name="email"
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 my-3">
-                <div>
-                  <div className="label">account_type</div>
-                  <input
-                    placeholder="account_type"
-                    className="Input"
-                    value={formData.account_type}
-                    onChange={handleInputChange}
-                    name="account_type"
                   />
                 </div>
               </div>

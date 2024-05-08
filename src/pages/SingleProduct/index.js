@@ -1,5 +1,5 @@
 import { Card, Footer, Header } from "@/Component";
-import { CreateRoom } from "@/config/Axiosconfig/AxiosHandle/chat";
+import { AuthToken, CreateRoom } from "@/config/Axiosconfig/AxiosHandle/chat";
 import {
   FetchServices,
   FindService,
@@ -50,6 +50,7 @@ function Index() {
       },
     ],
   });
+  const [token, setToken] = useState();
   const FetchGetMe = async () => {
     try {
       const cookies = document.cookie.split(";");
@@ -75,17 +76,26 @@ function Index() {
   useEffect(() => {
     FetchGetMe();
   }, []);
+  const FetchToken = async () => {
+    try {
+      const response = await AuthToken();
+      if (response) {
+        setToken(response?.data?.token);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    FetchToken();
+  }, []);
   const handleCreateRoom = async () => {
     try {
       console.log(singleData.user_id._id, "id_user");
-      const response = await CreateRoom(singleData.user_id._id);
+      const response = await CreateRoom(singleData.user_id._id, token);
       if (response) {
         console.log(response, "Roomcreate");
-
-        router.push({
-          pathname: "/massage",
-          query: { id: singleData.user_id._id },
-        });
+        router.push("./massage");
       }
     } catch (error) {
       console.log(error.message);
@@ -201,6 +211,12 @@ function Index() {
               }}
             >
               <div
+                onClick={() => {
+                  router.push({
+                    pathname: "/mentor-profile",
+                    query: { id: singleData.user_id._id },
+                  });
+                }}
                 style={{
                   width: "50px",
                   height: "50px",

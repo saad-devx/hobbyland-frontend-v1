@@ -1,5 +1,6 @@
 import { FectchRooms } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
+import { useSocket } from "@/config/contextapi/socket";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -34,21 +35,29 @@ function Index() {
 
     FetchmeData();
   }, []);
-
-  useEffect(() => {
-    const GetRooms = async () => {
-      try {
-        const response = await FectchRooms();
-        if (response) {
-          setData([...response.data.rooms]);
-        }
-      } catch (e) {
-        console.log(e, "err");
+  const GetRooms = async () => {
+    try {
+      const response = await FectchRooms();
+      if (response) {
+        setData([...response.data.rooms]);
+        console.log(data);
       }
-    };
-
+    } catch (e) {
+      console.log(e, "err");
+    }
+  };
+  useEffect(() => {
     GetRooms();
-  }, []);
+  }, [data]);
+
+  const socket = useSocket();
+  useEffect(() => {
+    if (socket) {
+      socket.on("new-room", (data) => {
+        setData((prevData) => [data, ...prevData]);
+      });
+    }
+  }, [socket]);
 
   const router = useRouter();
   const handleClick = (id) => {

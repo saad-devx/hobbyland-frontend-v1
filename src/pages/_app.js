@@ -36,53 +36,15 @@ import "@/styles/Auth/signupDetail.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
 import React, { useEffect } from "react";
-import { io } from "socket.io-client";
-import { BASECHATURL } from "@/config/Axiosconfig";
-
-const FectchAuthSocket = async () => {
-  try {
-    const cookies = document.cookie.split(";");
-    let isLoggedIn = false;
-    cookies.forEach((cookie) => {
-      const [name, value] = cookie.split("=");
-      if (name.trim() === "is_logged_in" && value.trim() === "true") {
-        isLoggedIn = true;
-      }
-    });
-    if (isLoggedIn) {
-      const response = await AuthToken();
-      if (response) {
-        localStorage.setItem("Sockettoken", response.data?.token);
-        const socket = io(BASECHATURL, {
-          query: {
-            token: response.data.token,
-          },
-        });
-
-        socket.on("connect", () => {
-          console.log("Socket connected successfully");
-        });
-
-        socket.on("error", (error) => {
-          console.error("Socket connection error:", error);
-        });
-        socket.on("message", (data) => {
-          console.log(data, "message");
-        });
-        socket.on("new-room", (data) => {
-          console.log(data, "room");
-        });
-      }
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
+import { SocketProvider } from "@/config/contextapi/socket";
+import { AuthProvider } from "@/config/contextapi/auth";
 
 export default function App({ Component, pageProps }) {
-  useEffect(() => {
-    FectchAuthSocket();
-  }, []);
-
-  return <Component {...pageProps} />;
+  return (
+    <AuthProvider>
+      <SocketProvider>
+        <Component {...pageProps} />
+      </SocketProvider>
+    </AuthProvider>
+  );
 }
