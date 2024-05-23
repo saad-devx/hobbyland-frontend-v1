@@ -216,30 +216,7 @@ function Header() {
                   />
                 </div>
                 {/* ////notificatopn button */}
-                <div
-                  aria-controls="menu"
-                  aria-haspopup="true"
-                  onClick={handleMenuOpen}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Icon
-                    fontSize={25}
-                    icon="mingcute:notification-fill"
-                    color="white"
-                  />
-                </div>
-                {/* ////notificatopn button */}
-                <Menu
-                  id="menu"
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                >
-                  {/* Menu items */}
-                  <MenuItem onClick={handleMenuClose}>Notification 1</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Notification 2</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Notification 3</MenuItem>
-                </Menu>
+
                 <div
                   onClick={handleFaverioteCLick}
                   style={{ position: "relative", cursor: "pointer" }}
