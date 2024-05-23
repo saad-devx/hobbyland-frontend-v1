@@ -2,19 +2,20 @@ import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-// import { Button } from "antd";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import React, { useEffect, useState } from "react";
 
 function Header() {
   const [datalenght, setDatalenght] = useState(0);
   const [openSideBar, setOpenSideBar] = useState(false);
   const [token, setToken] = useState(false);
-  const [userdata, serUserdata] = useState({});
+  const [userdata, setUserdata] = useState({});
   const [fixedNavebare, setFixedNavebare] = useState(false);
   const [faveroutelenght, setFaveroutelenght] = useState(0);
-
+  const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 135) {
@@ -29,12 +30,12 @@ function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []); // Empty dependency array to ensure it only runs once on component mount
+  }, []);
 
   const fecthMeData = async () => {
     try {
       const cookies = document.cookie.split(";");
-      console.log(cookies, "cokiies");
+      console.log(cookies, "cookies");
       let isLoggedIn = false;
       cookies.forEach((cookie) => {
         const [name, value] = cookie.split("=");
@@ -46,10 +47,9 @@ function Header() {
         const response = await FetchMe();
         if (response) {
           console.log(response, "fetchme header");
-          serUserdata({ ...response.data.user });
-          console.log(userdata);
+          setUserdata({ ...response.data.user });
           const cookies = document.cookie.split(";");
-          console.log(cookies, "cokiies");
+          console.log(cookies, "cookies");
           let isLoggedIn = false;
           cookies.forEach((cookie) => {
             const [name, value] = cookie.split("=");
@@ -74,23 +74,38 @@ function Header() {
       setToken(false);
     }
   };
+
   useEffect(() => {
     fecthMeData();
-    console.log(token, "teken");
+    console.log(token, "token");
   }, []);
+
+  useEffect(() => {
+    if (token && userdata._id) {
+
+    }
+  }, [token, userdata._id]);
 
   const handleFaverioteCLick = () => {
     router.push("favourite");
   };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
 
   return (
     <>
       {token ? (
         <>
           <div
-            className={`${
-              fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
-            }`}
+            className={`${fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
+              }`}
           >
             {openSideBar ? (
               <div className="SideBarContainer">
@@ -200,6 +215,31 @@ function Header() {
                     color="white"
                   />
                 </div>
+                {/* ////notificatopn button */}
+                <div
+                  aria-controls="menu"
+                  aria-haspopup="true"
+                  onClick={handleMenuOpen}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Icon
+                    fontSize={25}
+                    icon="mingcute:notification-fill"
+                    color="white"
+                  />
+                </div>
+                {/* ////notificatopn button */}
+                <Menu
+                  id="menu"
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                >
+                  {/* Menu items */}
+                  <MenuItem onClick={handleMenuClose}>Notification 1</MenuItem>
+                  <MenuItem onClick={handleMenuClose}>Notification 2</MenuItem>
+                  <MenuItem onClick={handleMenuClose}>Notification 3</MenuItem>
+                </Menu>
                 <div
                   onClick={handleFaverioteCLick}
                   style={{ position: "relative", cursor: "pointer" }}
@@ -229,9 +269,8 @@ function Header() {
         </>
       ) : (
         <div
-          className={`${
-            fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
-          }`}
+          className={`${fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
+            }`}
         >
           {openSideBar ? (
             <div className="SideBarContainer">
