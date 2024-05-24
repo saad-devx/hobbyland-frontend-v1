@@ -39,72 +39,18 @@ import React, { useEffect, useState } from "react";
 import { SocketProvider } from "@/config/contextapi/socket";
 import { AuthProvider } from "@/config/contextapi/auth";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
+import { UserProvider } from "@/config/contextapi/user";
+import Render from "./render";
 
 export default function App({ Component, pageProps }) {
-  const [userdata, setUserdata] = useState({})
-  const FectMedata = async () => {
-    const cookies = document.cookie.split(";");
-    console.log(cookies, "cookies");
-    let isLoggedIn = false;
-    cookies.forEach((cookie) => {
-      const [name, value] = cookie.split("=");
-      if (name.trim() === "is_logged_in" && value.trim() === "true") {
-        isLoggedIn = true;
-      }
-    });
-    if (isLoggedIn) {
-      const response = FetchMe()
-      if (response) {
-        setUserdata({ ...response.data?.user })
-        console.log(userdata, "userdata")
 
-      }
-    }
-  }
-  useEffect(() => {
-    FectMedata()
-  }, [])
-  const pusherAppSubscribe = async () => {
-    const cookies = document.cookie.split(";");
-    console.log(cookies, "cookies");
-    let isLoggedIn = false;
-    cookies.forEach((cookie) => {
-      const [name, value] = cookie.split("=");
-      if (name.trim() === "is_logged_in" && value.trim() === "true") {
-        isLoggedIn = true;
-      }
-    });
-    if (isLoggedIn) {
-      try {
-
-        const PusherPushNotifications = await import("@pusher/push-notifications-web");
-
-        const beamsClient = new PusherPushNotifications.Client({
-          instanceId: "3c7f24f8-0cec-4d30-af7a-d137b4b70eb6",
-        });
-
-        const deviceId = await beamsClient.start().then((client) => client.getDeviceId());
-        console.log("Successfully registered with Beams. Device ID:", deviceId);
-        await beamsClient.addDeviceInterest(userdata._id);
-        const interests = await beamsClient.getDeviceInterests();
-        console.log("Current interests:", interests);
-
-      } catch (error) {
-        console.error("Error subscribing to Pusher Beams:", error);
-      }
-    } else {
-      console.log("Tokon Not found")
-    }
-  };
-
-  useEffect(() => {
-    pusherAppSubscribe();
-  }, [userdata]);
 
   return (
     <AuthProvider>
       <SocketProvider>
-        <Component {...pageProps} />
+        <UserProvider>
+          <Render Component={Component} pageProps={pageProps} />
+        </UserProvider>
       </SocketProvider>
     </AuthProvider>
   );

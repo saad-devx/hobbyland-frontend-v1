@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "@/config/contextapi/user";
 
 function Header() {
   const [datalenght, setDatalenght] = useState(0);
@@ -15,7 +16,7 @@ function Header() {
   const [faveroutelenght, setFaveroutelenght] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
-
+  const { fetchUserData } = useContext(UserContext)
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 135) {
@@ -48,6 +49,7 @@ function Header() {
         if (response) {
           console.log(response, "fetchme header");
           setUserdata({ ...response.data.user });
+          fetchUserData()
           const cookies = document.cookie.split(";");
           console.log(cookies, "cookies");
           let isLoggedIn = false;

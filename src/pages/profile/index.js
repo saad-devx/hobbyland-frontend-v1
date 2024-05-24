@@ -1,23 +1,24 @@
 import { Footer, Header } from "@/Component";
 import ProfileLayout from "@/layout/profileLayout";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   FetchMe,
   UpdateUserProfile,
 } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
+import { UserContext } from "@/config/contextapi/user";
 
 function Index() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
   const [fecthmeData, setFecthmeData] = useState({});
+  const { fetchUserData } = useContext(UserContext)
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
     email: "",
-
     gender: "Male",
     timezone: "",
     password: "",
@@ -92,6 +93,7 @@ function Index() {
       if (response) {
         console.log(response, "profile updated");
         setSuccess("Profile Updated Succesfully");
+        fetchUserData()
       }
     } catch (error) {
       console.log(error, "err");
