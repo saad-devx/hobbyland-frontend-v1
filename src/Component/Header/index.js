@@ -130,7 +130,6 @@ function Header() {
   const socket = useSocket();
   useEffect(() => {
     if (socket) {
-
     }
   }, [])
   return (
@@ -278,7 +277,18 @@ function Header() {
                       console.log(notification)
                       return (
                         <div
-
+                          style={{
+                            cursor: "pointer",
+                            padding: "15px",
+                            backgroundColor: "#e6faf5",
+                            padding: "2px",
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: "10px",
+                            width: "500px",
+                            alignItems: "center"
+                          }}
                           className="notification_"
                         >
                           <div>
