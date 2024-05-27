@@ -48,12 +48,12 @@ function Index() {
   };
   useEffect(() => {
     GetRooms();
-  }, [data]);
-
+  }, []);
   const socket = useSocket();
   useEffect(() => {
     if (socket) {
       socket.on("new-room", (data) => {
+        alert("new-room")
         setData((prevData) => [data, ...prevData]);
       });
     }
@@ -90,9 +90,8 @@ function Index() {
     <>
       {open === true ? (
         <div
-          className={`${
-            openSideBare ? "massage_sideBare" : "massage_sideBare_relative"
-          }`}
+          className={`${openSideBare ? "massage_sideBare" : "massage_sideBare_relative"
+            }`}
         >
           <div
             onClick={() => {

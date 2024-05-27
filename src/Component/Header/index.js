@@ -1,4 +1,4 @@
-import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
+import { FetchMe, FetchMeNotification } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/config/contextapi/user";
+import { SocketProvider, useSocket } from "@/config/contextapi/socket";
 
 function Header() {
   const [datalenght, setDatalenght] = useState(0);
@@ -76,7 +77,35 @@ function Header() {
       setToken(false);
     }
   };
+  const [notification, setNotification] = useState([])
+  const FetchNotification = async () => {
+    try {
+      const cookies = document.cookie.split(";");
+      console.log(cookies, "cookies");
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMeNotification()
+        if (response) {
+          console.log(response, "notification")
+          setNotification(response.data.notifications_data[0]?.notifications)
+          // console.log()
+          console.log(notification, "notifcation")
+        }
+      }
 
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  useEffect(() => {
+    FetchNotification()
+  }, [])
   useEffect(() => {
     fecthMeData();
     console.log(token, "token");
@@ -84,7 +113,6 @@ function Header() {
 
   useEffect(() => {
     if (token && userdata._id) {
-
     }
   }, [token, userdata._id]);
 
@@ -99,8 +127,12 @@ function Header() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  const socket = useSocket();
+  useEffect(() => {
+    if (socket) {
 
-
+    }
+  }, [])
   return (
     <>
       {token ? (
@@ -217,8 +249,58 @@ function Header() {
                     color="white"
                   />
                 </div>
-                {/* ////notificatopn button */}
+                {/* {notification} */}
+                <div
+                  onClick={handleMenuOpen}
+                  style={{ position: "relative", cursor: "pointer" }}
+                >
+                  <div>
+                    <Icon
+                      fontSize={25}
+                      icon="mingcute:notification-fill"
+                      color="white"
+                    />
+                  </div>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                  >
+                    {notification?.map((e, i) => {
+                      console.log(notification)
+                      return (
+                        <div
 
+                          className="notification_"
+                        >
+                          <div>
+
+                            <Icon
+                              icon="ep:success-filled"
+                              style={{ fontSize: "29px", color: "#01b574" }}
+                            />
+                          </div>
+                          <div>
+
+                            <div className="fs-5 fw-bold">{e?.mini_msg}</div>
+                            <div className="">{e?.message}</div>
+                          </div>
+
+                        </div>
+                      )
+                    })
+                    }
+
+                  </Menu>
+                </div>
                 <div
                   onClick={handleFaverioteCLick}
                   style={{ position: "relative", cursor: "pointer" }}

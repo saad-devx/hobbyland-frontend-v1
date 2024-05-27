@@ -21,3 +21,10 @@ export const ProfileGetByeId = (data) => {
   });
   return responseData;
 };
+
+export const FetchMeNotification = (data) => {
+  const responseData = axios.get(`${BASEURL}user/get/notifications`, {
+    withCredentials: true,
+  });
+  return responseData;
+};

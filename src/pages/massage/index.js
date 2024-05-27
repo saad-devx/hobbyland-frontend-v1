@@ -101,12 +101,15 @@ function Index() {
   const socket = useSocket();
 
   useEffect(() => {
-    if (socket) {
-      socket.on("message", (data) => {
-        setData((prevData) => [data?.message, ...prevData]);
-        console.log(data);
-      });
+    const conneckSocket = async () => {
+      if (socket) {
+        await socket.on("message", (data) => {
+          setData((prevData) => [data?.message, ...prevData]);
+          console.log(data, "socket");
+        });
+      }
     }
+    conneckSocket()
   }, [socket]);
   console.log(data);
 
