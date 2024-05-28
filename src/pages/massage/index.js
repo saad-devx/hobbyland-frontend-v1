@@ -93,6 +93,7 @@ function Index() {
       const response = await MessageSend(roomid, sendmassage);
       if (response) {
         setSendmassage("");
+        fetchAllMessages();
       }
     } catch (error) {
       console.log(error);
@@ -103,6 +104,7 @@ function Index() {
   useEffect(() => {
     const conneckSocket = async () => {
       if (socket) {
+        console.log(socket, "message-socket")
         await socket.on("message", (data) => {
           setData((prevData) => [data?.message, ...prevData]);
           console.log(data, "socket");

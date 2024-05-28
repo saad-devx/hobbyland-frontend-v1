@@ -44,7 +44,9 @@ import Render from "./render";
 
 export default function App({ Component, pageProps }) {
 
-
+  useEffect(() => {
+    import('bootstrap/dist/js/bootstrap.bundle.min.js');
+  }, [])
   return (
     <AuthProvider>
       <SocketProvider>

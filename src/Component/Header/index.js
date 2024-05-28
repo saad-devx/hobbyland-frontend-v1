@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/config/contextapi/user";
 import { SocketProvider, useSocket } from "@/config/contextapi/socket";
+import NotificationDropdown from "@/Component/Notificationdrowpdown";
 
 function Header() {
   const [datalenght, setDatalenght] = useState(0);
@@ -16,8 +17,10 @@ function Header() {
   const [fixedNavebare, setFixedNavebare] = useState(false);
   const [faveroutelenght, setFaveroutelenght] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [notification, setNotification] = useState([]);
   const router = useRouter();
-  const { fetchUserData } = useContext(UserContext)
+  const { fetchUserData } = useContext(UserContext);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 135) {
@@ -50,7 +53,7 @@ function Header() {
         if (response) {
           console.log(response, "fetchme header");
           setUserdata({ ...response.data.user });
-          fetchUserData()
+          fetchUserData();
           const cookies = document.cookie.split(";");
           console.log(cookies, "cookies");
           let isLoggedIn = false;
@@ -77,7 +80,7 @@ function Header() {
       setToken(false);
     }
   };
-  const [notification, setNotification] = useState([])
+
   const FetchNotification = async () => {
     try {
       const cookies = document.cookie.split(";");
@@ -90,22 +93,22 @@ function Header() {
         }
       });
       if (isLoggedIn) {
-        const response = await FetchMeNotification()
+        const response = await FetchMeNotification();
         if (response) {
-          console.log(response, "notification")
-          setNotification(response.data.notifications_data[0]?.notifications)
-          // console.log()
-          console.log(notification, "notifcation")
+          console.log(response, "notification");
+          setNotification(response.data.notifications_data[0]?.notifications);
+          console.log(notification, "notifcation");
         }
       }
-
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }
+  };
+
   useEffect(() => {
-    FetchNotification()
-  }, [])
+    FetchNotification();
+  }, []);
+
   useEffect(() => {
     fecthMeData();
     console.log(token, "token");
@@ -127,11 +130,13 @@ function Header() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
   const socket = useSocket();
   useEffect(() => {
     if (socket) {
     }
-  }, [])
+  }, []);
+
   return (
     <>
       {token ? (
@@ -184,7 +189,7 @@ function Header() {
                     setOpenSideBar(true);
                   }}
                   icon="eva:menu-2-outline"
-                  fontSize={40}
+                  fontSize={25}
                   color="white"
                 />
               </div>
@@ -248,69 +253,9 @@ function Header() {
                     color="white"
                   />
                 </div>
-                {/* {notification} */}
-                <div
-                  onClick={handleMenuOpen}
-                  style={{ position: "relative", cursor: "pointer" }}
-                >
-                  <div>
-                    <Icon
-                      fontSize={25}
-                      icon="mingcute:notification-fill"
-                      color="white"
-                    />
-                  </div>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                  >
-                    {notification?.map((e, i) => {
-                      console.log(notification)
-                      return (
-                        <div
-                          style={{
-                            cursor: "pointer",
-                            padding: "15px",
-                            backgroundColor: "#e6faf5",
-                            padding: "2px",
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "10px",
-                            width: "500px",
-                            alignItems: "center"
-                          }}
-                          className="notification_"
-                        >
-                          <div>
 
-                            <Icon
-                              icon="ep:success-filled"
-                              style={{ fontSize: "29px", color: "#01b574" }}
-                            />
-                          </div>
-                          <div>
+                <NotificationDropdown />
 
-                            <div className="fs-5 fw-bold">{e?.mini_msg}</div>
-                            <div className="">{e?.message}</div>
-                          </div>
-
-                        </div>
-                      )
-                    })
-                    }
-
-                  </Menu>
-                </div>
                 <div
                   onClick={handleFaverioteCLick}
                   style={{ position: "relative", cursor: "pointer" }}

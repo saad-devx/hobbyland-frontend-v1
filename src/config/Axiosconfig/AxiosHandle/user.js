@@ -28,3 +28,8 @@ export const FetchMeNotification = (data) => {
   });
   return responseData;
 };
+export const UpdateNotificationCategory = (data) => {
+  const responseData = axios.put(`${BASEURL}user/get/notifications/update-status?category=${data}`, {}, { withCredentials: true });
+  console.log(data)
+  return responseData;
+};

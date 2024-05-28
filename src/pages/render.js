@@ -53,8 +53,9 @@ function Render({ Component, pageProps }) {
             const deviceId = await beamsClient.start().then(client => client.getDeviceId());
             await beamsClient.addDeviceInterest(user?._id);
             const interests = await beamsClient.getDeviceInterests();
+            console.log(interests)
         } catch (error) {
-
+            console.log(error, "pusherinterest err")
         }
     }
 
