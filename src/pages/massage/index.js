@@ -11,7 +11,7 @@ import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import MassageLayout from "@/layout/Massageloyout";
 import { all } from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import ContentLoader, {
   Instagram,
@@ -20,9 +20,9 @@ import ContentLoader, {
   Code,
 } from "react-content-loader";
 import { Icon } from "@iconify/react";
-import { useSocket } from "@/config/contextapi/socket";
+import { UserContext } from "@/config/contextapi/user";
 
-function Index() {
+function Index({ socket }) {
   const router = useRouter();
   const [loader, setLoader] = useState(true);
   const [sendmassage, setSendmassage] = useState("");
@@ -86,34 +86,23 @@ function Index() {
     };
     fetchRoom();
   }, [roomid]);
-
   const handleMessageSend = async () => {
     if (!sendmassage) return;
     try {
       const response = await MessageSend(roomid, sendmassage);
       if (response) {
         setSendmassage("");
-        fetchAllMessages();
       }
     } catch (error) {
       console.log(error);
     }
   };
-  const socket = useSocket();
-
   useEffect(() => {
-    const conneckSocket = async () => {
-      if (socket) {
-        console.log(socket, "message-socket")
-        await socket.on("message", (data) => {
-          setData((prevData) => [data?.message, ...prevData]);
-          console.log(data, "socket");
-        });
-      }
-    }
-    conneckSocket()
-  }, [socket]);
-  console.log(data);
+
+    socket?.on("message", (data) => {
+      setData((prevData) => [data?.message, ...prevData]);
+    })
+  }, [socket])
 
   const otherMember = room.members?.find((member) => member._id !== medata._id);
 

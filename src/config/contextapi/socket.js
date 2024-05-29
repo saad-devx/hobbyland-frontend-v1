@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { AuthToken } from "../Axiosconfig/AxiosHandle/chat";
-import { BASECHATURL } from "../Axiosconfig";
+// SocketContext.js
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import io from 'socket.io-client';
+import { BASECHATURL } from '../Axiosconfig';
+import { AuthToken } from '../Axiosconfig/AxiosHandle/chat';
+
 
 const SocketContext = createContext(null);
-export const useSocket = () => {
-  return useContext(SocketContext);
-};
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
@@ -34,8 +33,6 @@ export const SocketProvider = ({ children }) => {
               },
             });
 
-            setSocket(newSocket);
-
             newSocket.on("connect", () => {
               console.log("Socket connected successfully");
             });
@@ -43,6 +40,8 @@ export const SocketProvider = ({ children }) => {
             newSocket.on("error", (error) => {
               console.error("Socket connection error:", error);
             });
+
+            setSocket(newSocket); // Set the socket in state
           }
         }
       } catch (error) {
@@ -53,7 +52,6 @@ export const SocketProvider = ({ children }) => {
     fetchAuthSocket();
 
     return () => {
-      // Clean up socket connection
       if (socket) {
         socket.disconnect();
       }
@@ -61,6 +59,10 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={socket}>
+      {children}
+    </SocketContext.Provider>
   );
 };
+
+export const useSocket = () => useContext(SocketContext);

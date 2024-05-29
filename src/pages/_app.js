@@ -36,11 +36,11 @@ import "@/styles/Auth/signupDetail.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
 import React, { useEffect, useState } from "react";
-import { SocketProvider } from "@/config/contextapi/socket";
 import { AuthProvider } from "@/config/contextapi/auth";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { UserProvider } from "@/config/contextapi/user";
 import Render from "./render";
+import { SocketProvider } from "@/config/contextapi/socket";
 
 export default function App({ Component, pageProps }) {
 

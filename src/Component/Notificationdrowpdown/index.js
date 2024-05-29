@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from "@iconify/react";
 import { FetchMeNotification, UpdateNotificationCategory } from '@/config/Axiosconfig/AxiosHandle/user';
+import { useSocket } from '@/config/contextapi/socket';
 
 const NotificationDropdown = () => {
     const [expanded, setExpanded] = useState({});
@@ -79,6 +80,7 @@ const NotificationDropdown = () => {
     console.log(notifications)
     const filteredNotifications = notifications.filter(notif => notif.category === tab);
     console.log(filteredNotifications, "filter")
+
     return (
         <div className="dropdown" ref={dropdownRef}>
             <button

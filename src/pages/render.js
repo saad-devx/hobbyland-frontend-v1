@@ -1,13 +1,13 @@
-import { BASECHATURL } from '@/config/Axiosconfig';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '@/config/contextapi/user';
 import { AuthToken } from '@/config/Axiosconfig/AxiosHandle/chat';
 import { io } from "socket.io-client";
-import { UserContext } from '@/config/contextapi/user';
-import React, { useContext, useEffect, useState } from 'react'
+import { BASECHATURL } from '@/config/Axiosconfig';
+import { useSocket } from '@/config/contextapi/socket';
 
 function Render({ Component, pageProps }) {
-
-    const { user } = useContext(UserContext)
-    console.log(user, "render")
+    const { user } = useContext(UserContext);
+    const [socket, setSocket] = useState(null)
     const fetchAuthSocket = async () => {
         try {
             const cookies = document.cookie.split(";");
@@ -30,45 +30,51 @@ function Render({ Component, pageProps }) {
                         },
                     });
 
-
                     newSocket.on("connect", () => {
                         console.log("Socket connected successfully");
                     });
-
+                    console.log(newSocket, "render.js")
                     newSocket.on("error", (error) => {
                         console.error("Socket connection error:", error);
                     });
+                    setSocket(newSocket)
+
                 }
             }
         } catch (error) {
             console.log(error);
         }
     };
+
     const pusherAppSubscribe = async () => {
         try {
             const PusherPushNotifications = await import("@pusher/push-notifications-web");
             const beamsClient = new PusherPushNotifications.Client({
-                instanceId: "3c7f24f8-0cec-4d30-af7a-d137b4b70eb6", // Replace with your instance ID
+                instanceId: "3c7f24f8-0cec-4d30-af7a-d137b4b70eb6",
             });
-            const deviceId = await beamsClient.start().then(client => client.getDeviceId());
-            await beamsClient.addDeviceInterest(user?._id);
-            const interests = await beamsClient.getDeviceInterests();
-            console.log(interests)
+            if (user?._id) {
+                await beamsClient.start()
+                    .then(client => client.getDeviceId())
+                    .then(deviceId => {
+                        return beamsClient.addDeviceInterest(user._id);
+                    })
+                    .then(() => beamsClient.getDeviceInterests())
+                    .then(interests => {
+                    });
+            } else {
+                console.log("User ID not found");
+            }
         } catch (error) {
-            console.log(error, "pusherinterest err")
         }
-    }
+    };
+
 
     useEffect(() => {
         pusherAppSubscribe();
-        fetchAuthSocket()
+        fetchAuthSocket();
     }, [user]);
-    return (
-        <>
-            <Component {...pageProps} />
 
-        </>
-    )
+    return <Component socket={socket} {...pageProps} />;
 }
 
-export default Render
+export default Render;

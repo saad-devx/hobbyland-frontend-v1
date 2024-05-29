@@ -22,9 +22,10 @@ function Index() {
     try {
       const responseData = await FetchQrcode();
       if (responseData) {
-        console.log(responseData);
-        setQrcode(responseData.data.qr_url);
-        setSecret(responseData.data.qr_secret);
+        console.log(responseData, "qrcode");
+        setQrcode(responseData?.data?.qr_url);
+        setSecret(responseData?.data?.qr_secret);
+        console.log(qrcode, "qrcode")
       }
     } catch (error) {
       console.log(error, "err");

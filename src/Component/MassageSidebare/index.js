@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-function Index() {
+function Index({ socket }) {
   const [data, setData] = useState([]);
   const [openSideBare, setOpenSideBare] = useState(true);
   const [open, setOpen] = useState(true);
@@ -49,15 +49,13 @@ function Index() {
   useEffect(() => {
     GetRooms();
   }, []);
-  const socket = useSocket();
+
   useEffect(() => {
-    if (socket) {
-      socket.on("new-room", (data) => {
-        alert("new-room")
-        setData((prevData) => [data, ...prevData]);
-      });
-    }
-  }, [socket]);
+    socket?.on("new-room", (data) => {
+      setData((prevData) => [data, ...prevData]);
+
+    })
+  }, [socket])
 
   const router = useRouter();
   const handleClick = (id) => {
