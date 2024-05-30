@@ -39,8 +39,9 @@ function Index({ socket }) {
     try {
       const response = await FectchRooms();
       if (response) {
-        setData([...response.data.rooms]);
-        console.log(data);
+        console.log(response, "getroom")
+        setData([...response?.data.rooms]);
+        console.log(data, "state data");
       }
     } catch (e) {
       console.log(e, "err");
@@ -52,8 +53,7 @@ function Index({ socket }) {
 
   useEffect(() => {
     socket?.on("new-room", (data) => {
-      setData((prevData) => [data, ...prevData]);
-
+      GetRooms()
     })
   }, [socket])
 
@@ -121,7 +121,7 @@ function Index({ socket }) {
               <button className="btn_Green mt-3">Search</button>
             </div>
             <div className="mt-3">
-              {data.map((room, i) => {
+              {data?.map((room, i) => {
                 const otherMember = room.members?.find(
                   (member) => member._id !== medata._id
                 );
@@ -144,7 +144,22 @@ function Index({ socket }) {
                     </div>
                   );
                 } else {
-                  return null;
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => {
+                        handleClick(room.last_message.room_id);
+                      }}
+                      className="chips_"
+                    >
+                      <div className="circleProfile">
+                        Y
+                      </div>
+                      <div>
+                        <div className="title_">You</div>
+                      </div>
+                    </div>
+                  )
                 }
               })}
             </div>

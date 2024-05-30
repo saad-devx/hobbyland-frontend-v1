@@ -1,9 +1,10 @@
 import { Footer, Header } from "@/Component";
 import { AuthToken, CreateRoom } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { ProfileGetByeId } from "@/config/Axiosconfig/AxiosHandle/user";
+import { UserContext } from "@/config/contextapi/user";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 function Index() {
   const router = useRouter();
@@ -55,6 +56,8 @@ function Index() {
     }
   };
   console.log(medocumentation, "docmu");
+  const { user } = useContext(UserContext);
+
   return (
     <div>
       <Header />
@@ -89,14 +92,14 @@ function Index() {
             <h2>{medata?.firstname}</h2>
             <p>{medata?.lastname}</p>
             {medata?.account_type ===
-            "student" ? null : medata?.account_type === "mentor" ? (
-              <button
-                onClick={handleCreateRoom}
-                className="btn_Green_Large_Size"
-              >
-                Contact With Mentor
-              </button>
-            ) : null}
+              "student" ? null : medata?.account_type === "mentor" ? (
+                medata?._id === id ? (<div></div>) : (<button
+                  onClick={handleCreateRoom}
+                  className="btn_Green_Large_Size"
+                >
+                  Contact With Mentor
+                </button>)
+              ) : null}
           </div>
         </div>
         <div className="row">

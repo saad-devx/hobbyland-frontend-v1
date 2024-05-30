@@ -52,21 +52,25 @@ function Render({ Component, pageProps }) {
             const beamsClient = new PusherPushNotifications.Client({
                 instanceId: "3c7f24f8-0cec-4d30-af7a-d137b4b70eb6",
             });
+
             if (user?._id) {
                 await beamsClient.start()
-                    .then(client => client.getDeviceId())
-                    .then(deviceId => {
-                        return beamsClient.addDeviceInterest(user._id);
+                    .then(client => {
+                        console.log("Beams client started successfully");
+                        return client.getDeviceId();
                     })
-                    .then(() => beamsClient.getDeviceInterests())
-                    .then(interests => {
-                    });
+                    .then(deviceId => {
+                        console.log(`Device ID: ${deviceId}`);
+                        return beamsClient.addDeviceInterest(user?._id);
+                    })
             } else {
                 console.log("User ID not found");
             }
         } catch (error) {
+
         }
     };
+
 
 
     useEffect(() => {

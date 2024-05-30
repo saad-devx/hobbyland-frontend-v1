@@ -34,8 +34,7 @@ function Index() {
 
   const handleSubmit = async () => {
     if (!totp) {
-      // Check if OTP is empty
-      setError("Please enter OTP"); // Set error message
+      setError("Please enter OTP");
       return;
     }
     const data = {

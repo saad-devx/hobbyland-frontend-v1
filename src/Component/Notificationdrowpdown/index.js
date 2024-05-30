@@ -78,7 +78,7 @@ const NotificationDropdown = () => {
         FetchNotification();
     }, [refresh]);
     console.log(notifications)
-    const filteredNotifications = notifications.filter(notif => notif.category === tab);
+    const filteredNotifications = notifications?.filter(notif => notif.category === tab);
     console.log(filteredNotifications, "filter")
 
     return (
@@ -87,65 +87,70 @@ const NotificationDropdown = () => {
                 type="button"
                 id="dropdownMenuButton"
                 onClick={handleDropdownToggle}
+
                 aria-expanded={isDropdownOpen}
             >
-                <Icon fontSize={25} icon="mingcute:notification-fill" color="white" />
+                <Icon
+                    fontSize={25} icon="mingcute:notification-fill" color="white" />
             </button>
             {isDropdownOpen && (
-                <div className="dropdown-menu-wrapper" >
-                    <div className="dropdown-menu show" aria-labelledby="dropdownMenuButton">
-                        <div className='top_fixed'>
-                            <div onClick={() => setTab("account")} className={`${tab === 'account' ? "ineerbutton_active" : "ineerbutton"}`}>
-                                Account
+                <>
+                    <div className="dropdown-menu-wrapper" >
+                        <div className="dropdown-menu show" aria-labelledby="dropdownMenuButton">
+                            <div className='top_fixed'>
+                                <div onClick={() => setTab("account")} className={`${tab === 'account' ? "ineerbutton_active" : "ineerbutton"}`}>
+                                    Account
+                                </div>
+                                <div onClick={() => setTab("primary")} className={`${tab === 'primary' ? "ineerbutton_active" : "ineerbutton"}`}>
+                                    Primary
+                                </div>
                             </div>
-                            <div onClick={() => setTab("primary")} className={`${tab === 'primary' ? "ineerbutton_active" : "ineerbutton"}`}>
-                                Primary
-                            </div>
-                        </div>
 
-                        <div className='w-100 d-flex justify-content-end p-2 align-items-center gap-3' style={{ height: "45px", backgroundColor: "white" }}>
-                            <button onClick={() => setRefresh(!refresh)} className='button-outline d-flex align-items-center '>
-                                <div>
-                                    <Icon icon="dashicons:yes" fontSize="16px" />
-                                </div>
-                                <div onClick={UpdateCategrios} style={{ fontSize: "16px" }}>
-                                    Mark All as read
-                                </div>
-                            </button>
-                            <button onClick={FetchNotification} className='button-outline d-flex align-items-center '>
-                                <div>
-                                    <Icon icon="material-symbols:refresh" fontSize="16px" />
-                                </div>
-                                <div style={{ fontSize: "16px" }}>
-                                    Refresh
-                                </div>
-                            </button>
-                        </div>
-
-                        <div className="notifications-content">
-                            {filteredNotifications.length > 0 ? (
-                                filteredNotifications.map((notif, index) => (
-                                    <div key={index} className={`notificationchips ${expanded[index] ? 'expanded' : ''}`}>
-                                        <div>
-                                            <div className='fw-bold'>{notif.mini_msg}</div>
-                                            <div className='description_dsc'>
-                                                {expanded[index] ? notif.message : notif.message.slice(0, 60)}
-                                                {isTruncated(notif.message) && !expanded[index] && '...'}
-                                            </div>
-                                            {isTruncated(notif.message) && (
-                                                <div className='seemorebutton' onClick={() => toggleExpand(index)}>
-                                                    {expanded[index] ? 'Show Less' : 'See More..'}
-                                                </div>
-                                            )}
-                                        </div>
+                            <div className='w-100 d-flex justify-content-end p-2 align-items-center gap-3' style={{ height: "45px", backgroundColor: "white" }}>
+                                <button onClick={() => setRefresh(!refresh)} className='button-outline d-flex align-items-center '>
+                                    <div>
+                                        <Icon icon="dashicons:yes" fontSize="16px" />
                                     </div>
-                                ))
-                            ) : (
-                                <li className="dropdown-item w-100 text-center">No notifications</li>
-                            )}
+                                    <div onClick={UpdateCategrios} style={{ fontSize: "16px" }}>
+                                        Mark All as read
+                                    </div>
+                                </button>
+                                <button onClick={FetchNotification} className='button-outline d-flex align-items-center '>
+                                    <div>
+                                        <Icon icon="material-symbols:refresh" fontSize="16px" />
+                                    </div>
+                                    <div style={{ fontSize: "16px" }}>
+                                        Refresh
+                                    </div>
+                                </button>
+                            </div>
+
+                            <div className="notifications-content">
+                                {filteredNotifications?.length > 0 ? (
+                                    filteredNotifications?.map((notif, index) => (
+                                        <div key={index} className={`notificationchips ${expanded[index] ? 'expanded' : ''}`}>
+                                            <div>
+                                                <div className='fw-bold'>{notif.mini_msg}</div>
+                                                <div className='description_dsc'>
+                                                    {expanded[index] ? notif.message : notif.message.slice(0, 60)}
+                                                    {isTruncated(notif.message) && !expanded[index] && '...'}
+                                                </div>
+                                                {isTruncated(notif.message) && (
+                                                    <div className='seemorebutton' onClick={() => toggleExpand(index)}>
+                                                        {expanded[index] ? 'Show Less' : 'See More..'}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <li className="dropdown-item w-100 text-center">No notifications</li>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                </>
             )}
         </div>
     );

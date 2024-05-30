@@ -13,6 +13,7 @@ function Index() {
     try {
       const response = await FindService(title);
       if (response) {
+        console.log(response, "serach data")
         setData([...response.data.services]);
       }
     } catch (e) {

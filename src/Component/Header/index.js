@@ -141,9 +141,10 @@ function Header() {
     <>
       {token ? (
         <>
+          <div className="emptybox"></div>
           <div
-            className={`${fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
-              }`}
+            className={"Navebar_Container"}
+
           >
             {openSideBar ? (
               <div className="SideBarContainer">
@@ -284,87 +285,90 @@ function Header() {
           </div>
         </>
       ) : (
-        <div
-          className={`${fixedNavebare ? "fixed_Navebar_Container" : "Navebar_Container"
-            }`}
-        >
-          {openSideBar ? (
-            <div className="SideBarContainer">
-              <div className="CLoseIcon">
-                <Icon
-                  onClick={() => {
-                    setOpenSideBar(false);
-                  }}
-                  icon="material-symbols:close"
-                  fontSize={40}
-                  color="black"
-                />
-                <div className="Link_Navigation_Container">
-                  <div
+        <>
+          <div className="emptybox"></div>
+
+          <div
+            className="Navebar_Container"
+          >
+            {openSideBar ? (
+              <div className="SideBarContainer">
+                <div className="CLoseIcon">
+                  <Icon
                     onClick={() => {
-                      router.push("./SIgnupDetail");
+                      setOpenSideBar(false);
                     }}
-                    className="Responsive_Navigation_link"
-                  >
-                    HobbyLand Teacher
-                  </div>
-                  <div
-                    onClick={() => {
-                      router.push("./SIgnupDetail");
-                    }}
-                    className="Responsive_Navigation_link"
-                  >
-                    HobbyLand student
+                    icon="material-symbols:close"
+                    fontSize={40}
+                    color="black"
+                  />
+                  <div className="Link_Navigation_Container">
+                    <div
+                      onClick={() => {
+                        router.push("./SIgnupDetail");
+                      }}
+                      className="Responsive_Navigation_link"
+                    >
+                      HobbyLand Teacher
+                    </div>
+                    <div
+                      onClick={() => {
+                        router.push("./SIgnupDetail");
+                      }}
+                      className="Responsive_Navigation_link"
+                    >
+                      HobbyLand student
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : null}
-          <div className="Left_Section">
-            <div className="MenueIcon">
-              <Icon
+            ) : null}
+            <div className="Left_Section">
+              <div className="MenueIcon">
+                <Icon
+                  onClick={() => {
+                    setOpenSideBar(true);
+                  }}
+                  icon="eva:menu-2-outline"
+                  fontSize={40}
+                  color="white"
+                />
+              </div>
+              <div className="Title_Navebar">
+                HOBBY
+                <br />
+                LAND.
+              </div>
+              <div
                 onClick={() => {
-                  setOpenSideBar(true);
+                  router.push("./SIgnupDetail");
                 }}
-                icon="eva:menu-2-outline"
-                fontSize={40}
-                color="white"
-              />
+                className="Link_Navigation"
+              >
+                HobblyLand Teacher
+              </div>
+              <div
+                onClick={() => {
+                  router.push("./SIgnupDetail");
+                }}
+                className="Link_Navigation"
+              >
+                HobblyLand StudentHome
+              </div>
             </div>
-            <div className="Title_Navebar">
-              HOBBY
-              <br />
-              LAND.
-            </div>
-            <div
-              onClick={() => {
-                router.push("./SIgnupDetail");
-              }}
-              className="Link_Navigation"
-            >
-              HobblyLand Teacher
-            </div>
-            <div
-              onClick={() => {
-                router.push("./SIgnupDetail");
-              }}
-              className="Link_Navigation"
-            >
-              HobblyLand StudentHome
+            <div className="Right_Section">
+              <Link href="./login" className="SignIn">
+                <Icon color="white" icon="zondicons:network" />
+                Sign In
+              </Link>
+              <button style={{ paddingLeft: "15px" }}>
+                <a href="./SIgnupDetail" className="btn_Header_Green">
+                  Sign Up
+                </a>
+              </button>
             </div>
           </div>
-          <div className="Right_Section">
-            <Link href="./login" className="SignIn">
-              <Icon color="white" icon="zondicons:network" />
-              Sign In
-            </Link>
-            <button style={{ paddingLeft: "15px" }}>
-              <a href="./SIgnupDetail" className="btn_Header_Green">
-                Sign Up
-              </a>
-            </button>
-          </div>
-        </div>
+        </>
       )}
     </>
   );

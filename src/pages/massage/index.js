@@ -98,9 +98,8 @@ function Index({ socket }) {
     }
   };
   useEffect(() => {
-
     socket?.on("message", (data) => {
-      setData((prevData) => [data?.message, ...prevData]);
+      fetchAllMessages()
     })
   }, [socket])
 
@@ -118,11 +117,20 @@ function Index({ socket }) {
         }}
       >
         {roomid ? (
-          <div className="Header_Top">
-            <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
+          otherMember ? (
+            <div className="Header_Top">
+              <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
 
-            <div className="title_">{otherMember?.firstname}</div>
-          </div>
+              <div className="title_">{otherMember?.firstname}</div>
+            </div>
+          ) : (
+            <div className="Header_Top">
+              <div className="circle_box">Y</div>
+
+              <div className="title_">You</div>
+            </div>
+          )
+
         ) : null}
 
         {roomid ? (
