@@ -12,6 +12,13 @@ function Index() {
   const { query } = router.query;
   console.log(query);
   const Acounttype = query;
+  const [acountType, setAcountType] = useState()
+  useEffect(() => {
+    const data = localStorage.getItem("acountType")
+    setAcountType(data)
+
+    console.log(acountType, 'acoht type')
+  }, [query])
   const [signupData, setSignupData] = useState({
     username: "",
     email: "",
@@ -19,13 +26,12 @@ function Index() {
     firstname: "",
     lastname: "",
     timezone: "",
-    account_type: query,
+    account_type: acountType ? acountType : query,
     accept_policies: accecptPolicies,
     register_provider: "hobbyland",
   });
   const [errors, setErrors] = useState({});
   const [timezones, setTimezones] = useState([]);
-
   useEffect(() => {
     const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const timezoneList = moment.tz.names();
@@ -82,6 +88,7 @@ function Index() {
           console.log(data.data.msg);
           setSuccess(data.data.msg);
           setError("");
+          localStorage.removeItem("acountType")
 
           setTimeout(() => {
             router.push("./otp");

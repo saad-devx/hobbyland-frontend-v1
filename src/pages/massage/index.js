@@ -56,6 +56,7 @@ function Index({ socket }) {
     };
     fetchData();
   }, []);
+
   const fetchAllMessages = async () => {
     try {
       if (!roomid) return;
@@ -68,6 +69,7 @@ function Index({ socket }) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchAllMessages();
   }, [roomid]);
@@ -86,6 +88,7 @@ function Index({ socket }) {
     };
     fetchRoom();
   }, [roomid]);
+
   const handleMessageSend = async () => {
     if (!sendmassage) return;
     try {
@@ -97,11 +100,12 @@ function Index({ socket }) {
       console.log(error);
     }
   };
+
   useEffect(() => {
-    socket?.on("message", (data) => {
-      fetchAllMessages()
-    })
-  }, [socket])
+    socket?.on("message", (v) => {
+      setData((prevData) => [v.message, ...prevData]);
+    });
+  }, [socket]);
 
   const otherMember = room.members?.find((member) => member._id !== medata._id);
 
@@ -130,7 +134,6 @@ function Index({ socket }) {
               <div className="title_">You</div>
             </div>
           )
-
         ) : null}
 
         {roomid ? (
@@ -150,81 +153,81 @@ function Index({ socket }) {
                     padding: "25px",
                   }}
                 >
-                  {data
-                    .map((message, index, array) => {
-                      if (index === array.length - 1) {
-                        return (
-                          <div className="py-3 m-auto d-flex justify-content-center">
-                            <span
-                              style={{
-                                margin: "auto",
-                                marginTop: "10px",
-                                marginBottom: "20px",
-                                backgroundColor: "#003a55",
-                                color: "white",
-                                padding: "10px",
-                              }}
-                              className="rounded"
-                              key={index}
-                            >
-                              {message.content}
-                            </span>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div
-                            style={{
-                              height: "45px",
-                              width: "100%",
-                              marginTop: "20px",
-                              backgroundColor: "transparent",
-                            }}
-                          >
-                            <p
-                              style={{
-                                fontSize: "15px",
-                                paddingLeft: "2px",
-                                lineHeight: "18px",
-                                textAlign:
-                                  message.author._id == medata._id
-                                    ? "right"
-                                    : "left",
-                              }}
-                            >
-                              {message.author.firstname}
-                            </p>
-                            <div
-                              style={{
-                                width: "100%",
-                                marginTop: "-18px",
-                                height: "35px",
-                                backgroundColor: "transparent",
-                                display: "flex",
-                                alignItems: "center",
-
-                                justifyContent:
-                                  message.author._id == medata._id
-                                    ? "flex-end"
-                                    : "flex-start",
-                              }}
-                            >
+                  {data.length > 0 &&
+                    data
+                      .map((message, index, array) => {
+                        if (index === array.length - 1) {
+                          return (
+                            <div className="py-3 m-auto d-flex justify-content-center" key={index}>
                               <span
                                 style={{
-                                  paddingLeft: "10px",
-                                  paddingRight: "20px",
-                                  backgroundColor: "#e8f0fe",
+                                  margin: "auto",
+                                  marginTop: "10px",
+                                  marginBottom: "20px",
+                                  backgroundColor: "#003a55",
+                                  color: "white",
+                                  padding: "10px",
                                 }}
                                 className="rounded"
                               >
                                 {message.content}
                               </span>
                             </div>
-                          </div>
-                        );
-                      }
-                    })
-                    .reverse()}
+                          );
+                        } else {
+                          return (
+                            <div
+                              style={{
+                                height: "45px",
+                                width: "100%",
+                                marginTop: "20px",
+                                backgroundColor: "transparent",
+                              }}
+                              key={index}
+                            >
+                              <p
+                                style={{
+                                  fontSize: "15px",
+                                  paddingLeft: "2px",
+                                  lineHeight: "18px",
+                                  textAlign:
+                                    message.author._id == medata._id
+                                      ? "right"
+                                      : "left",
+                                }}
+                              >
+                                {message.author.firstname}
+                              </p>
+                              <div
+                                style={{
+                                  width: "100%",
+                                  marginTop: "-18px",
+                                  height: "35px",
+                                  backgroundColor: "transparent",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent:
+                                    message.author._id == medata._id
+                                      ? "flex-end"
+                                      : "flex-start",
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    paddingLeft: "10px",
+                                    paddingRight: "20px",
+                                    backgroundColor: "#e8f0fe",
+                                  }}
+                                  className="rounded"
+                                >
+                                  {message.content}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                      })
+                      .reverse()}
                 </div>
               </div>
             )}

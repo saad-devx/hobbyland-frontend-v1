@@ -26,6 +26,8 @@ export const SocketProvider = ({ children }) => {
         if (isLoggedIn) {
           const response = await AuthToken();
           if (response) {
+            console.log(response, "toke scoket")
+
             localStorage.setItem("Sockettoken", response.data?.token);
             const newSocket = io(BASECHATURL, {
               query: {

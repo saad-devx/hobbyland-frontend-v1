@@ -52,8 +52,10 @@ function Index({ socket }) {
   }, []);
 
   useEffect(() => {
-    socket?.on("new-room", (data) => {
-      GetRooms()
+    socket?.on("new-room", (v) => {
+      setData((prevData) => [v.message, ...prevData]);
+      console.log(v)
+      alert('v')
     })
   }, [socket])
 

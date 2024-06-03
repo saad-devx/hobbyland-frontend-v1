@@ -168,6 +168,15 @@
   height: 80px;
 }
 
+@media only screen and (max-width:794px) {
+  .SignIn {
+    display: none;
+  }
+
+  .Link_Navigation {
+    display: none;
+  }
+}
 
 
 .content_input {

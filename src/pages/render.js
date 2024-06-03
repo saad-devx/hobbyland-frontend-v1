@@ -23,6 +23,7 @@ function Render({ Component, pageProps }) {
             if (isLoggedIn) {
                 const response = await AuthToken();
                 if (response) {
+                    console.log(response, "toke render")
                     localStorage.setItem("Sockettoken", response.data?.token);
                     const newSocket = io(BASECHATURL, {
                         query: {

@@ -81,22 +81,25 @@ function SignUpHero() {
         </div>
       </div>
       <div className="text-center p-3">
-        <Link href={`./Signup?query=${dataToSend}`}>
+        <Link href={`./Signup?query=${dataToSend}`} onClick={() => {
+          localStorage.removeItem("acountType");
+          localStorage.setItem("acountType", dataToSend)
+
+        }} >
           <button
             disabled={student ? false : courseAdministator ? false : true}
-            className={`${
-              student
-                ? "btn_Green_Large_Size"
-                : courseAdministator
+            className={`${student
+              ? "btn_Green_Large_Size"
+              : courseAdministator
                 ? "btn_Green_Large_Size"
                 : "btn_Green_Large_Size_Disabled"
-            }`}
+              }`}
           >
             {student
               ? "Join as a Student"
               : courseAdministator
-              ? "Join as a Administator"
-              : "Create Acount"}
+                ? "Join as a Administator"
+                : "Create Acount"}
           </button>
         </Link>
 
