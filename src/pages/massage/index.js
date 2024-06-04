@@ -29,6 +29,13 @@ function Index({ socket }) {
   const [data, setData] = useState([]);
   const [medata, serMedata] = useState({});
   const [room, setRoom] = useState({});
+  const [openSpeaker, setOpenSpeaker] = useState(false)
+  const [opneVoluem, setOpneVoluem] = useState(false)
+
+  const [popupOpen, setPopupOpen] = useState({
+    open: false,
+    type: "me"
+  })
   const { id } = router.query;
   const roomid = id;
 
@@ -123,15 +130,29 @@ function Index({ socket }) {
         {roomid ? (
           otherMember ? (
             <div className="Header_Top">
-              <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
+              <div className="d-flex gap-1 align-items-center">
+                <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
 
-              <div className="title_">{otherMember?.firstname}</div>
+                <div className="title_">{otherMember?.firstname}</div>
+              </div>
+              <div onClick={() => {
+                setPopupOpen({
+                  type: "me",
+                  open: true,
+                })
+              }} className="padingleft" style={{ cursor: "pointer" }}>
+                <Icon fontSize={35} icon="material-symbols:call" />
+              </div>
             </div>
           ) : (
             <div className="Header_Top">
-              <div className="circle_box">Y</div>
+              <div>
 
-              <div className="title_">You</div>
+                <div className="circle_box">Y</div>
+
+                <div className="title_">You</div>
+              </div>
+
             </div>
           )
         ) : null}
@@ -254,7 +275,82 @@ function Index({ socket }) {
           </div>
         ) : null}
       </div>
-    </div>
+      {popupOpen?.open && (
+        <div className="popup-overlay">
+          <div className="popup-content shadow">
+            <div style={{ width: "100%" }}>
+              <div className="box">S</div>
+              <div className="text-center mt-2 fs-3">Shahbaz Ai</div>
+              <div className="text-center">Ringing</div>
+              {
+                popupOpen?.type === "me" ? (
+                  <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
+                    <div onClick={() => {
+                      setOpenSpeaker((prev) => !prev)
+                    }} className={`${openSpeaker === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
+                      {
+                        openSpeaker === true ? (
+                          <Icon icon="f7:speaker-2" fontSize={22} color="white" />
+                        ) : (
+                          <Icon icon="f7:speaker-2" fontSize={22} color="black" />
+
+                        )
+                      }
+                    </div>
+                    <div onClick={() => {
+                      setOpneVoluem((prev) => !prev)
+                    }} className={`${opneVoluem === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
+                      {
+                        opneVoluem === true ? (
+                          <svg focusable="false" width="24" height="22" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path></svg>
+                        ) : (
+                          <Icon icon="mdi:mute" />
+                        )
+                      }
+
+                    </div>
+                    <div onClick={() => {
+                      setPopupOpen({
+                        type: "",
+                        open: false
+                      })
+                    }} className="CutCall" style={{ cursor: "pointer" }}>
+                      Call end .
+                    </div>
+
+                  </div>
+                ) : popupOpen?.type === "you" ? (
+                  <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
+                    <div onClick={() => {
+                      setPopupOpen({
+                        type: "me",
+                        open: false
+                      })
+                      setPopupOpen({
+                        type: "me",
+                        open: true
+                      })
+                    }} className="AcceptCall" style={{ cursor: "pointer" }}>
+                      Accept
+                    </div>
+                    <div onClick={() => {
+                      setPopupOpen({
+                        type: "",
+                        open: false
+                      })
+                    }} className="CutCall1" style={{ cursor: "pointer" }}>
+                      Rejected
+                    </div>
+
+                  </div>
+                ) : (null)
+              }
+
+            </div>
+          </div>
+        </div>
+      )}
+    </div >
   );
 }
 
