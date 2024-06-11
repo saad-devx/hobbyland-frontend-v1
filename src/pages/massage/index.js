@@ -108,7 +108,7 @@ function Index({ socket }) {
       const response = await MessageSend(roomid, sendmassage);
       if (response) {
         setSendmassage("");
-        fetchAllMessages(); // To update the messages after sending
+        fetchAllMessages();
       }
     } catch (error) {
       console.log(error);
@@ -364,12 +364,10 @@ function Index({ socket }) {
                     style={{ cursor: "pointer" }}
                   >
                     {video === true ? (
-                      <svg focusable="false" width="24" height="22" viewBox="0 0 24 24">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
-                      </svg>
+                      <Icon icon="mdi:video" color="white" />
+
                     ) : (
-                      <Icon icon="mdi:mute" />
+                      <Icon icon="hugeicons:video-off" color="black" />
                     )}
                   </div>
                   <div onClick={() => {
