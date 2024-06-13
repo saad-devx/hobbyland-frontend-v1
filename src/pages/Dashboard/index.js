@@ -135,7 +135,7 @@ function Index() {
                         <img
                           src={e.portfolio[0].media_url}
                           height={"100%"}
-                          width="50%"
+                          width="300x"
                           style={{ marginRight: "20px", objectFit: "cover" }}
                         />
 

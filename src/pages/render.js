@@ -1,13 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@/config/contextapi/user';
-import { AuthToken } from '@/config/Axiosconfig/AxiosHandle/chat';
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "@/config/contextapi/user";
+import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { io } from "socket.io-client";
-import { BASECHATURL } from '@/config/Axiosconfig';
-import { useSocket } from '@/config/contextapi/socket';
+import { BASECHATURL, WEBRTCBASEURL } from "@/config/Axiosconfig";
+import SimplePeer from "simple-peer";
 
 function Render({ Component, pageProps }) {
     const { user } = useContext(UserContext);
-    const [socket, setSocket] = useState(null)
+    const [socket, setSocket] = useState(null);
+    const [peer, setPeer] = useState(null);
+
     const fetchAuthSocket = async () => {
         try {
             const cookies = document.cookie.split(";");
@@ -23,7 +25,6 @@ function Render({ Component, pageProps }) {
             if (isLoggedIn) {
                 const response = await AuthToken();
                 if (response) {
-                    console.log(response, "toke render")
                     localStorage.setItem("Sockettoken", response.data?.token);
                     const newSocket = io(BASECHATURL, {
                         query: {
@@ -31,55 +32,63 @@ function Render({ Component, pageProps }) {
                         },
                     });
 
+                    const newPeer = new SimplePeer({
+                        query: {
+                            token: response.data?.token,
+                        },
+                        initiator: true,
+                        trickle: false,
+                        config: {
+                            iceServers: [
+                                { urls: "stun:stun.l.google.com:19302" },
+                            ]
+                        },
+                    });
+
+                    console.log('New peer created:', newPeer);
+                    newPeer.on("signal", data => {
+                        console.log("Signal data sent:", data);
+                        newSocket.emit("signal", data);
+                    });
+                    newPeer.on("connect", () => {
+                        console.log("WebRTC connected successfully");
+                    });
+                    newPeer.on("error", (err) => {
+                        console.error("WebRTC connection error:", err);
+                    });
+                    ;
                     newSocket.on("connect", () => {
                         console.log("Socket connected successfully");
                     });
-                    console.log(newSocket, "render.js")
                     newSocket.on("error", (error) => {
                         console.error("Socket connection error:", error);
                     });
-                    setSocket(newSocket)
+                    newSocket.on("signal", data => {
+                        console.log("Received signal:", data);
+                        newPeer.signal(data);
+                    });
 
+                    newSocket.on("ice-candidate", (candidate) => {
+                        console.log("Received ICE candidate:", candidate);
+                        newPeer.signal({
+                            candidate
+                        });
+                    });
+
+                    setSocket(newSocket);
+                    setPeer(newPeer);
                 }
             }
         } catch (error) {
-            console.log(error);
+            console.error("Error in fetchAuthSocket:", error);
         }
     };
-
-    const pusherAppSubscribe = async () => {
-        try {
-            const PusherPushNotifications = await import("@pusher/push-notifications-web");
-            const beamsClient = new PusherPushNotifications.Client({
-                instanceId: "3c7f24f8-0cec-4d30-af7a-d137b4b70eb6",
-            });
-
-            if (user?._id) {
-                await beamsClient.start()
-                    .then(client => {
-                        console.log("Beams client started successfully");
-                        return client.getDeviceId();
-                    })
-                    .then(deviceId => {
-                        console.log(`Device ID: ${deviceId}`);
-                        return beamsClient.addDeviceInterest(user?._id);
-                    })
-            } else {
-                console.log("User ID not found");
-            }
-        } catch (error) {
-
-        }
-    };
-
-
 
     useEffect(() => {
-        pusherAppSubscribe();
         fetchAuthSocket();
     }, [user]);
 
-    return <Component socket={socket} {...pageProps} />;
+    return <Component socket={socket} peer={peer} {...pageProps} />;
 }
 
 export default Render;
