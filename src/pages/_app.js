@@ -41,6 +41,7 @@ import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { UserProvider } from "@/config/contextapi/user";
 import Render from "./render";
 import { SocketProvider } from "@/config/contextapi/socket";
+import { PeerProvider } from "@/config/contextapi/peer";
 
 export default function App({ Component, pageProps }) {
 

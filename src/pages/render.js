@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { UserContext } from "@/config/contextapi/user";
 import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { io } from "socket.io-client";
@@ -32,31 +32,25 @@ function Render({ Component, pageProps }) {
                         },
                     });
 
-                    const newPeer = new SimplePeer({
-                        query: {
-                            token: response.data?.token,
-                        },
-                        initiator: true,
-                        trickle: false,
-                        config: {
-                            iceServers: [
-                                { urls: "stun:stun.l.google.com:19302" },
-                            ]
-                        },
-                    });
 
-                    console.log('New peer created:', newPeer);
-                    newPeer.on("signal", data => {
-                        console.log("Signal data sent:", data);
-                        newSocket.emit("signal", data);
-                    });
-                    newPeer.on("connect", () => {
-                        console.log("WebRTC connected successfully");
-                    });
-                    newPeer.on("error", (err) => {
-                        console.error("WebRTC connection error:", err);
-                    });
-                    ;
+
+                    const Peer = useMemo(() => new RTCPeerConnection(
+                        {
+                            query: {
+                                token: response.data?.token,
+                            },
+                            iceServers: [
+                                {
+                                    urls: [
+                                        "stun:stun.l.goggle.com:19302",
+                                        "stun:global.stun.twilio.com:478"
+                                    ]
+                                }
+                            ]
+
+                        }
+                    ), [])
+
                     newSocket.on("connect", () => {
                         console.log("Socket connected successfully");
                     });
@@ -75,8 +69,7 @@ function Render({ Component, pageProps }) {
                         });
                     });
 
-                    setSocket(newSocket);
-                    setPeer(newPeer);
+                    setSocket(newSocket);;
                 }
             }
         } catch (error) {

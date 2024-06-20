@@ -1,8 +1,5 @@
 import { BASECHATURL } from "@/config/Axiosconfig";
 import {
-  AuthToken,
-  CreateRoom,
-  FectchRooms,
   GetMassage,
   GetSingleRoom,
   MessageSend,
@@ -11,12 +8,9 @@ import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import MassageLayout from "@/layout/Massageloyout";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { useGlobal, getGlobal } from 'reactn';
+import { useGlobal } from 'reactn';
 
-import { io } from "socket.io-client";
 import ContentLoader, {
-  Instagram,
-  List,
   BulletList,
   Code,
 } from "react-content-loader";
@@ -94,6 +88,7 @@ function Index({ socket }) {
         const response = await GetSingleRoom(roomid);
         if (response) {
           setRoom({ ...response.data.room });
+          console.log(response.data.room, "ddd")
         }
       } catch (error) {
         console.log(error);
@@ -114,7 +109,6 @@ function Index({ socket }) {
       console.log(error);
     }
   };
-  let transport;
   let videoProducer;
   let screenProducer;
   const [audio, setAudio] = useState("audio");
@@ -137,6 +131,8 @@ function Index({ socket }) {
         audioRef.current.srcObject = stream;
       }
       console.log(stream);
+      socket?.emit("audio", { audioStream: stream })
+
     } catch (error) {
       console.error('Error accessing microphone:', error);
     }
@@ -147,6 +143,7 @@ function Index({ socket }) {
       audioStream.getTracks().forEach(track => track.stop());
       setAudioStream(null);
       setOpneVoluem(false);
+      socket?.emit("audio", { audioStream: null })
       if (audioRef.current) {
         audioRef.current.srcObject = null;
       }
@@ -155,6 +152,7 @@ function Index({ socket }) {
   const getVideo = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     setVideoStream(stream);
+    socket?.emit("video", { videoStream: stream })
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
@@ -166,6 +164,8 @@ function Index({ socket }) {
       videoStream.getTracks().forEach(track => track.stop());
       setVideoStream(null);
       setVideo(false);
+      socket?.emit("video", { videoStream: null })
+
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
@@ -189,9 +189,48 @@ function Index({ socket }) {
       setVideo(false);
     }
   };
-
+  let meetingId;
   const otherMember = room.members?.find((member) => member._id !== medata._id);
+  useEffect(() => {
+    socket?.on("in-comming-call", (data) => {
+      setPopupOpen({
+        open: true,
+        type: "you"
+      })
+    })
+  }, [socket])
 
+
+  const startCall = () => {
+    socket?.emit("call", { roomId: roomid, callerId: medata._id, videoStream: video ? videoRef : null, audioStream: audio ? audioRef : null });
+    setPopupOpen({
+      type: "me",
+      open: true
+    });
+  }
+  const HandleCancelCall = async () => {
+    socket?.emit("leave-call", { meetingId, userId: medata?._id })
+    setPopupOpen({
+      type: "",
+      open: false,
+    })
+    setVideo(false)
+    setAudio(false)
+    setVideoStream(null)
+    setAudioStream(null)
+  }
+  const AcceptCall = () => {
+    socket?.emit("accepted-call", { meetingId, userId: medata?._id })
+    setPopupOpen({
+      type: "me",
+      open: false
+    });
+    setPopupOpen({
+      type: "me",
+      open: true
+    });
+
+  }
   return (
     <div style={{ display: "flex", width: "100%", gap: "0px" }}>
       <MassageLayout />
@@ -210,12 +249,7 @@ function Index({ socket }) {
                 <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
                 <div className="title_">{otherMember?.firstname}</div>
               </div>
-              <div onClick={() => {
-                setPopupOpen({
-                  type: "me",
-                  open: true,
-                });
-              }} className="padingleft" style={{ cursor: "pointer" }}>
+              <div onClick={startCall} className="padingleft" style={{ cursor: "pointer" }}>
                 <Icon fontSize={35} icon="material-symbols:call" />
               </div>
             </div>
@@ -348,7 +382,7 @@ function Index({ socket }) {
             <div style={{ width: "100%" }}>
               <div className="box">S</div>
               <div className="text-center mt-2 fs-3">Shahbaz Ai</div>
-              <div className="text-center">Ringing</div>
+
               {popupOpen?.type === "me" ? (
                 <div
                   style={{
@@ -382,39 +416,16 @@ function Index({ socket }) {
                       <Icon icon="mdi:mute" />
                     )}
                   </div>
-                  <div onClick={() => {
-                    setPopupOpen({
-                      type: "",
-                      open: false
-                    });
-                    StopVoice();
-                    StopVideo();
-                  }} className="CutCall" style={{ cursor: "pointer" }}>
+                  <div onClick={HandleCancelCall} className="CutCall" style={{ cursor: "pointer" }}>
                     Call end.
                   </div>
                 </div>
               ) : popupOpen?.type === "you" ? (
                 <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
-                  <div onClick={() => {
-                    setPopupOpen({
-                      type: "me",
-                      open: false
-                    });
-                    setPopupOpen({
-                      type: "me",
-                      open: true
-                    });
-                  }} className="AcceptCall" style={{ cursor: "pointer" }}>
+                  <div onClick={AcceptCall} className="AcceptCall" style={{ cursor: "pointer" }}>
                     Accept
                   </div>
-                  <div onClick={() => {
-                    setPopupOpen({
-                      type: "",
-                      open: false
-                    });
-                    StopVoice();
-                    StopVideo();
-                  }} className="CutCall1" style={{ cursor: "pointer" }}>
+                  <div onClick={HandleCancelCall} className="CutCall1" style={{ cursor: "pointer" }}>
                     Rejected
                   </div>
                 </div>
