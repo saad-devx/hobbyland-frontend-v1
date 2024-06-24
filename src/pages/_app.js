@@ -35,6 +35,7 @@ import "@/styles/checkout/index.scss";
 import "@/styles/Auth/signupDetail.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { AuthProvider } from "@/config/contextapi/auth";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
@@ -43,7 +44,7 @@ import Render from "./render";
 import { SocketProvider } from "@/config/contextapi/socket";
 import { PeerProvider } from "@/config/contextapi/peer";
 
-export default function App({ Component, pageProps }) {
+function App({ Component, pageProps }) {
 
   useEffect(() => {
     import('bootstrap/dist/js/bootstrap.bundle.min.js');
@@ -59,3 +60,4 @@ export default function App({ Component, pageProps }) {
     </AuthProvider>
   );
 }
+export default dynamic(() => Promise.resolve(App), { ssr: false })

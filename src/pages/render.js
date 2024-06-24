@@ -34,22 +34,22 @@ function Render({ Component, pageProps }) {
 
 
 
-                    const Peer = useMemo(() => new RTCPeerConnection(
-                        {
-                            query: {
-                                token: response.data?.token,
-                            },
-                            iceServers: [
-                                {
-                                    urls: [
-                                        "stun:stun.l.goggle.com:19302",
-                                        "stun:global.stun.twilio.com:478"
-                                    ]
-                                }
-                            ]
+                    // const Peer = useMemo(() => new RTCPeerConnection(
+                    //     {
+                    //         query: {
+                    //             token: response.data?.token,
+                    //         },
+                    //         iceServers: [
+                    //             {
+                    //                 urls: [
+                    //                     "stun:stun.l.goggle.com:19302",
+                    //                     "stun:global.stun.twilio.com:478"
+                    //                 ]
+                    //             }
+                    //         ]
 
-                        }
-                    ), [])
+                    //     }
+                    // ), [])
 
                     newSocket.on("connect", () => {
                         console.log("Socket connected successfully");

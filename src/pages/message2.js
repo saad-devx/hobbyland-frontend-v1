@@ -1,111 +1,126 @@
-import { useEffect, useState, useRef } from "react";
-import { GetMassage, GetSingleRoom, MessageSend } from "@/config/Axiosconfig/AxiosHandle/chat";
-import { WEBRTCBASEURL } from "@/config/Axiosconfig";
-import { Device } from "mediasoup-client";
+import { BASECHATURL } from "@/config/Axiosconfig";
+import {
+    GetMassage,
+    GetSingleRoom,
+    MessageSend,
+} from "@/config/Axiosconfig/AxiosHandle/chat";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
-import createSocket from "@/lib/promisified-io";
 import MassageLayout from "@/layout/Massageloyout";
 import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useGlobal } from 'reactn';
+
+import ContentLoader, {
+    BulletList,
+    Code,
+} from "react-content-loader";
 import { Icon } from "@iconify/react";
-import ContentLoader, { BulletList, Code } from "react-content-loader";
-// import { UserContext } from "@/config/contextapi/user";
+import { UserContext } from "@/config/contextapi/user";
 
 function Index({ socket }) {
     const router = useRouter();
     const [loader, setLoader] = useState(true);
-    const [rtcSocket, setRtcSocket] = useState(null);
-    const [device, setDevice] = useState(null);
     const [sendmassage, setSendmassage] = useState("");
     const [data, setData] = useState([]);
     const [medata, serMedata] = useState({});
     const [room, setRoom] = useState({});
+    const [openSpeaker, setOpenSpeaker] = useState(false);
     const [opneVoluem, setOpneVoluem] = useState(false);
-    const [popupOpen, setPopupOpen] = useState({ open: false, type: "me" });
-    const [audio, setAudio] = useState("audio");
-    const [audioStream, setAudioStream] = useGlobal('audioStream');
-    const [video, setVideo] = useState(false);
-    const [videoStream, setVideoStream] = useState();
+
+    const [popupOpen, setPopupOpen] = useState({
+        open: false,
+        type: "me",
+    });
+    const { id } = router.query;
+    const roomid = id;
+
+    let audioProducer;
 
     const videoRef = useRef(null);
     const audioRef = useRef(null);
 
-    const room_id = router.query.id;
-
     useEffect(() => {
         // Fetch user data
-        (async () => {
+        const fetchData = async () => {
             try {
                 const cookies = document.cookie.split(";");
                 let isLoggedIn = false;
                 cookies.forEach((cookie) => {
                     const [name, value] = cookie.split("=");
-                    if (name.trim() === "is_logged_in" && value.trim() === "true") isLoggedIn = true;
+                    if (name.trim() === "is_logged_in" && value.trim() === "true") {
+                        isLoggedIn = true;
+                    }
                 });
                 if (isLoggedIn) {
                     const response = await FetchMe();
-                    if (response) serMedata(response.data.user);
+                    if (response) {
+                        serMedata(response.data.user);
+                    }
                 }
-            } catch (error) { console.log(error) }
-        })();
-
-        // Connecting to the rtc socket server
-        (async () => {
-            try {
-                const rtcSocketInstance = createSocket(WEBRTCBASEURL, localStorage.getItem("Sockettoken"));
-                setRtcSocket(rtcSocketInstance);
-                rtcSocketInstance.on("connect", () => {
-                    console.log("RTC Socket connected successfully")
-                });
-            } catch (e) { console.log("Error connecting to the RTC socket server: ", e) }
-        })()
-
-        return () => {
-            rtcSocket?.disconnect()
-        }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData();
     }, []);
+
+    const fetchAllMessages = async () => {
+        try {
+            if (!roomid) return;
+            const response = await GetMassage(roomid);
+            if (response) {
+                setData([...response.data?.messages]);
+                setLoader(false);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
         fetchAllMessages();
-        (async () => { // fetching the room
+    }, [roomid]);
+
+    useEffect(() => {
+        const fetchRoom = async () => {
             try {
-                if (!room_id) return;
-                const response = await GetSingleRoom(room_id);
+                if (!roomid) return;
+                const response = await GetSingleRoom(roomid);
                 if (response) {
                     setRoom({ ...response.data.room });
-                    console.log("room data ", response.data.room)
+                    console.log(response.data.room, "ddd")
                 }
-            } catch (error) { console.log(error) }
-        })()
-    }, [room_id]);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchRoom();
+    }, [roomid]);
+
+    const handleMessageSend = async () => {
+        if (!sendmassage) return;
+        try {
+            const response = await MessageSend(roomid, sendmassage);
+            if (response) {
+                setSendmassage("");
+                fetchAllMessages();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    let videoProducer;
+    let screenProducer;
+    const [audio, setAudio] = useState("audio");
+    const [audioStream, setAudioStream] = useGlobal('audioStream');
+    const [video, setVideo] = useState(false);
+    const [videoStream, setVideoStream] = useState();
 
     useEffect(() => {
         socket?.on("message", (v) => {
             setData((prevData) => [v.message, ...prevData]);
         });
     }, [socket]);
-
-    const fetchAllMessages = async () => {
-        try {
-            if (!room_id) return;
-            const response = await GetMassage(room_id);
-            if (response) {
-                setData([...response.data?.messages]);
-                setLoader(false);
-            }
-        } catch (error) { console.log(error) }
-    };
-
-    const handleMessageSend = async () => {
-        if (!sendmassage) return;
-        try {
-            const response = await MessageSend(room_id, sendmassage);
-            if (response) {
-                setSendmassage("");
-                fetchAllMessages();
-            }
-        } catch (error) { console.log(error) }
-    };
 
     const OpenVoice = async () => {
         try {
@@ -118,7 +133,9 @@ function Index({ socket }) {
             console.log(stream);
             socket?.emit("audio", { audioStream: stream })
 
-        } catch (error) { console.error('Error accessing microphone:', error) }
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+        }
     };
 
     const StopVoice = async () => {
@@ -155,14 +172,18 @@ function Index({ socket }) {
         }
     };
 
-    const produceVideo = async (vidStream) => {
-        const stream = vidStream || videoStream;
+    const setLocalStream = (stream) => {
+        setVideoStream(stream);
+    };
+    console.log(videoRef, "video")
+    const produceVideo = async (stream) => {
+        const useStream = stream || videoStream;
         setVideo(true);
         try {
-            const track = stream.getVideoTracks()[0];
+            const track = useStream.getVideoTracks()[0];
             const params = { track, appData: { isScreen: false } };
-            setVideoStream(stream);
-            videoProducer = params;
+            setLocalStream(useStream);
+            videoProducer = await params;
         } catch (err) {
             console.log('getusermedia produce failed', err);
             setVideo(false);
@@ -180,123 +201,13 @@ function Index({ socket }) {
     }, [socket])
 
 
-    const initiateCall = async () => {
+    const startCall = () => {
+        socket?.emit("call", { roomId: roomid, callerId: medata._id, videoStream: video ? videoRef : null, audioStream: audio ? audioRef : null });
         setPopupOpen({
             type: "me",
             open: true
         });
-
-        window.consumers = [];
-        setAudioStream([]);
-        setVideoStream([]);
-
-        // dispatch({ type: Actions.RTC_ROOM_ID, roomID });
-
-        const { producers, consumers, peers } = await rtcSocket.asyncEmit('join-meeting', { room_id });
-
-        // dispatch({ type: Actions.RTC_CONSUMERS, consumers, peers });
-
-        const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
-        const device = new Device();
-        await device.load({ routerRtpCapabilities });
-
-        setDevice(device);
-
-        const consumerTransportParams = await rtcSocket.asyncEmit('create-consumer-transport', {
-            forceTcp: false,
-            roomID: room_id,
-            socketID: medata._id
-        });
-
-        let transport = device.createRecvTransport(consumerTransportParams);
-        transport.on('connect', ({ dtlsParameters }, callback, errback) => {
-            rtcSocket.asyncEmit('connect-consumer-transport', {
-                transportId: transport.id,
-                dtlsParameters,
-                socketID: medata._id
-            }).then(callback).catch(errback);
-        });
-
-        transport.on('connectionstatechange', async (state) => {
-            switch (state) {
-                case 'connecting':
-                    break;
-
-                case 'connected':
-                    // document.querySelector('#remote_video').srcObject = await stream;
-                    for (const producer of producers) {
-                        await rtcSocket.asyncEmit('resume', { producerID: producer.producerID });
-                    }
-                    break;
-
-                case 'failed':
-                    transport.close();
-                    break;
-
-                default:
-                    break;
-            }
-        });
-
-        window.transport = transport;
-
-
-        // dispatch({ type: Actions.RTC_PRODUCERS, producers: producers || [] });
-
-        const data = await rtcSocket.asyncEmit('create-producer-transport', {
-            forceTcp: false,
-            rtpCapabilities: device.rtpCapabilities,
-            roomID: room_id
-        });
-
-        transport = device.createSendTransport(data);
-        transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
-            rtcSocket.asyncEmit('connect-producer-transport', { dtlsParameters }).then(callback).catch(errback);
-        });
-
-        transport.on('produce', async ({ kind, rtpParameters, appData }, callback, errback) => {
-            try {
-                const { id } = await rtcSocket.asyncEmit('produce', {
-                    transportId: transport.id,
-                    kind,
-                    rtpParameters,
-                    room_id,
-                    isScreen: appData && appData.isScreen,
-                });
-                callback({ id });
-            } catch (err) { errback(err); }
-        });
-
-        transport.on('connectionstatechange', (state) => {
-            switch (state) {
-                case 'connecting':
-                    break;
-
-                case 'connected':
-                    // document.querySelector('#local_video').srcObject = stream;
-                    break;
-
-                case 'failed':
-                    transport.close();
-                    break;
-
-                default:
-                    break;
-            }
-        });
-
-        await OpenVoice();
-        await produceVideo();
-    };
-
-
-    // const startCall = () => {
-    //     socket?.emit("call", { room_id, callerId: medata._id, videoStream: video ? videoRef : null, audioStream: audio ? audioRef : null });
-    //     setPopupOpen({
-    //         type: "me",
-    //         open: true
-    //     });
-    // }
+    }
     const HandleCancelCall = async () => {
         socket?.emit("leave-call", { meetingId, userId: medata?._id })
         setPopupOpen({
@@ -318,8 +229,8 @@ function Index({ socket }) {
             type: "me",
             open: true
         });
-    }
 
+    }
     return (
         <div style={{ display: "flex", width: "100%", gap: "0px" }}>
             <MassageLayout />
@@ -331,14 +242,14 @@ function Index({ socket }) {
                     height: "100vh",
                 }}
             >
-                {room_id ? (
+                {roomid ? (
                     otherMember ? (
                         <div className="Header_Top">
                             <div className="d-flex gap-1 align-items-center">
                                 <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
                                 <div className="title_">{otherMember?.firstname}</div>
                             </div>
-                            <div onClick={initiateCall} className="padingleft" style={{ cursor: "pointer" }}>
+                            <div onClick={startCall} className="padingleft" style={{ cursor: "pointer" }}>
                                 <Icon fontSize={35} icon="material-symbols:call" />
                             </div>
                         </div>
@@ -352,7 +263,7 @@ function Index({ socket }) {
                     )
                 ) : null}
 
-                {room_id ? (
+                {roomid ? (
                     <>
                         {loader === true ? (
                             <div className="MassageBox d-flex justify-content-center align-items-center">
@@ -449,7 +360,7 @@ function Index({ socket }) {
                     </>
                 ) : null}
 
-                {room_id ? (
+                {roomid ? (
                     <div className="bottom gap-3">
                         <input
                             placeholder="Enter A Message"
