@@ -13,19 +13,23 @@ import ContentLoader, { BulletList, Code } from "react-content-loader";
 
 function Index({ socket }) {
     const router = useRouter();
-    const [loader, setLoader] = useState(true);
-    const [rtcSocket, setRtcSocket] = useState(null);
-    const [device, setDevice] = useState(null);
-    const [sendmassage, setSendmassage] = useState("");
-    const [data, setData] = useState([]);
     const [medata, serMedata] = useState({});
     const [room, setRoom] = useState({});
-    const [opneVoluem, setOpneVoluem] = useState(false);
+    const [loader, setLoader] = useState(true);
+    const [sendmassage, setSendmassage] = useState("");
+    const [rtcSocket, setRtcSocket] = useState(null);
+    const [device, setDevice] = useState(null);
+    const [consumerTransport, setConsumerTransport] = useState([]);
+    const [peers, setPeers] = useState([]);
+    const [consumers, setConsumers] = useState([]);
+    const [producers, setProducers] = useState([]);
+    const [data, setData] = useState([]);
     const [popupOpen, setPopupOpen] = useState({ open: false, type: "me" });
-    const [audio, setAudio] = useState("audio");
-    const [audioStream, setAudioStream] = useGlobal('audioStream');
-    const [video, setVideo] = useState(false);
-    const [videoStream, setVideoStream] = useState();
+    const [isVideo, setIsVideo] = useState(false);
+    const [isAudio, setIsAudio] = useState(true);
+    const [localVideoProducer, setLocalVideoProducer] = useState(true);
+    const [videoStream, setVideoStream] = useState(null);
+    const [streams, setStreams] = useState([]);
 
     const videoRef = useRef(null);
     const audioRef = useRef(null);
@@ -60,10 +64,14 @@ function Index({ socket }) {
             } catch (e) { console.log("Error connecting to the RTC socket server: ", e) }
         })()
 
-        return () => {
-            rtcSocket?.disconnect()
-        }
+        return () => { rtcSocket?.disconnect() }
     }, []);
+
+    useEffect(() => {
+        socket?.on("message", (v) => {
+            setData((prevData) => [v.message, ...prevData]);
+        });
+    }, [socket]);
 
     useEffect(() => {
         fetchAllMessages();
@@ -71,19 +79,30 @@ function Index({ socket }) {
             try {
                 if (!room_id) return;
                 const response = await GetSingleRoom(room_id);
-                if (response) {
-                    setRoom({ ...response.data.room });
-                    console.log("room data ", response.data.room)
-                }
+                if (response) setRoom({ ...response.data.room });
             } catch (error) { console.log(error) }
         })()
     }, [room_id]);
 
     useEffect(() => {
-        socket?.on("message", (v) => {
-            setData((prevData) => [v.message, ...prevData]);
-        });
-    }, [socket]);
+        (async () => { // persisting the call if producers change
+            const newStreams = [];
+            for (const producer of producers) {
+                if (!consumers.includes(producer.producerID) && producer.roomID === room_id) {
+                    setConsumers(prev => prev.push(producer.producerID));
+
+                    const stream = await consume(consumerTransport, producer);
+                    stream.producerID = producer.producerID;
+                    stream.socketID = producer.socketID;
+                    stream.userID = producer.userID;
+
+                    newStreams.push(stream);
+                    rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
+                }
+            }
+            setStreams(prev => ([...prev, ...newStreams]));
+        })()
+    }, [producers]);
 
     const fetchAllMessages = async () => {
         try {
@@ -107,31 +126,54 @@ function Index({ socket }) {
         } catch (error) { console.log(error) }
     };
 
-    const OpenVoice = async () => {
+    // const OpenVoice = async () => {
+    //     try {
+    //         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    //         setAudioStream(stream);
+    //         setOpneVoluem(true);
+    //         if (audioRef.current) {
+    //             audioRef.current.srcObject = stream;
+    //         }
+    //         console.log(stream);
+    //         socket?.emit("audio", { audioStream: stream })
+
+    //     } catch (error) { console.error('Error accessing microphone:', error) }
+    // };
+
+    const produceAudio = async (audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })) => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            setAudioStream(stream);
-            setOpneVoluem(true);
-            if (audioRef.current) {
-                audioRef.current.srcObject = stream;
-            }
-            console.log(stream);
-            socket?.emit("audio", { audioStream: stream })
-
-        } catch (error) { console.error('Error accessing microphone:', error) }
-    };
-
-    const StopVoice = async () => {
-        if (audioStream) {
-            audioStream.getTracks().forEach(track => track.stop());
-            setAudioStream(null);
-            setOpneVoluem(false);
-            socket?.emit("audio", { audioStream: null })
-            if (audioRef.current) {
-                audioRef.current.srcObject = null;
-            }
+            setIsAudio(true);
+            audioProducer = await transport.produce({ track: audioStream.getAudioTracks()[0] });
+        } catch (err) {
+            console.log('getusermedia produce failed', err);
+            setIsAudio(false);
         }
     };
+
+    const produceVideo = async (vidSream = navigator.mediaDevices.getUserMedia({ video: true })) => {
+        setIsVideo(true);
+        try {
+            const params = { track: vidSream.getVideoTracks()[0], appData: { isScreen: false } };
+            await setLocalStream(vidSream);
+            const videoProducer = await transport.produce(params);
+            setLocalVideoProducer(videoProducer);
+        } catch (err) {
+            console.log('Video production failed: ', err);
+            setIsVideo(false);
+        }
+    };
+
+    // const StopVoice = async () => {
+    //     if (audioStream) {
+    //         audioStream.getTracks().forEach(track => track.stop());
+    //         setAudioStream(null);
+    //         setIsAudio(false);
+    //         socket?.emit("audio", { audioStream: null })
+    //         if (audioRef.current) {
+    //             audioRef.current.srcObject = null;
+    //         }
+    //     }
+    // };
     const getVideo = async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         setVideoStream(stream);
@@ -146,7 +188,7 @@ function Index({ socket }) {
         if (videoStream) {
             videoStream.getTracks().forEach(track => track.stop());
             setVideoStream(null);
-            setVideo(false);
+            setIsVideo(false);
             socket?.emit("video", { videoStream: null })
 
             if (videoRef.current) {
@@ -155,101 +197,54 @@ function Index({ socket }) {
         }
     };
 
-    const produceVideo = async (vidStream) => {
-        const stream = vidStream || videoStream;
-        setVideo(true);
-        try {
-            const track = stream.getVideoTracks()[0];
-            const params = { track, appData: { isScreen: false } };
-            setVideoStream(stream);
-            videoProducer = params;
-        } catch (err) {
-            console.log('getusermedia produce failed', err);
-            setVideo(false);
-        }
-    };
     let meetingId;
     const otherMember = room.members?.find((member) => member._id !== medata._id);
-    useEffect(() => {
-        socket?.on("in-comming-call", (data) => {
-            setPopupOpen({
-                open: true,
-                type: "you"
-            })
-        })
-    }, [socket])
-
 
     const initiateCall = async () => {
         setPopupOpen({
             type: "me",
             open: true
         });
-
-        window.consumers = [];
-        setAudioStream([]);
+        setConsumers([]);
         setVideoStream([]);
 
-        // dispatch({ type: Actions.RTC_ROOM_ID, roomID });
-
         const { producers, consumers, peers } = await rtcSocket.asyncEmit('join-meeting', { room_id });
-
-        // dispatch({ type: Actions.RTC_CONSUMERS, consumers, peers });
+        setPeers(peers);
+        setProducers(producers);
+        setConsumers(consumers);
 
         const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
         const device = new Device();
         await device.load({ routerRtpCapabilities });
-
         setDevice(device);
 
-        const consumerTransportParams = await rtcSocket.asyncEmit('create-consumer-transport', {
-            forceTcp: false,
-            roomID: room_id,
-            socketID: medata._id
-        });
+        const consumerTransportParams = await rtcSocket.asyncEmit('create-consumer-transport');
 
         let transport = device.createRecvTransport(consumerTransportParams);
         transport.on('connect', ({ dtlsParameters }, callback, errback) => {
-            rtcSocket.asyncEmit('connect-consumer-transport', {
-                transportId: transport.id,
-                dtlsParameters,
-                socketID: medata._id
-            }).then(callback).catch(errback);
+            rtcSocket.asyncEmit('connect-consumer-transport', { dtlsParameters }).then(callback).catch(errback);
         });
 
         transport.on('connectionstatechange', async (state) => {
             switch (state) {
-                case 'connecting':
-                    break;
-
+                case 'connecting': break;
                 case 'connected':
                     // document.querySelector('#remote_video').srcObject = await stream;
                     for (const producer of producers) {
-                        await rtcSocket.asyncEmit('resume', { producerID: producer.producerID });
+                        await rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
                     }
                     break;
-
                 case 'failed':
                     transport.close();
                     break;
-
-                default:
-                    break;
+                default: break;
             }
         });
+        setConsumerTransport(transport);;
 
-        window.transport = transport;
+        const producerTransportParams = await rtcSocket.asyncEmit('create-producer-transport');
 
-
-        // dispatch({ type: Actions.RTC_PRODUCERS, producers: producers || [] });
-
-        const data = await rtcSocket.asyncEmit('create-producer-transport', {
-            forceTcp: false,
-            rtpCapabilities: device.rtpCapabilities,
-            roomID: room_id
-        });
-
-        transport = device.createSendTransport(data);
+        transport = device.createSendTransport(producerTransportParams);
         transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
             rtcSocket.asyncEmit('connect-producer-transport', { dtlsParameters }).then(callback).catch(errback);
         });
@@ -257,10 +252,9 @@ function Index({ socket }) {
         transport.on('produce', async ({ kind, rtpParameters, appData }, callback, errback) => {
             try {
                 const { id } = await rtcSocket.asyncEmit('produce', {
-                    transportId: transport.id,
                     kind,
-                    rtpParameters,
                     room_id,
+                    rtpParameters,
                     isScreen: appData && appData.isScreen,
                 });
                 callback({ id });
@@ -268,46 +262,47 @@ function Index({ socket }) {
         });
 
         transport.on('connectionstatechange', (state) => {
-            switch (state) {
-                case 'connecting':
-                    break;
-
-                case 'connected':
-                    // document.querySelector('#local_video').srcObject = stream;
-                    break;
-
-                case 'failed':
-                    transport.close();
-                    break;
-
-                default:
-                    break;
-            }
+            if (state === "closed" || state === "failed") transport.close();
         });
 
-        await OpenVoice();
+        await produceAudio();
         await produceVideo();
     };
 
+    const consume = async (transport, producer) => {
+        const { rtpCapabilities } = device;
+        const { producerId, id, kind, rtpParameters } = await rtcSocket.asyncEmit('consume', {
+            rtpCapabilities,
+            socket_id: producer.socketID,
+            producer_id: producer.producerID
+        });
 
-    // const startCall = () => {
-    //     socket?.emit("call", { room_id, callerId: medata._id, videoStream: video ? videoRef : null, audioStream: audio ? audioRef : null });
-    //     setPopupOpen({
-    //         type: "me",
-    //         open: true
-    //     });
-    // }
+        const consumer = await transport.consume({
+            id,
+            producerId,
+            kind,
+            rtpParameters,
+            codecOptions: {},
+        });
+        consumer.on('close', () => console.log('consumer closed'));
+        consumer.on('producerclose', () => console.log('associated producer closed so consumer closed'));
+        const stream = new MediaStream();
+        stream.addTrack(consumer.track);
+        stream.isVideo = (kind === 'video');
+        return stream;
+    };
+
     const HandleCancelCall = async () => {
         socket?.emit("leave-call", { meetingId, userId: medata?._id })
         setPopupOpen({
             type: "",
             open: false,
         })
-        setVideo(false)
-        setAudio(false)
+        setIsVideo(false)
+        setIsAudio(false)
         setVideoStream(null)
-        setAudioStream(null)
     }
+
     const AcceptCall = () => {
         socket?.emit("accepted-call", { meetingId, userId: medata?._id })
         setPopupOpen({
@@ -320,196 +315,145 @@ function Index({ socket }) {
         });
     }
 
-    return (
-        <div style={{ display: "flex", width: "100%", gap: "0px" }}>
-            <MassageLayout />
-            <div
-                style={{
-                    width: "100%",
-                    backgroundColor: "#f9f9f9",
-                    position: "relative",
-                    height: "100vh",
-                }}
-            >
-                {room_id ? (
-                    otherMember ? (
-                        <div className="Header_Top">
-                            <div className="d-flex gap-1 align-items-center">
-                                <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
-                                <div className="title_">{otherMember?.firstname}</div>
-                            </div>
-                            <div onClick={initiateCall} className="padingleft" style={{ cursor: "pointer" }}>
-                                <Icon fontSize={35} icon="material-symbols:call" />
-                            </div>
+    return <div style={{ display: "flex", width: "100%", gap: "0px" }}>
+        <MassageLayout />
+        <div style={{
+            width: "100%",
+            backgroundColor: "#f9f9f9",
+            position: "relative",
+            height: "100vh",
+        }}>
+            {room_id ? (
+                otherMember ? (
+                    <div className="Header_Top">
+                        <div className="d-flex gap-1 align-items-center">
+                            <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
+                            <div className="title_">{otherMember?.firstname}</div>
                         </div>
-                    ) : (
-                        <div className="Header_Top">
-                            <div>
-                                <div className="circle_box">Y</div>
-                                <div className="title_">You</div>
-                            </div>
+                        <div onClick={initiateCall} className="padingleft" style={{ cursor: "pointer" }}>
+                            <Icon fontSize={35} icon="material-symbols:call" />
                         </div>
-                    )
-                ) : null}
-
-                {room_id ? (
-                    <>
-                        {loader === true ? (
-                            <div className="MassageBox d-flex justify-content-center align-items-center">
-                                <BulletList />
-                            </div>
-                        ) : (
-                            <div className="MassageBox">
-                                <div
-                                    style={{
-                                        width: "100%",
-                                        backgroundColor: "",
-                                        height: "100%",
-                                        overflow: "auto",
-                                        padding: "25px",
-                                    }}
-                                >
-                                    {data.length > 0 &&
-                                        data
-                                            .map((message, index, array) => {
-                                                if (index === array.length - 1) {
-                                                    return (
-                                                        <div className="py-3 m-auto d-flex justify-content-center" key={index}>
-                                                            <span
-                                                                style={{
-                                                                    margin: "auto",
-                                                                    marginTop: "10px",
-                                                                    marginBottom: "20px",
-                                                                    backgroundColor: "#003a55",
-                                                                    color: "white",
-                                                                    padding: "10px",
-                                                                }}
-                                                                className="rounded"
-                                                            >
-                                                                {message.content}
-                                                            </span>
-                                                        </div>
-                                                    );
-                                                } else {
-                                                    return (
-                                                        <div
-                                                            style={{
-                                                                height: "45px",
-                                                                width: "100%",
-                                                                marginTop: "20px",
-                                                            }}
-                                                            key={index}
-                                                        >
-                                                            <p
-                                                                style={{
-                                                                    fontSize: "15px",
-                                                                    paddingLeft: "2px",
-                                                                    lineHeight: "18px",
-                                                                    backgroundColor: "transparent",
-                                                                    textAlign:
-                                                                        message.author._id == medata._id
-                                                                            ? "right"
-                                                                            : "left",
-                                                                }}
-                                                            >
-                                                                {message.author.firstname}
-                                                            </p>
-                                                            <div
-                                                                style={{
-                                                                    width: "100%",
-                                                                    marginTop: "-18px",
-                                                                    height: "35px",
-                                                                    backgroundColor: "transparent",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent:
-                                                                        message.author._id == medata._id
-                                                                            ? "flex-end"
-                                                                            : "flex-start",
-                                                                }}
-                                                            >
-                                                                <div
-                                                                    style={{ backgroundColor: "#003a55" }}
-                                                                    className={`rounded px-2 ${message.author._id == medata._id
-                                                                        ? " text-white"
-                                                                        : " text-white"
-                                                                        }`}
-                                                                >
-                                                                    {message.content}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                }
-                                            })
-                                            .reverse()}
-                                </div>
-                            </div>
-                        )}
-                    </>
-                ) : null}
-
-                {room_id ? (
-                    <div className="bottom gap-3">
-                        <input
-                            placeholder="Enter A Message"
-                            value={sendmassage}
-                            onChange={(e) => {
-                                setSendmassage(e.target.value);
-                            }}
-                            className="Input"
-                        />
-                        <button onClick={handleMessageSend} className="btn_Green">
-                            Send
-                        </button>
                     </div>
-                ) : null}
-            </div>
-            {popupOpen?.open && (
-                <div className="popup-overlay">
-                    <div className="popup-content shadow">
-                        <div style={{ width: "100%" }}>
-                            <div className="box">S</div>
-                            <div className="text-center mt-2 fs-3">Shahbaz Ai</div>
+                ) : (
+                    <div className="Header_Top">
+                        <div>
+                            <div className="circle_box">Y</div>
+                            <div className="title_">You</div>
+                        </div>
+                    </div>
+                )
+            ) : null}
 
-                            {popupOpen?.type === "me" ? (
+            {room_id ? <>
+                {loader ? <div className="MassageBox d-flex justify-content-center align-items-center"><BulletList /></div>
+                    : <div className="MassageBox">
+                        <div
+                            style={{
+                                width: "100%",
+                                backgroundColor: "",
+                                height: "100%",
+                                overflow: "auto",
+                                padding: "25px",
+                            }}>
+                            {data.length > 0 &&
+                                data.map((message, index, array) => {
+                                    if (index === array.length - 1) return <div className="py-3 m-auto d-flex justify-content-center" key={index}>
+                                        <span
+                                            style={{
+                                                margin: "auto",
+                                                marginTop: "10px",
+                                                marginBottom: "20px",
+                                                backgroundColor: "#003a55",
+                                                color: "white",
+                                                padding: "10px",
+                                            }}
+                                            className="rounded">
+                                            {message.content}
+                                        </span>
+                                    </div>
+                                    else return <div
+                                        style={{
+                                            height: "45px",
+                                            width: "100%",
+                                            marginTop: "20px",
+                                        }}
+                                        key={index}>
+                                        <p style={{
+                                            fontSize: "15px",
+                                            paddingLeft: "2px",
+                                            lineHeight: "18px",
+                                            backgroundColor: "transparent",
+                                            textAlign: message.author._id == medata._id ? "right" : "left",
+                                        }}>{message.author.firstname}</p>
+                                        <div
+                                            style={{
+                                                width: "100%",
+                                                marginTop: "-18px",
+                                                height: "35px",
+                                                backgroundColor: "transparent",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent:
+                                                    message.author._id == medata._id
+                                                        ? "flex-end"
+                                                        : "flex-start",
+                                            }}>
+                                            <div style={{ backgroundColor: "#003a55" }}
+                                                className={`rounded px-2 ${message.author._id == medata._id
+                                                    ? " text-white"
+                                                    : " text-white"
+                                                    }`}>
+                                                {message.content}
+                                            </div>
+                                        </div>
+                                    </div>
+                                }).reverse()}
+                        </div>
+                    </div>}
+            </> : null}
+
+            {room_id ? (
+                <div className="bottom gap-3">
+                    <input
+                        placeholder="Enter A Message"
+                        value={sendmassage}
+                        onChange={(e) => {
+                            setSendmassage(e.target.value);
+                        }}
+                        className="Input"
+                    />
+                    <button onClick={handleMessageSend} className="btn_Green">
+                        Send
+                    </button>
+                </div>
+            ) : null}
+        </div>
+        {popupOpen?.open && (
+            <div className="popup-overlay">
+                <div className="popup-content shadow">
+                    <div style={{ width: "100%" }}>
+                        <div className="box">S</div>
+                        <div className="text-center mt-2 fs-3">Shahbaz Ai</div>
+
+                        {popupOpen?.type === "me" ?
+                            <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
                                 <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: "center",
-                                        marginTop: "20px",
-                                        gap: "20px",
-                                    }}
-                                >
-                                    <div
-                                        onClick={() => (video ? StopVideo() : getVideo().then((stream) => produceVideo(stream)))}
-                                        className={`${video === true ? "activebutton" : "unactivebutton"}`}
-                                        style={{ cursor: "pointer" }}
-                                    >
-                                        {video === true ? (
-                                            <Icon icon="mdi:video" color="white" />
-
-                                        ) : (
-                                            <Icon icon="hugeicons:video-off" color="black" />
-                                        )}
-                                    </div>
-                                    <div onClick={() => {
-                                        opneVoluem ? StopVoice() : OpenVoice();
-                                    }} className={`${opneVoluem === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
-                                        {opneVoluem === true ? (
-                                            <svg focusable="false" width="24" height="22" viewBox="0 0 24 24">
-                                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-                                                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
-                                            </svg>
-                                        ) : (
-                                            <Icon icon="mdi:mute" />
-                                        )}
-                                    </div>
-                                    <div onClick={HandleCancelCall} className="CutCall" style={{ cursor: "pointer" }}>
-                                        Call end.
-                                    </div>
+                                    onClick={() => (isVideo ? StopVideo() : getVideo().then((stream) => produceVideo(stream)))}
+                                    className={`${isVideo ? "activebutton" : "unactivebutton"}`}
+                                    style={{ cursor: "pointer" }}>
+                                    {isVideo ? <Icon icon="mdi:video" color="white" /> : <Icon icon="hugeicons:video-off" color="black" />}
                                 </div>
-                            ) : popupOpen?.type === "you" ? (
+                                <div onClick={() => isAudio ? StopVoice() : OpenVoice()} className={`${isAudio === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
+                                    {isAudio ? <svg focusable="false" width="24" height="22" viewBox="0 0 24 24">
+                                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
+                                    </svg> : <Icon icon="mdi:mute" />}
+                                </div>
+                                <div onClick={HandleCancelCall} className="CutCall" style={{ cursor: "pointer" }}>
+                                    Call end.
+                                </div>
+                            </div>
+                            : popupOpen?.type === "you" ?
                                 <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
                                     <div onClick={AcceptCall} className="AcceptCall" style={{ cursor: "pointer" }}>
                                         Accept
@@ -517,16 +461,14 @@ function Index({ socket }) {
                                     <div onClick={HandleCancelCall} className="CutCall1" style={{ cursor: "pointer" }}>
                                         Rejected
                                     </div>
-                                </div>
-                            ) : (null)}
-                            <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "auto", display: video ? "block" : "none" }} />
-                            <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} />
-                        </div>
+                                </div> : null}
+                        <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "auto", display: isVideo ? "block" : "none" }} />
+                        <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} />
                     </div>
                 </div>
-            )}
-        </div>
-    );
+            </div>
+        )}
+    </div>
 }
 
 export default Index;
