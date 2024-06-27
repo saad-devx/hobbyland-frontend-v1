@@ -6,10 +6,8 @@ import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import createSocket from "@/lib/promisified-io";
 import MassageLayout from "@/layout/Massageloyout";
 import { useRouter } from "next/router";
-import { useGlobal } from 'reactn';
 import { Icon } from "@iconify/react";
-import ContentLoader, { BulletList, Code } from "react-content-loader";
-// import { UserContext } from "@/config/contextapi/user";
+import { BulletList } from "react-content-loader";
 
 function Index({ socket }) {
     const router = useRouter();
@@ -19,8 +17,7 @@ function Index({ socket }) {
     const [sendmassage, setSendmassage] = useState("");
     const [rtcSocket, setRtcSocket] = useState(null);
     const [device, setDevice] = useState(null);
-    const [consumerTransport, setConsumerTransport] = useState([]);
-    const [peers, setPeers] = useState([]);
+    const [localTransport, setLocalTransport] = useState([]);
     const [consumers, setConsumers] = useState([]);
     const [producers, setProducers] = useState([]);
     const [data, setData] = useState([]);
@@ -28,13 +25,18 @@ function Index({ socket }) {
     const [isVideo, setIsVideo] = useState(false);
     const [isAudio, setIsAudio] = useState(true);
     const [localVideoProducer, setLocalVideoProducer] = useState(true);
-    const [videoStream, setVideoStream] = useState(null);
+    const [localAudioProducer, setLocalAudioProducer] = useState(true);
+    const [localStream, setLocalStream] = useState(true);
+    const [peers, setPeers] = useState({});
     const [streams, setStreams] = useState([]);
 
     const videoRef = useRef(null);
     const audioRef = useRef(null);
 
     const room_id = router.query.id;
+    const otherMember = room.members?.find((member) => member._id !== medata._id);
+
+    console.log("The local transport: ", localTransport)
 
     useEffect(() => {
         // Fetch user data
@@ -88,10 +90,10 @@ function Index({ socket }) {
         (async () => { // persisting the call if producers change
             const newStreams = [];
             for (const producer of producers) {
-                if (!consumers.includes(producer.producerID) && producer.roomID === room_id) {
-                    setConsumers(prev => prev.push(producer.producerID));
+                if (!consumers?.length || !consumers.includes(producer.producerID) && producer.roomID === room_id) {
+                    setConsumers(prev => [...prev, producer.producerID]);
 
-                    const stream = await consume(consumerTransport, producer);
+                    const stream = await consume(localTransport, producer);
                     stream.producerID = producer.producerID;
                     stream.socketID = producer.socketID;
                     stream.userID = producer.userID;
@@ -126,36 +128,27 @@ function Index({ socket }) {
         } catch (error) { console.log(error) }
     };
 
-    // const OpenVoice = async () => {
-    //     try {
-    //         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    //         setAudioStream(stream);
-    //         setOpneVoluem(true);
-    //         if (audioRef.current) {
-    //             audioRef.current.srcObject = stream;
-    //         }
-    //         console.log(stream);
-    //         socket?.emit("audio", { audioStream: stream })
-
-    //     } catch (error) { console.error('Error accessing microphone:', error) }
-    // };
-
-    const produceAudio = async (audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })) => {
+    const produceAudio = async () => {
         try {
             setIsAudio(true);
-            audioProducer = await transport.produce({ track: audioStream.getAudioTracks()[0] });
+            const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // if (audioRef.current) audioRef.current.srcObject = audioStream;
+            const audioProducer = await localTransport.produce({ track: audioStream.getAudioTracks()[0] });
+            setLocalAudioProducer(audioProducer);
         } catch (err) {
             console.log('getusermedia produce failed', err);
             setIsAudio(false);
         }
     };
 
-    const produceVideo = async (vidSream = navigator.mediaDevices.getUserMedia({ video: true })) => {
-        setIsVideo(true);
+    const produceVideo = async () => {
         try {
-            const params = { track: vidSream.getVideoTracks()[0], appData: { isScreen: false } };
-            await setLocalStream(vidSream);
-            const videoProducer = await transport.produce(params);
+            setIsVideo(true);
+            const vidStream = await navigator.mediaDevices.getUserMedia({ video: true })
+            if (videoRef.current) videoRef.current.srcObject = vidStream;
+            const params = { track: vidStream.getVideoTracks()[0], appData: { isScreen: false } };
+            setLocalStream(vidStream);
+            const videoProducer = await localTransport.produce(params);
             setLocalVideoProducer(videoProducer);
         } catch (err) {
             console.log('Video production failed: ', err);
@@ -163,64 +156,48 @@ function Index({ socket }) {
         }
     };
 
-    // const StopVoice = async () => {
-    //     if (audioStream) {
-    //         audioStream.getTracks().forEach(track => track.stop());
-    //         setAudioStream(null);
-    //         setIsAudio(false);
-    //         socket?.emit("audio", { audioStream: null })
-    //         if (audioRef.current) {
-    //             audioRef.current.srcObject = null;
-    //         }
-    //     }
-    // };
-    const getVideo = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        setVideoStream(stream);
-        socket?.emit("video", { videoStream: stream })
-        if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-        }
-        console.log(stream, "video");
-        return stream;
-    };
-    const StopVideo = () => {
-        if (videoStream) {
-            videoStream.getTracks().forEach(track => track.stop());
-            setVideoStream(null);
+    const stopVideo = async () => {
+        try {
+            if (localStream) localStream.getVideoTracks()[0].stop();
+            if (videoRef.current) videoRef.current.srcObject = null
+            await rtcSocket.asyncEmit('remove', { producer_id: localVideoProducer.id, room_id });
+            localVideoProducer.close();
+            setLocalVideoProducer(null);
             setIsVideo(false);
-            socket?.emit("video", { videoStream: null })
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = null;
-            }
-        }
+        } catch (e) { console.log(e) }
     };
 
-    let meetingId;
-    const otherMember = room.members?.find((member) => member._id !== medata._id);
+    const stopAudio = async () => {
+        try {
+            if (audioRef.current) audioRef.current.srcObject = null
+            await rtcSocket.asyncEmit('remove', { producer_id: localAudioProducer.id, room_id });
+            localAudioProducer.close();
+            setLocalAudioProducer(null);
+            setIsAudio(false);
+        } catch (e) { console.log(e) }
+    };
 
-    const initiateCall = async () => {
+    const initiateMeeting = async () => {
         setPopupOpen({
             type: "me",
             open: true
         });
         setConsumers([]);
-        setVideoStream([]);
 
         const { producers, consumers, peers } = await rtcSocket.asyncEmit('join-meeting', { room_id });
+        console.log("Here are the peers: ", peers, "And also consumers here: ", consumers)
         setPeers(peers);
         setProducers(producers);
-        setConsumers(consumers);
+        setConsumers(consumers.content);
 
         const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
         const device = new Device();
         await device.load({ routerRtpCapabilities });
         setDevice(device);
 
-        const consumerTransportParams = await rtcSocket.asyncEmit('create-consumer-transport');
+        const localTransportParams = await rtcSocket.asyncEmit('create-consumer-transport');
 
-        let transport = device.createRecvTransport(consumerTransportParams);
+        let transport = device.createRecvTransport(localTransportParams);
         transport.on('connect', ({ dtlsParameters }, callback, errback) => {
             rtcSocket.asyncEmit('connect-consumer-transport', { dtlsParameters }).then(callback).catch(errback);
         });
@@ -229,9 +206,8 @@ function Index({ socket }) {
             switch (state) {
                 case 'connecting': break;
                 case 'connected':
-                    // document.querySelector('#remote_video').srcObject = await stream;
                     for (const producer of producers) {
-                        await rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
+                        await rtcSocket.asyncEmit('resume', { producer_id: producer.producerID })
                     }
                     break;
                 case 'failed':
@@ -240,7 +216,6 @@ function Index({ socket }) {
                 default: break;
             }
         });
-        setConsumerTransport(transport);;
 
         const producerTransportParams = await rtcSocket.asyncEmit('create-producer-transport');
 
@@ -265,8 +240,10 @@ function Index({ socket }) {
             if (state === "closed" || state === "failed") transport.close();
         });
 
+        setLocalTransport(transport);
+
         await produceAudio();
-        await produceVideo();
+        // await produceVideo();
     };
 
     const consume = async (transport, producer) => {
@@ -292,28 +269,23 @@ function Index({ socket }) {
         return stream;
     };
 
-    const HandleCancelCall = async () => {
-        socket?.emit("leave-call", { meetingId, userId: medata?._id })
-        setPopupOpen({
-            type: "",
-            open: false,
-        })
-        setIsVideo(false)
-        setIsAudio(false)
-        setVideoStream(null)
-    }
-
-    const AcceptCall = () => {
-        socket?.emit("accepted-call", { meetingId, userId: medata?._id })
-        setPopupOpen({
-            type: "me",
-            open: false
-        });
-        setPopupOpen({
-            type: "me",
-            open: true
-        });
-    }
+    const closeMeeting = async () => {
+        try {
+            if (localStream?.getVideoTracks) localStream.getVideoTracks()[0].stop();
+            localTransport.close();
+            setPopupOpen({
+                type: "",
+                open: false,
+            })
+            await rtcSocket.asyncEmit('leave-meeting', { room_id });
+            setStreams([]);
+            setConsumers([]);
+            setProducers([]);
+            setPeers({});
+            setLocalTransport(null);
+            setStreams([])
+        } catch (e) { console.log(e) }
+    };
 
     return <div style={{ display: "flex", width: "100%", gap: "0px" }}>
         <MassageLayout />
@@ -330,7 +302,7 @@ function Index({ socket }) {
                             <div className="circle_box">{otherMember?.firstname.charAt(0)}</div>
                             <div className="title_">{otherMember?.firstname}</div>
                         </div>
-                        <div onClick={initiateCall} className="padingleft" style={{ cursor: "pointer" }}>
+                        <div onClick={initiateMeeting} className="padingleft" style={{ cursor: "pointer" }}>
                             <Icon fontSize={35} icon="material-symbols:call" />
                         </div>
                     </div>
@@ -438,27 +410,27 @@ function Index({ socket }) {
                         {popupOpen?.type === "me" ?
                             <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
                                 <div
-                                    onClick={() => (isVideo ? StopVideo() : getVideo().then((stream) => produceVideo(stream)))}
+                                    onClick={() => (isVideo ? stopVideo() : produceVideo())}
                                     className={`${isVideo ? "activebutton" : "unactivebutton"}`}
                                     style={{ cursor: "pointer" }}>
                                     {isVideo ? <Icon icon="mdi:video" color="white" /> : <Icon icon="hugeicons:video-off" color="black" />}
                                 </div>
-                                <div onClick={() => isAudio ? StopVoice() : OpenVoice()} className={`${isAudio === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
+                                <div onClick={() => isAudio ? stopAudio() : produceAudio()} className={`${isAudio === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
                                     {isAudio ? <svg focusable="false" width="24" height="22" viewBox="0 0 24 24">
                                         <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
                                         <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
                                     </svg> : <Icon icon="mdi:mute" />}
                                 </div>
-                                <div onClick={HandleCancelCall} className="CutCall" style={{ cursor: "pointer" }}>
+                                <div onClick={closeMeeting} className="CutCall" style={{ cursor: "pointer" }}>
                                     Call end.
                                 </div>
                             </div>
                             : popupOpen?.type === "you" ?
                                 <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
-                                    <div onClick={AcceptCall} className="AcceptCall" style={{ cursor: "pointer" }}>
+                                    <div onClick={initiateMeeting} className="AcceptCall" style={{ cursor: "pointer" }}>
                                         Accept
                                     </div>
-                                    <div onClick={HandleCancelCall} className="CutCall1" style={{ cursor: "pointer" }}>
+                                    <div onClick={closeMeeting} className="CutCall1" style={{ cursor: "pointer" }}>
                                         Rejected
                                     </div>
                                 </div> : null}
