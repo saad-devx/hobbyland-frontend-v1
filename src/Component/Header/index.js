@@ -19,7 +19,7 @@ function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notification, setNotification] = useState([]);
   const router = useRouter();
-  const { fetchUserData } = useContext(UserContext);
+  const { fetchUserData, user } = useContext(UserContext);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -272,7 +272,10 @@ function Header() {
 
                 <div
                   onClick={() => {
-                    router.push("./profile");
+                    router.push({
+                      pathname: "/mentor-profile",
+                      query: { id: user?._id },
+                    });
                   }}
                   className="BottonUserProfile"
                 >
