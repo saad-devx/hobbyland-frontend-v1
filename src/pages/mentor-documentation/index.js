@@ -32,8 +32,6 @@ function Index() {
     e.preventDefault();
     const errors = validateFormData(formData);
     if (Object.keys(errors).length === 0) {
-      // console.log("Form data:", formData);
-      // alert("Form submitted successfully!");
       const data = {
         documents: [{ ...formData }],
       };
@@ -145,9 +143,8 @@ function Index() {
           <div className="d-flex gap-3">
             <div className="w-75 mt-3">
               <input
-                className={`${
-                  errors.document_type ? "errTimezoneInput" : "Input"
-                }`}
+                className={`${errors.document_type ? "errTimezoneInput" : "Input"
+                  }`}
                 placeholder="Documentation type"
                 name="document_type"
                 value={formData.document_type}
@@ -159,9 +156,8 @@ function Index() {
             </div>
             <div className="w-75 mt-3">
               <input
-                className={`${
-                  errors.document_number ? "errTimezoneInput" : "Input"
-                }`}
+                className={`${errors.document_number ? "errTimezoneInput" : "Input"
+                  }`}
                 placeholder="Documentation Number"
                 name="document_number"
                 value={formData.document_number}
@@ -175,9 +171,8 @@ function Index() {
           <div className="d-flex gap-3">
             <div className="w-75 mt-3">
               <input
-                className={`${
-                  errors.document_name ? "errTimezoneInput" : "Input"
-                }`}
+                className={`${errors.document_name ? "errTimezoneInput" : "Input"
+                  }`}
                 placeholder="Documentation Name"
                 name="document_name"
                 value={formData.document_name}
@@ -203,9 +198,8 @@ function Index() {
           <div className="d-flex gap-3">
             <div className="w-75 mt-3">
               <input
-                className={`${
-                  errors.front_image ? "errTimezoneInput" : "Input"
-                }`}
+                className={`${errors.front_image ? "errTimezoneInput" : "Input"
+                  }`}
                 placeholder="Front image"
                 name="front_image"
                 value={formData.front_image}
@@ -217,9 +211,8 @@ function Index() {
             </div>
             <div className="w-75 mt-3">
               <input
-                className={`${
-                  errors.back_image ? "errTimezoneInput" : "Input"
-                }`}
+                className={`${errors.back_image ? "errTimezoneInput" : "Input"
+                  }`}
                 placeholder="Back image"
                 name="back_image"
                 value={formData.back_image}
@@ -232,9 +225,8 @@ function Index() {
           </div>
           <div className="w-100 mt-3">
             <input
-              className={`${
-                errors.additional_details ? "errTimezoneInput" : "Input"
-              }`}
+              className={`${errors.additional_details ? "errTimezoneInput" : "Input"
+                }`}
               placeholder="Additional Details"
               name="additional_details"
               value={formData.additional_details}
@@ -248,9 +240,8 @@ function Index() {
           <div className="d-flex gap-3">
             <div className="w-75 mt-3">
               <DatePicker
-                className={`${
-                  errors.expiration_date ? "errTimezoneInput" : "Input"
-                }`}
+                className={`${errors.expiration_date ? "errTimezoneInput" : "Input"
+                  }`}
                 selected={formData.expiration_date}
                 onChange={(date) =>
                   setFormData({ ...formData, expiration_date: date })
@@ -263,9 +254,8 @@ function Index() {
             </div>
             <div className="w-75 mt-3">
               <DatePicker
-                className={` w-100 ${
-                  errors.issue_date ? "errTimezoneInput" : "Input"
-                }`}
+                className={` w-100 ${errors.issue_date ? "errTimezoneInput" : "Input"
+                  }`}
                 selected={formData.issue_date}
                 onChange={(date) =>
                   setFormData({ ...formData, issue_date: date })
