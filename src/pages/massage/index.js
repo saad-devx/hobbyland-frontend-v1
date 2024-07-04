@@ -11,7 +11,6 @@ import { BulletList } from "react-content-loader";
 
 const PeersMedia = (props) => {
     const { name, audioStream, vidStream } = props.peer;
-    console.log("Here is the peer: ", props.peer)
     const audioRef = useRef(null);
     const videoRef = useRef(null);
 
@@ -53,18 +52,18 @@ function Index({ socket }) {
     const [loader, setLoader] = useState(true);
     const [sendmassage, setSendmassage] = useState("");
     const [rtcSocket, setRtcSocket] = useState(null);
-    const [device, setDevice] = useState(null);
-    const [producingTransport, setProducingTransport] = useState([]);
-    const [consumingTransport, setConsumingTransport] = useState([]);
+    const [rtpCapabilities, setRtpCapabilities] = useState(null);
+    const [producingTransport, setProducingTransport] = useState(null);
+    const [consumingTransport, setConsumingTransport] = useState(null);
     const [consumersData, setConsumersData] = useState(null);
     const [producers, setProducers] = useState([]);
     const [data, setData] = useState([]);
     const [popupOpen, setPopupOpen] = useState({ open: false, type: "me" });
     const [isVideo, setIsVideo] = useState(false);
-    const [isAudio, setIsAudio] = useState(true);
-    const [localVideoProducer, setLocalVideoProducer] = useState(true);
-    const [localAudioProducer, setLocalAudioProducer] = useState(true);
-    const [localStream, setLocalStream] = useState(true);
+    const [isAudio, setIsAudio] = useState(false);
+    const [localVideoProducer, setLocalVideoProducer] = useState({});
+    const [localAudioProducer, setLocalAudioProducer] = useState({});
+    const [localStream, setLocalStream] = useState({});
     const [peers, setPeers] = useState({});
     const [streams, setStreams] = useState([]);
 
@@ -102,8 +101,9 @@ function Index({ socket }) {
                     console.log("RTC Socket connected successfully");
 
                     // rtcSocketInstance.on("incoming-call", () => {
+                    //     if (popupOpen.open) return;
                     //     setPopupOpen({
-                    //         type: "me",
+                    //         type: "you",
                     //         open: true
                     //     });
                     // })
@@ -113,27 +113,7 @@ function Index({ socket }) {
                     })
 
                     rtcSocketInstance.on('new-producer', async (newProducer) => {
-                        const newProducers = [...producers, newProducer];
-                        setProducers(newProducers)
-
-                        const newStreams = [];
-                        for (const producer of newProducers) {
-                            if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
-                                setConsumersData(prev => ({
-                                    ...prev,
-                                    content: [...prev.content, producer.producerID]
-                                }));
-
-                                const stream = await consume(consumingTransport, producer);
-                                stream.producerID = producer.producerID;
-                                stream.socket_id = producer.socket_id;
-                                stream.user_id = producer.user_id;
-
-                                newStreams.push(stream);
-                                rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
-                            }
-                        }
-                        setStreams(prev => ([...prev, ...newStreams]));
+                        setProducers([...producers, newProducer]);
                     })
 
                     rtcSocketInstance.on('consumers', (data) => {
@@ -147,6 +127,30 @@ function Index({ socket }) {
 
         return () => { rtcSocket?.disconnect() }
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            const newStreams = [];
+            for (const producer of producers) {
+                if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
+                    setConsumersData(prev => ({
+                        ...prev,
+                        content: [...prev.content, producer.producerID]
+                    }));
+
+                    console.log("Log 1 of rtc socket: ", rtcSocket);
+                    const stream = await consume(consumingTransport, producer, rtcSocket);
+                    stream.producerID = producer.producerID;
+                    stream.socket_id = producer.socket_id;
+                    stream.user_id = producer.user_id;
+
+                    newStreams.push(stream);
+                    rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
+                }
+            }
+            setStreams(prev => ([...prev, ...newStreams]))
+        })()
+    }, [producers])
 
     useEffect(() => {
         socket?.on("message", (v) => setData((prev) => [...prev, v.message]));
@@ -323,21 +327,18 @@ function Index({ socket }) {
             const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
             const device = new Device();
             await device.load({ routerRtpCapabilities });
-            setDevice(device);
+            setRtpCapabilities(routerRtpCapabilities);
 
-            await subscribeConsumerTransport(device);
             await subscribeProducerTransport(device);
+            await subscribeConsumerTransport(device);
 
-            await produceAudio();
+            // await produceAudio();
             // await produceVideo();
         } catch (e) { console.log("Error in initializing the meeting: " + e) }
     };
 
-    const consume = async (transport, producer) => {
-        console.log("The device: ", device);
-        if (!device) return console.warn("No device found hence aborted from consuming.")
-        const { rtpCapabilities } = device;
-        const { producerId, id, kind, rtpParameters } = await rtcSocket.asyncEmit('consume', {
+    const consume = async (transport, producer, rtcSocketInstance) => {
+        const { producerId, id, kind, rtpParameters } = await rtcSocketInstance.asyncEmit('consume', {
             rtpCapabilities,
             socket_id: producer.socket_id,
             producer_id: producer.producerID
@@ -372,28 +373,28 @@ function Index({ socket }) {
             setConsumersData(null);
             setProducers([]);
             setPeers({});
-            producingTransport([])
-            consumingTransport([])
+            setProducingTransport([])
+            setConsumingTransport([])
         } catch (e) { console.log(e) }
     };
 
-    const otherConsumers = consumersData?.content.filter(consumer => consumer !== medata.session_id) || [];
-    console.log(otherConsumers, peers)
+    const otherConsumers = Array.from(new Set(consumersData?.content.filter(consumer => consumer !== medata.session_id))) || [];
     const otherPeers = [];
     otherConsumers.forEach(consumer => {
         const peer = peers[consumer];
         if (!peer) return;
-        const audioStream = streams.find(stream => (stream.socket_id === peer.id && !isVideo))
-        const vidStream = streams.find(stream => (stream.socket_id === peer.id && isVideo))
-        console.log("Here are the found streams: ", audioStream, vidStream)
+        const audioStream = streams.find(stream => (stream.socket_id == peer.session_id && !isVideo))
+        const vidStream = streams.find(stream => (stream.socket_id == peer.session_id && isVideo == true))
         otherPeers.push({
             id: peer.id,
-            socket_id: peer.socket_id,
-            name: peer.name,
+            socket_id: peer.session_id,
+            name: peer.username,
+            email: peer.email,
             audioStream,
             vidStream
         });
     })
+    console.log("The other peers: ", otherPeers)
 
     return <div className="flex w-full">
         <MassageLayout />
@@ -495,12 +496,12 @@ function Index({ socket }) {
                 </div>
             ) : null}
         </div>
-        {popupOpen?.open && consumersData?.content?.length > 1 ?
+        {popupOpen?.open ?
             <div className="popup-overlay">
                 <div className="popup-content shadow">
                     <div style={{ width: "100%" }}>
                         <div className="box">S</div>
-                        <div className="text-center mt-2 fs-3">Shahbaz Ai</div>
+                        <div className="text-center mt-2 fs-3">Call</div>
 
                         {popupOpen?.type === "me" ?
                             <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
