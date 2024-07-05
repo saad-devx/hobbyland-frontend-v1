@@ -14,30 +14,42 @@ const PeersMedia = (props) => {
     const audioRef = useRef(null);
     const videoRef = useRef(null);
 
+    console.log("The individual peer: ", props.peer)
+
     useEffect(() => {
-        if (audioStream) audioRef.current.srcObject = audioStream;
+        if (audioStream && audioRef.current) {
+            audioRef.current.srcObject = audioStream;
+            audioRef.current.volume = 1.0
+            console.log("The audio stream exists: ", audioStream.getAudioTracks())
+        }
     }, [audioStream]);
 
     useEffect(() => {
-        if (vidStream) videoRef.current.srcObject = vidStream;
+        if (vidStream && videoRef.current) {
+            videoRef.current.srcObject = vidStream;
+            console.log("The video stream exists: ", vidStream.getVideoTracks())
+        }
     }, [vidStream]);
 
     return <div key={props.index} className="pointer-events-none">
-        {audioStream && <audio
+        {/* {audioStream &&  */}
+        <audio
             ref={audioRef}
             onLoadedMetadata={() => audioRef.current.play()}
             onCanPlay={() => audioRef.current.play()}
             autoPlay
             controls={false}
             hidden
-        />}
-        {vidStream && <video
+        />
+        {/* {vidStream && */}
+        <video
             ref={videoRef}
             onLoadedMetadata={() => videoRef.current.play()}
+            onCanPlay={() => audioRef.current.play()}
             autoPlay
             playsInline
             controls={false}
-        />}
+        />
         {!vidStream && <div className="text-white font-semibold">
             <div className="name">{name}</div>
             <div className="status">{audioStream ? 'Audio Only' : 'Spectator'}</div>
@@ -96,7 +108,6 @@ function Index({ socket }) {
         (async () => {
             try {
                 const rtcSocketInstance = createSocket(WEBRTCBASEURL, localStorage.getItem("Sockettoken"));
-                setRtcSocket(rtcSocketInstance);
                 rtcSocketInstance.on("connect", () => {
                     console.log("RTC Socket connected successfully");
 
@@ -113,15 +124,20 @@ function Index({ socket }) {
                     })
 
                     rtcSocketInstance.on('new-producer', async (newProducer) => {
-                        setProducers([...producers, newProducer]);
+                        const newProducers = [...producers, newProducer];
+                        await hydrateStreams(newProducers)
                     })
 
                     rtcSocketInstance.on('consumers', (data) => {
                         if (consumersData?.timestamp && new Date(consumersData.timestamp) > new Date(data.timestamp)) return;
                         else setConsumersData(data)
                     });
+                    rtcSocketInstance.on('leave', ({ socket_id }) => {
+                        setProducers(prev => (prev.filter(producer => producer.socket_id !== socket_id)))
+                    })
 
                 });
+                setRtcSocket(rtcSocketInstance);
             } catch (e) { console.log("Error connecting to the RTC socket server: ", e) }
         })()
 
@@ -129,54 +145,28 @@ function Index({ socket }) {
     }, []);
 
     useEffect(() => {
-        (async () => {
-            const newStreams = [];
-            for (const producer of producers) {
-                if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
-                    setConsumersData(prev => ({
-                        ...prev,
-                        content: [...prev.content, producer.producerID]
-                    }));
-
-                    console.log("Log 1 of rtc socket: ", rtcSocket);
-                    const stream = await consume(consumingTransport, producer, rtcSocket);
-                    stream.producerID = producer.producerID;
-                    stream.socket_id = producer.socket_id;
-                    stream.user_id = producer.user_id;
-
-                    newStreams.push(stream);
-                    rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
-                }
-            }
-            setStreams(prev => ([...prev, ...newStreams]))
-        })()
-    }, [producers])
-
-    useEffect(() => {
         socket?.on("message", (v) => setData((prev) => [...prev, v.message]));
     }, [socket]);
 
     useEffect(() => {
-        fetchAllMessages();
+        (async () => { // fetching all messages
+            try {
+                if (!room_id) return;
+                const response = await GetMassage(room_id);
+                if (response) {
+                    setData([...response.data?.messages]);
+                    setLoader(false);
+                }
+            } catch (error) { console.log(error) }
+        })();
         (async () => { // fetching the room
             try {
                 if (!room_id) return;
                 const response = await GetSingleRoom(room_id);
                 if (response) setRoom({ ...response.data.room });
             } catch (error) { console.log(error) }
-        })()
+        })();
     }, [room_id]);
-
-    const fetchAllMessages = async () => {
-        try {
-            if (!room_id) return;
-            const response = await GetMassage(room_id);
-            if (response) {
-                setData([...response.data?.messages]);
-                setLoader(false);
-            }
-        } catch (error) { console.log(error) }
-    };
 
     const handleMessageSend = async () => {
         if (!sendmassage) return;
@@ -191,10 +181,10 @@ function Index({ socket }) {
 
     const produceAudio = async () => {
         try {
-            setIsAudio(true);
             const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const audioProducer = await producingTransport.produce({ track: audioStream.getAudioTracks()[0] });
             setLocalAudioProducer(audioProducer);
+            setIsAudio(true);
         } catch (err) {
             console.log('getusermedia produce failed', err);
             setIsAudio(false);
@@ -203,13 +193,13 @@ function Index({ socket }) {
 
     const produceVideo = async () => {
         try {
-            setIsVideo(true);
             const vidStream = await navigator.mediaDevices.getUserMedia({ video: true })
+            setLocalStream(vidStream);
             if (videoRef.current) videoRef.current.srcObject = vidStream;
             const params = { track: vidStream.getVideoTracks()[0], appData: { isScreen: false } };
-            setLocalStream(vidStream);
             const videoProducer = await producingTransport.produce(params);
             setLocalVideoProducer(videoProducer);
+            setIsVideo(true);
         } catch (err) {
             console.log('Video production failed: ', err);
             setIsVideo(false);
@@ -237,6 +227,27 @@ function Index({ socket }) {
             setIsAudio(false);
         } catch (e) { console.log(e) }
     };
+
+    const hydrateStreams = async (newProducers) => {
+        setProducers(newProducers);
+
+        for (const producer of newProducers) {
+            if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
+                setConsumersData(prev => ({
+                    ...prev,
+                    content: [...prev.content, producer.producerID]
+                }));
+
+                const stream = await consume(consumingTransport, producer, rtpCapabilities, rtcSocket);
+                stream.producerID = producer.producerID;
+                stream.socket_id = producer.socket_id;
+                stream.user_id = producer.user_id;
+
+                rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
+                setStreams(prev => ([...prev, stream]))
+            }
+        }
+    }
 
     const subscribeConsumerTransport = async (device) => {
         const transportParams = await rtcSocket.asyncEmit('create-consumer-transport');
@@ -321,23 +332,23 @@ function Index({ socket }) {
 
             const { producers, consumers, peers } = await rtcSocket.asyncEmit('join-meeting', { room_id });
             setPeers(peers);
-            setProducers(producers);
             setConsumersData(consumers);
 
             const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
+            setRtpCapabilities(routerRtpCapabilities);
             const device = new Device();
             await device.load({ routerRtpCapabilities });
-            setRtpCapabilities(routerRtpCapabilities);
 
             await subscribeProducerTransport(device);
             await subscribeConsumerTransport(device);
+            await hydrateStreams(producers);
 
             // await produceAudio();
             // await produceVideo();
         } catch (e) { console.log("Error in initializing the meeting: " + e) }
     };
 
-    const consume = async (transport, producer, rtcSocketInstance) => {
+    const consume = async (transport, producer, rtpCapabilities, rtcSocketInstance) => {
         const { producerId, id, kind, rtpParameters } = await rtcSocketInstance.asyncEmit('consume', {
             rtpCapabilities,
             socket_id: producer.socket_id,
@@ -351,7 +362,7 @@ function Index({ socket }) {
             rtpParameters,
             codecOptions: {},
         });
-        consumer.on('', () => console.log('consumer closed'));
+        consumer.on('close', () => console.log('consumer closed'));
         consumer.on('producerclose', () => console.log('associated producer closed so consumer closed'));
         const stream = new MediaStream();
         stream.addTrack(consumer.track);
@@ -372,9 +383,11 @@ function Index({ socket }) {
             setStreams([]);
             setConsumersData(null);
             setProducers([]);
+            setIsAudio(false);
+            setIsVideo(false);
             setPeers({});
-            setProducingTransport([])
-            setConsumingTransport([])
+            setProducingTransport([]);
+            setConsumingTransport([]);
         } catch (e) { console.log(e) }
     };
 
@@ -382,16 +395,14 @@ function Index({ socket }) {
     const otherPeers = [];
     otherConsumers.forEach(consumer => {
         const peer = peers[consumer];
-        if (!peer) return;
-        const audioStream = streams.find(stream => (stream.socket_id == peer.session_id && !isVideo))
-        const vidStream = streams.find(stream => (stream.socket_id == peer.session_id && isVideo == true))
+        if (!peer) return console.warn("No matching peer found.");
         otherPeers.push({
             id: peer.id,
             socket_id: peer.session_id,
             name: peer.username,
             email: peer.email,
-            audioStream,
-            vidStream
+            audioStream: streams.find(stream => (stream.socket_id == peer.session_id && !stream.isVideo)),
+            vidStream: streams.find(stream => (stream.socket_id == peer.session_id && stream.isVideo))
         });
     })
     console.log("The other peers: ", otherPeers)
@@ -535,8 +546,9 @@ function Index({ socket }) {
                     </div>
                 </div>
             </div> : null}
-        <section className="fixed w-[30%] h-[10rem] bg-slate-600">
+        <section className="fixed z-[999] w-[40%] h-[20rem] bg-slate-600">
             {otherPeers.map((peer, index) => <PeersMedia index={index} peer={peer} />)}
+            {/* <AudioInput /> */}
         </section>
     </div>
 }
