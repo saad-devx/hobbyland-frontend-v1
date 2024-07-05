@@ -124,8 +124,7 @@ function Index({ socket }) {
                     })
 
                     rtcSocketInstance.on('new-producer', async (newProducer) => {
-                        const newProducers = [...producers, newProducer];
-                        await hydrateStreams(newProducers)
+                        setProducers(prev => ([...prev, newProducer]));
                     })
 
                     rtcSocketInstance.on('consumers', (data) => {
@@ -143,6 +142,27 @@ function Index({ socket }) {
 
         return () => { rtcSocket?.disconnect() }
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            for (const producer of producers) {
+                if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
+                    setConsumersData(prev => ({
+                        ...prev,
+                        content: [...prev.content, producer.producerID]
+                    }));
+
+                    const stream = await consume(consumingTransport, producer, rtcSocket);
+                    stream.producerID = producer.producerID;
+                    stream.socket_id = producer.socket_id;
+                    stream.user_id = producer.user_id;
+
+                    rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
+                    setStreams(prev => ([...prev, stream]))
+                }
+            }
+        })()
+    }, [producers])
 
     useEffect(() => {
         socket?.on("message", (v) => setData((prev) => [...prev, v.message]));
@@ -228,27 +248,6 @@ function Index({ socket }) {
         } catch (e) { console.log(e) }
     };
 
-    const hydrateStreams = async (newProducers) => {
-        setProducers(newProducers);
-
-        for (const producer of newProducers) {
-            if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
-                setConsumersData(prev => ({
-                    ...prev,
-                    content: [...prev.content, producer.producerID]
-                }));
-
-                const stream = await consume(consumingTransport, producer, rtpCapabilities, rtcSocket);
-                stream.producerID = producer.producerID;
-                stream.socket_id = producer.socket_id;
-                stream.user_id = producer.user_id;
-
-                rtcSocket.asyncEmit('resume', { producer_id: producer.producerID });
-                setStreams(prev => ([...prev, stream]))
-            }
-        }
-    }
-
     const subscribeConsumerTransport = async (device) => {
         const transportParams = await rtcSocket.asyncEmit('create-consumer-transport');
         const transport = device.createRecvTransport(transportParams);
@@ -332,6 +331,7 @@ function Index({ socket }) {
 
             const { producers, consumers, peers } = await rtcSocket.asyncEmit('join-meeting', { room_id });
             setPeers(peers);
+            setProducers(producers);
             setConsumersData(consumers);
 
             const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
@@ -341,14 +341,13 @@ function Index({ socket }) {
 
             await subscribeProducerTransport(device);
             await subscribeConsumerTransport(device);
-            await hydrateStreams(producers);
 
             // await produceAudio();
             // await produceVideo();
         } catch (e) { console.log("Error in initializing the meeting: " + e) }
     };
 
-    const consume = async (transport, producer, rtpCapabilities, rtcSocketInstance) => {
+    const consume = async (transport, producer, rtcSocketInstance) => {
         const { producerId, id, kind, rtpParameters } = await rtcSocketInstance.asyncEmit('consume', {
             rtpCapabilities,
             socket_id: producer.socket_id,
