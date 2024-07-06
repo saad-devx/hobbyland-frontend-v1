@@ -13,47 +13,35 @@ const PeersMedia = (props) => {
     const { name, audioStream, vidStream } = props.peer;
     const audioRef = useRef(null);
     const videoRef = useRef(null);
-
     console.log("The individual peer: ", props.peer)
 
     useEffect(() => {
         if (audioStream && audioRef.current) {
             audioRef.current.srcObject = audioStream;
             audioRef.current.volume = 1.0
-            console.log("The audio stream exists: ", audioStream.getAudioTracks())
         }
-    }, [audioStream]);
+        if (vidStream && videoRef.current) videoRef.current.srcObject = vidStream;
+    }, [audioStream, vidStream]);
 
-    useEffect(() => {
-        if (vidStream && videoRef.current) {
-            videoRef.current.srcObject = vidStream;
-            console.log("The video stream exists: ", vidStream.getVideoTracks())
-        }
-    }, [vidStream]);
-
-    return <div key={props.index} className="pointer-events-none">
-        {/* {audioStream &&  */}
-        <audio
+    return <div key={props.index} className="relative h-full aspect-video p-4 border rounded-xl flex flex-col justify-center items-center">
+        {audioStream && <audio
             ref={audioRef}
             onLoadedMetadata={() => audioRef.current.play()}
             onCanPlay={() => audioRef.current.play()}
             autoPlay
             controls={false}
             hidden
-        />
-        {/* {vidStream && */}
-        <video
+        />}
+        {vidStream ? <video
+            className="w-full h-full object-cover"
             ref={videoRef}
             onLoadedMetadata={() => videoRef.current.play()}
             onCanPlay={() => audioRef.current.play()}
             autoPlay
             playsInline
             controls={false}
-        />
-        {!vidStream && <div className="text-white font-semibold">
-            <div className="name">{name}</div>
-            <div className="status">{audioStream ? 'Audio Only' : 'Spectator'}</div>
-        </div>}
+        /> : <div className="w-32 aspect-square flex justify-center items-center rounded-full text-3xl text-gray-200 border-4 border-gray-400 font-bold uppercase">--</div>}
+        <span className="absolute left-1/2 -translate-x-1/2 bottom-4 text-xl text-white">{name}</span>
     </div>
 }
 
@@ -70,21 +58,20 @@ function Index({ socket }) {
     const [consumersData, setConsumersData] = useState(null);
     const [producers, setProducers] = useState([]);
     const [data, setData] = useState([]);
-    const [popupOpen, setPopupOpen] = useState({ open: false, type: "me" });
+    const [callModal, setCallModal] = useState({ open: false, type: "me" });
     const [isVideo, setIsVideo] = useState(false);
     const [isAudio, setIsAudio] = useState(false);
     const [localVideoProducer, setLocalVideoProducer] = useState({});
     const [localAudioProducer, setLocalAudioProducer] = useState({});
-    const [localStream, setLocalStream] = useState({});
     const [peers, setPeers] = useState({});
     const [streams, setStreams] = useState([]);
+    const [intervalId, setIntervalId] = useState(null);
 
     const videoRef = useRef(null);
     const audioRef = useRef(null);
 
     const room_id = router.query.id;
     const otherMember = room.members?.find((member) => member._id !== medata._id);
-
     console.log("The Streams: ", streams)
 
     useEffect(() => {
@@ -111,36 +98,49 @@ function Index({ socket }) {
                 rtcSocketInstance.on("connect", () => {
                     console.log("RTC Socket connected successfully");
 
-                    // rtcSocketInstance.on("incoming-call", () => {
-                    //     if (popupOpen.open) return;
-                    //     setPopupOpen({
-                    //         type: "you",
-                    //         open: true
-                    //     });
-                    // })
-
+                    rtcSocketInstance.on("incoming-call", () => {
+                        if (!callModal.open) setCallModal({
+                            type: "you",
+                            open: true
+                        });
+                    })
                     rtcSocketInstance.on('new-peer', ({ socket_id, user }) => {
                         setPeers(prev => ({ ...prev, [socket_id]: user }))
                     })
-
                     rtcSocketInstance.on('new-producer', async (newProducer) => {
                         setProducers(prev => ([...prev, newProducer]));
                     })
-
                     rtcSocketInstance.on('consumers', (data) => {
                         if (consumersData?.timestamp && new Date(consumersData.timestamp) > new Date(data.timestamp)) return;
                         else setConsumersData(data)
                     });
                     rtcSocketInstance.on('leave', ({ socket_id }) => {
-                        setProducers(prev => (prev.filter(producer => producer.socket_id !== socket_id)))
-                    })
+                        setProducers(prev => (prev.filter(producer => producer.socket_id !== socket_id)));
+                        setConsumersData(prev => ({
+                            content: prev.content.filter(consumer => consumer !== socket_id),
+                            timestamp: prev.timestamp
+                        }))
 
+                    })
+                    rtcSocketInstance.on('call-rejected', ({ socket_id }) => {
+                        setCallModal({
+                            type: "",
+                            open: false
+                        });
+                        if (intervalId) clearInterval(intervalId);
+                        setIntervalId(null);
+                        alert("You call was rejected.")
+                    })
                 });
                 setRtcSocket(rtcSocketInstance);
             } catch (e) { console.log("Error connecting to the RTC socket server: ", e) }
         })()
 
-        return () => { rtcSocket?.disconnect() }
+        return () => {
+            rtcSocket?.disconnect();
+            if (intervalId) clearInterval(intervalId);
+            setIntervalId(null);
+        }
     }, []);
 
     useEffect(() => {
@@ -214,7 +214,6 @@ function Index({ socket }) {
     const produceVideo = async () => {
         try {
             const vidStream = await navigator.mediaDevices.getUserMedia({ video: true })
-            setLocalStream(vidStream);
             if (videoRef.current) videoRef.current.srcObject = vidStream;
             const params = { track: vidStream.getVideoTracks()[0], appData: { isScreen: false } };
             const videoProducer = await producingTransport.produce(params);
@@ -228,7 +227,6 @@ function Index({ socket }) {
 
     const stopVideo = async () => {
         try {
-            if (localStream) localStream.getVideoTracks()[0].stop();
             if (videoRef.current) videoRef.current.srcObject = null
             await rtcSocket.asyncEmit('remove', { producer_id: localVideoProducer.id, room_id });
             localVideoProducer.close();
@@ -248,8 +246,7 @@ function Index({ socket }) {
         } catch (e) { console.log(e) }
     };
 
-    const subscribeConsumerTransport = async (device) => {
-        const transportParams = await rtcSocket.asyncEmit('create-consumer-transport');
+    const subscribeConsumerTransport = async (device, transportParams) => {
         const transport = device.createRecvTransport(transportParams);
 
         transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
@@ -279,8 +276,7 @@ function Index({ socket }) {
         setConsumingTransport(transport);
     };
 
-    const subscribeProducerTransport = async (device) => {
-        const transportParams = await rtcSocket.asyncEmit('create-producer-transport');
+    const subscribeProducerTransport = async (device, transportParams) => {
         const transport = device.createSendTransport(transportParams);
 
         transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
@@ -322,25 +318,35 @@ function Index({ socket }) {
     const initiateMeeting = async (_, outgoing = true) => {
         try {
             if (outgoing) {
-                rtcSocket.asyncEmit('call-user', { room_id })
-                setPopupOpen({
+                setCallModal({
                     type: "me",
                     open: true
                 });
+                const intervalId = setInterval(() => {
+                    rtcSocket.asyncEmit('call-user', { room_id })
+                }, 3000);
+                setIntervalId(intervalId);
+                setTimeout(() => clearInterval(intervalId), 45000);
             }
 
-            const { producers, consumers, peers } = await rtcSocket.asyncEmit('join-meeting', { room_id });
+            const {
+                producers,
+                consumers,
+                peers,
+                routerRtpCapabilities,
+                producerTransportParams,
+                consumerTransportParams
+            } = await rtcSocket.asyncEmit('join-meeting', { room_id });
             setPeers(peers);
             setProducers(producers);
             setConsumersData(consumers);
-
-            const routerRtpCapabilities = await rtcSocket.asyncEmit('get-router-rtp-capabilities');
             setRtpCapabilities(routerRtpCapabilities);
+            console.log("Here's all the DATA: ", peers, producers, consumers)
             const device = new Device();
             await device.load({ routerRtpCapabilities });
 
-            await subscribeProducerTransport(device);
-            await subscribeConsumerTransport(device);
+            subscribeProducerTransport(device, producerTransportParams);
+            subscribeConsumerTransport(device, consumerTransportParams);
 
             // await produceAudio();
             // await produceVideo();
@@ -371,14 +377,13 @@ function Index({ socket }) {
 
     const closeMeeting = async () => {
         try {
-            if (localStream?.getVideoTracks) localStream.getVideoTracks()[0].stop();
             producingTransport?.close();
             consumingTransport?.close();
-            setPopupOpen({
+            setCallModal({
                 type: "",
                 open: false,
             })
-            await rtcSocket.asyncEmit('leave-meeting', { room_id });
+            rtcSocket.asyncEmit('leave-meeting', { room_id });
             setStreams([]);
             setConsumersData(null);
             setProducers([]);
@@ -394,7 +399,7 @@ function Index({ socket }) {
     const otherPeers = [];
     otherConsumers.forEach(consumer => {
         const peer = peers[consumer];
-        if (!peer) return console.warn("No matching peer found.");
+        if (!peer) return;
         otherPeers.push({
             id: peer.id,
             socket_id: peer.session_id,
@@ -506,49 +511,72 @@ function Index({ socket }) {
                 </div>
             ) : null}
         </div>
-        {popupOpen?.open ?
-            <div className="popup-overlay">
-                <div className="popup-content shadow">
-                    <div style={{ width: "100%" }}>
-                        <div className="box">S</div>
-                        <div className="text-center mt-2 fs-3">Call</div>
 
-                        {popupOpen?.type === "me" ?
-                            <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
-                                <div
-                                    onClick={() => (isVideo ? stopVideo() : produceVideo())}
-                                    className={`${isVideo ? "activebutton" : "unactivebutton"}`}
-                                    style={{ cursor: "pointer" }}>
-                                    {isVideo ? <Icon icon="mdi:video" color="white" /> : <Icon icon="hugeicons:video-off" color="black" />}
-                                </div>
-                                <div onClick={() => isAudio ? stopAudio() : produceAudio()} className={`${isAudio === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
-                                    {isAudio ? <svg focusable="false" width="24" height="22" viewBox="0 0 24 24">
-                                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-                                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
-                                    </svg> : <Icon icon="mdi:mute" />}
-                                </div>
-                                <div onClick={closeMeeting} className="CutCall" style={{ cursor: "pointer" }}>
-                                    Call end.
-                                </div>
-                            </div>
-                            : popupOpen?.type === "you" ?
-                                <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
-                                    <div onClick={() => initiateMeeting(null, false)} className="AcceptCall" style={{ cursor: "pointer" }}>
-                                        Accept
-                                    </div>
-                                    <div onClick={closeMeeting} className="CutCall1" style={{ cursor: "pointer" }}>
-                                        Reject
-                                    </div>
-                                </div> : null}
-                        <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "auto", display: isVideo ? "block" : "none" }} />
-                        <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} />
+        {consumersData?.content.length > 1 ?
+            <section draggable className="fixed z-[999] inset-0 w-full h-screen call-mesh-background flex justify-center items-center">
+                <nav className="w-full h-1/2 p-8 flex justify-center items-center gap-4">
+                    <div className="relative h-full aspect-video p-4 border rounded-xl flex flex-col justify-center items-center">
+                        {isVideo ? <video
+                            className="w-full h-full object-cover"
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            controls={false}
+                        /> : <div className="w-32 aspect-square flex justify-center items-center rounded-full text-3xl text-gray-200 border-4 border-gray-400 font-bold uppercase">{medata?.firstname?.slice(0, 1)}</div>}
+                        <span className="absolute left-1/2 -translate-x-1/2 bottom-4 text-xl text-white">You</span>
                     </div>
-                </div>
-            </div> : null}
-        <section className="fixed z-[999] w-[40%] h-[20rem] bg-slate-600">
-            {otherPeers.map((peer, index) => <PeersMedia index={index} peer={peer} />)}
-            {/* <AudioInput /> */}
-        </section>
+                    {otherPeers.map((peer, index) => <PeersMedia index={index} peer={peer} />)}
+                </nav>
+                <nav className="absolute left-1/2 -translate-x-1/2 bottom-7 w-2/5 px-6 py-2 flex justify-around items-center rounded-full bg-black/40 shadow-xl">
+                    <button onClick={() => isAudio ? stopAudio() : produceAudio()} title="Toggle Mic" className="px-4 py-2 hover:scale-125 text-white text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
+                        {isAudio ? <Icon icon="eva:mic-off-fill" /> : <Icon icon="eva:mic-fill" />}
+                    </button>
+                    <button onClick={() => isVideo ? stopVideo() : produceVideo()} title="Toggle Camera" className="px-4 py-2 hover:scale-125 text-white text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
+                        {isVideo ? <Icon icon="majesticons:camera-off" /> : <Icon icon="heroicons:video-camera-solid" />}
+                    </button>
+                    <button onClick={closeMeeting} title="End Call" className="px-4 py-2 hover:scale-125 text-red-500 text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
+                        <Icon fontSize={42} icon="solar:end-call-bold" />
+                    </button>
+                </nav>
+            </section>
+            :
+            callModal?.open ?
+                <div className="popup-overlay">
+                    <div className="popup-content shadow">
+                        <div style={{ width: "100%" }}>
+                            <div className="box">S</div>
+                            {callModal?.type === "me" ? <>
+                                <div className="text-center mt-2 text-2xl">Outgoing Call <Icon icon="line-md:phone-call-loop" /></div>
+                                <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
+                                    <div
+                                        onClick={() => (isVideo ? stopVideo() : produceVideo())}
+                                        className={`${isVideo ? "activebutton" : "unactivebutton"}`}
+                                        style={{ cursor: "pointer" }}>
+                                        {isVideo ? <Icon icon="mdi:video" color="white" /> : <Icon icon="hugeicons:video-off" color="black" />}
+                                    </div>
+                                    <div onClick={() => isAudio ? stopAudio() : produceAudio()} className={`${isAudio === true ? "activebutton" : "unactivebutton"}`} style={{ cursor: "pointer" }}>
+                                        {isAudio ? <svg focusable="false" width="24" height="22" viewBox="0 0 24 24">
+                                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
+                                        </svg> : <Icon icon="mdi:mute" />}
+                                    </div>
+                                    <div onClick={closeMeeting} className="CutCall" style={{ cursor: "pointer" }}>
+                                        End Call
+                                    </div>
+                                </div>
+                            </>
+                                : callModal?.type === "you" ? <>
+                                    <div className="text-center mt-2 text-2xl">Incoming Call <Icon icon="line-md:phone-call-loop" /></div>
+                                    <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
+                                        <div onClick={() => initiateMeeting(null, false)} className="AcceptCall" style={{ cursor: "pointer" }}>Accept</div>
+                                        <div onClick={closeMeeting} className="CutCall1" style={{ cursor: "pointer" }}>Reject</div>
+                                    </div>
+                                </> : null}
+                            <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "auto", display: isVideo ? "block" : "none" }} />
+                            <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} />
+                        </div>
+                    </div>
+                </div> : null}
     </div>
 }
 
