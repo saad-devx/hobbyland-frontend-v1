@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { GetMassage, GetSingleRoom, MessageSend } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { WEBRTCBASEURL } from "@/config/Axiosconfig";
+import PeersMedia from "@/Component/peers-media";
 import { Device } from "mediasoup-client";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import createSocket from "@/lib/promisified-io";
@@ -8,42 +9,6 @@ import MassageLayout from "@/layout/Massageloyout";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { BulletList } from "react-content-loader";
-
-const PeersMedia = (props) => {
-    const { name, audioStream, vidStream } = props.peer;
-    const audioRef = useRef(null);
-    const videoRef = useRef(null);
-    console.log("The individual peer: ", props.peer)
-
-    useEffect(() => {
-        if (audioStream && audioRef.current) {
-            audioRef.current.srcObject = audioStream;
-            audioRef.current.volume = 1.0
-        }
-        if (vidStream && videoRef.current) videoRef.current.srcObject = vidStream;
-    }, [audioStream, vidStream]);
-
-    return <div key={props.index} className="relative h-full aspect-video p-4 border rounded-xl flex flex-col justify-center items-center">
-        {audioStream && <audio
-            ref={audioRef}
-            onLoadedMetadata={() => audioRef.current.play()}
-            onCanPlay={() => audioRef.current.play()}
-            autoPlay
-            controls={false}
-            hidden
-        />}
-        {vidStream ? <video
-            className="w-full h-full object-cover"
-            ref={videoRef}
-            onLoadedMetadata={() => videoRef.current.play()}
-            onCanPlay={() => audioRef.current.play()}
-            autoPlay
-            playsInline
-            controls={false}
-        /> : <div className="w-32 aspect-square flex justify-center items-center rounded-full text-3xl text-gray-200 border-4 border-gray-400 font-bold uppercase">--</div>}
-        <span className="absolute left-1/2 -translate-x-1/2 bottom-4 text-xl text-white">{name}</span>
-    </div>
-}
 
 function Index({ socket }) {
     const router = useRouter();
@@ -55,7 +20,6 @@ function Index({ socket }) {
     const [rtpCapabilities, setRtpCapabilities] = useState(null);
     const [producingTransport, setProducingTransport] = useState(null);
     const [consumingTransport, setConsumingTransport] = useState(null);
-    const [consumersData, setConsumersData] = useState(null);
     const [producers, setProducers] = useState([]);
     const [data, setData] = useState([]);
     const [callModal, setCallModal] = useState({ open: false, type: "me" });
@@ -107,20 +71,19 @@ function Index({ socket }) {
                     rtcSocketInstance.on('new-peer', ({ socket_id, user }) => {
                         setPeers(prev => ({ ...prev, [socket_id]: user }))
                     })
+                    rtcSocketInstance.on('remove', ({ producer_id, socket_id }) => {
+                        setStreams(prev => prev.filter(stream => (stream.producerID !== producer_id && stream.socket_id !== socket_id)))
+                    })
                     rtcSocketInstance.on('new-producer', async (newProducer) => {
                         setProducers(prev => ([...prev, newProducer]));
                     })
-                    rtcSocketInstance.on('consumers', (data) => {
-                        if (consumersData?.timestamp && new Date(consumersData.timestamp) > new Date(data.timestamp)) return;
-                        else setConsumersData(data)
-                    });
                     rtcSocketInstance.on('leave', ({ socket_id }) => {
                         setProducers(prev => (prev.filter(producer => producer.socket_id !== socket_id)));
-                        setConsumersData(prev => ({
-                            content: prev.content.filter(consumer => consumer !== socket_id),
-                            timestamp: prev.timestamp
-                        }))
-
+                        setPeers(prev => {
+                            const newPeers = prev;
+                            delete newPeers[socket_id];
+                            return newPeers;
+                        })
                     })
                     rtcSocketInstance.on('call-rejected', ({ socket_id }) => {
                         setCallModal({
@@ -146,12 +109,7 @@ function Index({ socket }) {
     useEffect(() => {
         (async () => {
             for (const producer of producers) {
-                if (!consumersData?.content?.length || !consumersData.content.includes(producer.producerID) && producer.room_id === room_id) {
-                    setConsumersData(prev => ({
-                        ...prev,
-                        content: [...prev.content, producer.producerID]
-                    }));
-
+                if (producer.room_id === room_id) {
                     const stream = await consume(consumingTransport, producer, rtcSocket);
                     stream.producerID = producer.producerID;
                     stream.socket_id = producer.socket_id;
@@ -213,12 +171,12 @@ function Index({ socket }) {
 
     const produceVideo = async () => {
         try {
+            setIsVideo(true);
             const vidStream = await navigator.mediaDevices.getUserMedia({ video: true })
-            if (videoRef.current) videoRef.current.srcObject = vidStream;
+            if (videoRef.current) videoRef.current.srcObject = new MediaStream(vidStream);
             const params = { track: vidStream.getVideoTracks()[0], appData: { isScreen: false } };
             const videoProducer = await producingTransport.produce(params);
             setLocalVideoProducer(videoProducer);
-            setIsVideo(true);
         } catch (err) {
             console.log('Video production failed: ', err);
             setIsVideo(false);
@@ -331,7 +289,6 @@ function Index({ socket }) {
 
             const {
                 producers,
-                consumers,
                 peers,
                 routerRtpCapabilities,
                 producerTransportParams,
@@ -339,17 +296,13 @@ function Index({ socket }) {
             } = await rtcSocket.asyncEmit('join-meeting', { room_id });
             setPeers(peers);
             setProducers(producers);
-            setConsumersData(consumers);
             setRtpCapabilities(routerRtpCapabilities);
-            console.log("Here's all the DATA: ", peers, producers, consumers)
+            console.log("Here's all the DATA: ", peers, producers)
             const device = new Device();
             await device.load({ routerRtpCapabilities });
 
-            subscribeProducerTransport(device, producerTransportParams);
-            subscribeConsumerTransport(device, consumerTransportParams);
-
-            // await produceAudio();
-            // await produceVideo();
+            await subscribeProducerTransport(device, producerTransportParams);
+            await subscribeConsumerTransport(device, consumerTransportParams);
         } catch (e) { console.log("Error in initializing the meeting: " + e) }
     };
 
@@ -384,8 +337,8 @@ function Index({ socket }) {
                 open: false,
             })
             rtcSocket.asyncEmit('leave-meeting', { room_id });
+            if (intervalId) clearInterval(intervalId);
             setStreams([]);
-            setConsumersData(null);
             setProducers([]);
             setIsAudio(false);
             setIsVideo(false);
@@ -395,20 +348,11 @@ function Index({ socket }) {
         } catch (e) { console.log(e) }
     };
 
-    const otherConsumers = Array.from(new Set(consumersData?.content.filter(consumer => consumer !== medata.session_id))) || [];
-    const otherPeers = [];
-    otherConsumers.forEach(consumer => {
-        const peer = peers[consumer];
-        if (!peer) return;
-        otherPeers.push({
-            id: peer.id,
-            socket_id: peer.session_id,
-            name: peer.username,
-            email: peer.email,
-            audioStream: streams.find(stream => (stream.socket_id == peer.session_id && !stream.isVideo)),
-            vidStream: streams.find(stream => (stream.socket_id == peer.session_id && stream.isVideo))
-        });
-    })
+    const otherPeers = Object.values(peers).filter(peer => peer.id !== medata._id).map(peer => ({
+        ...peer,
+        audioStream: streams.find(stream => (stream.socket_id == peer.session_id && !stream.isVideo)),
+        vidStream: streams.find(stream => (stream.socket_id == peer.session_id && stream.isVideo))
+    }));
     console.log("The other peers: ", otherPeers)
 
     return <div className="flex w-full">
@@ -499,25 +443,24 @@ function Index({ socket }) {
                     </div>}
             </> : null}
 
-            {room_id ? (
-                <div className="bottom gap-3">
-                    <input
-                        placeholder="Enter A Message"
-                        value={sendmassage}
-                        onChange={(e) => setSendmassage(e.target.value)}
-                        className="Input"
-                    />
-                    <button onClick={handleMessageSend} className="btn_Green">Send</button>
-                </div>
-            ) : null}
+            {room_id ? <div className="bottom gap-3">
+                <input
+                    placeholder="Enter A Message"
+                    value={sendmassage}
+                    onChange={(e) => setSendmassage(e.target.value)}
+                    className="Input"
+                />
+                <button onClick={handleMessageSend} className="btn_Green">Send</button>
+            </div> : null}
         </div>
 
-        {consumersData?.content.length > 1 ?
-            <section draggable className="fixed z-[999] inset-0 w-full h-screen call-mesh-background flex justify-center items-center">
+        {Object.values(peers).length > 1 ?
+            <section draggable className="fixed z-[999] inset-0 w-full h-screen min-h-[40rem] call-mesh-background flex justify-center items-center">
                 <nav className="w-full h-1/2 p-8 flex justify-center items-center gap-4">
-                    <div className="relative h-full aspect-video p-4 border rounded-xl flex flex-col justify-center items-center">
+
+                    <div className="relative h-full aspect-video rounded-xl flex flex-col justify-center items-center bg-black/40 backdrop-blur overflow-hidden">
                         {isVideo ? <video
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover z-[1200]"
                             ref={videoRef}
                             autoPlay
                             playsInline
@@ -529,7 +472,7 @@ function Index({ socket }) {
                 </nav>
                 <nav className="absolute left-1/2 -translate-x-1/2 bottom-7 w-2/5 px-6 py-2 flex justify-around items-center rounded-full bg-black/40 shadow-xl">
                     <button onClick={() => isAudio ? stopAudio() : produceAudio()} title="Toggle Mic" className="px-4 py-2 hover:scale-125 text-white text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
-                        {isAudio ? <Icon icon="eva:mic-off-fill" /> : <Icon icon="eva:mic-fill" />}
+                        {isAudio ? <Icon icon="eva:mic-fill" /> : <Icon icon="eva:mic-off-fill" />}
                     </button>
                     <button onClick={() => isVideo ? stopVideo() : produceVideo()} title="Toggle Camera" className="px-4 py-2 hover:scale-125 text-white text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
                         {isVideo ? <Icon icon="majesticons:camera-off" /> : <Icon icon="heroicons:video-camera-solid" />}
@@ -546,7 +489,7 @@ function Index({ socket }) {
                         <div style={{ width: "100%" }}>
                             <div className="box">S</div>
                             {callModal?.type === "me" ? <>
-                                <div className="text-center mt-2 text-2xl">Outgoing Call <Icon icon="line-md:phone-call-loop" /></div>
+                                <div className="flex justify-center gap-2 items-center text-center my-4 text-2xl">Outgoing Call <Icon fontSize={34} icon="line-md:phone-call-loop" /></div>
                                 <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
                                     <div
                                         onClick={() => (isVideo ? stopVideo() : produceVideo())}
@@ -566,14 +509,14 @@ function Index({ socket }) {
                                 </div>
                             </>
                                 : callModal?.type === "you" ? <>
-                                    <div className="text-center mt-2 text-2xl">Incoming Call <Icon icon="line-md:phone-call-loop" /></div>
+                                    <div className="flex justify-center gap-2 items-center my-4 text-2xl">Incoming Call <Icon fontSize={34} icon="line-md:phone-call-loop" /></div>
                                     <div style={{ display: 'flex', justifyContent: "center", marginTop: "20px", gap: "20px" }}>
                                         <div onClick={() => initiateMeeting(null, false)} className="AcceptCall" style={{ cursor: "pointer" }}>Accept</div>
                                         <div onClick={closeMeeting} className="CutCall1" style={{ cursor: "pointer" }}>Reject</div>
                                     </div>
                                 </> : null}
-                            <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "auto", display: isVideo ? "block" : "none" }} />
-                            <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} />
+                            {/* <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "auto", display: isVideo ? "block" : "none" }} />
+                            <audio ref={audioRef} autoPlay playsInline style={{ display: "none" }} /> */}
                         </div>
                     </div>
                 </div> : null}
