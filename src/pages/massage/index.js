@@ -68,6 +68,16 @@ function Index({ socket }) {
                             open: true
                         });
                     })
+                    rtcSocketInstance.on('call-accepted', ({ socket_id }) => {
+                        if (intervalId) clearInterval(intervalId);
+                        setIntervalId(null);
+                    })
+                    rtcSocketInstance.on('call-rejected', ({ socket_id }) => {
+                        if (intervalId) clearInterval(intervalId);
+                        setIntervalId(null);
+                        closeMeeting();
+                        alert("You call was rejected.")
+                    })
                     rtcSocketInstance.on('new-peer', ({ socket_id, user }) => {
                         setPeers(prev => ({ ...prev, [socket_id]: user }))
                     })
@@ -280,12 +290,13 @@ function Index({ socket }) {
                     type: "me",
                     open: true
                 });
-                const intervalId = setInterval(() => {
-                    rtcSocket.asyncEmit('call-user', { room_id })
-                }, 3000);
+                rtcSocket.asyncEmit('call-user', { room_id })
+                // const intervalId = setInterval(() => {
+                // }, 3000);
                 setIntervalId(intervalId);
                 setTimeout(() => clearInterval(intervalId), 45000);
             }
+            else { rtcSocket.emit("accept-call", { room_id }) }
 
             const {
                 producers,
@@ -328,15 +339,16 @@ function Index({ socket }) {
         return stream;
     };
 
-    const closeMeeting = async () => {
+    const closeMeeting = () => {
         try {
-            producingTransport?.close();
-            consumingTransport?.close();
+            rtcSocket.asyncEmit('leave-meeting', { room_id });
+            rtcSocket.asyncEmit('reject-call', { room_id });
             setCallModal({
                 type: "",
                 open: false,
             })
-            rtcSocket.asyncEmit('leave-meeting', { room_id });
+            producingTransport?.close();
+            consumingTransport?.close();
             if (intervalId) clearInterval(intervalId);
             setStreams([]);
             setProducers([]);
