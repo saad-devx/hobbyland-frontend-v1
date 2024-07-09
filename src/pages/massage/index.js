@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { GetMassage, GetSingleRoom, MessageSend } from "@/config/Axiosconfig/AxiosHandle/chat";
 import { WEBRTCBASEURL } from "@/config/Axiosconfig";
-import PeersMedia from "@/Component/peers-media";
+import MeetingModal from "@/Component/meeting-modal";
 import { Device } from "mediasoup-client";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import createSocket from "@/lib/promisified-io";
@@ -167,9 +167,11 @@ function Index({ socket }) {
         } catch (error) { console.log(error) }
     };
 
-    const produceAudio = async () => {
+    const produceAudio = async (deviceId = null) => {
         try {
-            const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const audioStream = deviceId ? await navigator.mediaDevices.getUserMedia({
+                audio: { deviceId: { exact: deviceId } },
+            }) : await navigator.mediaDevices.getUserMedia({ audio: true });
             const audioProducer = await producingTransport.produce({ track: audioStream.getAudioTracks()[0] });
             setLocalAudioProducer(audioProducer);
             setIsAudio(true);
@@ -179,10 +181,12 @@ function Index({ socket }) {
         }
     };
 
-    const produceVideo = async () => {
+    const produceVideo = async (deviceId = null) => {
         try {
             setIsVideo(true);
-            const vidStream = await navigator.mediaDevices.getUserMedia({ video: true })
+            const vidStream = deviceId ? await navigator.mediaDevices.getUserMedia({
+                video: { deviceId: { exact: deviceId } },
+            }) : await navigator.mediaDevices.getUserMedia({ video: true })
             if (videoRef.current) videoRef.current.srcObject = new MediaStream(vidStream);
             const params = { track: vidStream.getVideoTracks()[0], appData: { isScreen: false } };
             const videoProducer = await producingTransport.produce(params);
@@ -196,7 +200,7 @@ function Index({ socket }) {
     const stopVideo = async () => {
         try {
             if (videoRef.current) videoRef.current.srcObject = null
-            await rtcSocket.asyncEmit('remove', { producer_id: localVideoProducer.id, room_id });
+            rtcSocket.emit('remove', { producer_id: localVideoProducer.id, room_id });
             localVideoProducer.close();
             setLocalVideoProducer(null);
             setIsVideo(false);
@@ -207,7 +211,7 @@ function Index({ socket }) {
         try {
             if (!producingTransport || producingTransport.closed) return console.error('Producing transport is not ready or closed');
             if (audioRef.current) audioRef.current.srcObject = null
-            await rtcSocket.asyncEmit('remove', { producer_id: localAudioProducer.id, room_id });
+            rtcSocket.emit('remove', { producer_id: localAudioProducer.id, room_id });
             localAudioProducer.close();
             setLocalAudioProducer(null);
             setIsAudio(false);
@@ -466,35 +470,18 @@ function Index({ socket }) {
             </div> : null}
         </div>
 
-        {Object.values(peers).length > 1 ?
-            <section draggable className="fixed z-[999] inset-0 w-full h-screen min-h-[40rem] call-mesh-background flex justify-center items-center">
-                <nav className="w-full h-1/2 p-8 flex justify-center items-center gap-4">
-
-                    <div className="relative h-full aspect-video rounded-xl flex flex-col justify-center items-center bg-black/40 backdrop-blur overflow-hidden">
-                        {isVideo ? <video
-                            className="w-full h-full object-cover z-[1200]"
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            controls={false}
-                        /> : <div className="w-32 aspect-square flex justify-center items-center rounded-full text-3xl text-gray-200 border-4 border-gray-400 font-bold uppercase">{medata?.firstname?.slice(0, 1)}</div>}
-                        <span className="absolute left-1/2 -translate-x-1/2 bottom-4 text-xl text-white">You</span>
-                    </div>
-                    {otherPeers.map((peer, index) => <PeersMedia index={index} peer={peer} />)}
-                </nav>
-                <nav className="absolute left-1/2 -translate-x-1/2 bottom-7 w-2/5 px-6 py-2 flex justify-around items-center rounded-full bg-black/40 shadow-xl">
-                    <button onClick={() => isAudio ? stopAudio() : produceAudio()} title="Toggle Mic" className="px-4 py-2 hover:scale-125 text-white text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
-                        {isAudio ? <Icon icon="eva:mic-fill" /> : <Icon icon="eva:mic-off-fill" />}
-                    </button>
-                    <button onClick={() => isVideo ? stopVideo() : produceVideo()} title="Toggle Camera" className="px-4 py-2 hover:scale-125 text-white text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
-                        {isVideo ? <Icon icon="majesticons:camera-off" /> : <Icon icon="heroicons:video-camera-solid" />}
-                    </button>
-                    <button onClick={closeMeeting} title="End Call" className="px-4 py-2 hover:scale-125 text-red-500 text-3xl hover:-translate-y-4 rounded-3xl transition-all duration-300">
-                        <Icon fontSize={42} icon="solar:end-call-bold" />
-                    </button>
-                </nav>
-            </section>
-            :
+        {Object.values(peers).length > 1 ? <MeetingModal
+            userData={medata}
+            otherPeers={otherPeers}
+            isAudio={isAudio}
+            isVideo={isVideo}
+            videoRef={videoRef}
+            stopAudio={stopAudio}
+            produceAudio={produceAudio}
+            stopVideo={stopVideo}
+            produceVideo={produceVideo}
+            closeMeeting={closeMeeting}
+        /> :
             callModal?.open ?
                 <div className="popup-overlay">
                     <div className="popup-content shadow">

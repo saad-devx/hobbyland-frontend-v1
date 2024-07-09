@@ -433,17 +433,6 @@
   justify-content: center;
 }
 
-.call-mesh-background {
-  background-color: rgb(36, 10, 87);
-  background-image: radial-gradient(at 19% 54%, hsla(55, 32%, 41%, 0.438) 0px, transparent 50%),
-    radial-gradient(at 3% 47%, hsla(45, 100%, 80%, 0.8) 0px, transparent 50%),
-    radial-gradient(at 98% 3%, hsla(226, 100%, 53%, 0.87) 0px, transparent 50%),
-    radial-gradient(at 94% 44%, hsla(44, 100%, 79%, 0.8) 0px, transparent 50%),
-    radial-gradient(at 53% 29%, hsla(13, 100%, 72%, 0.87) 0px, transparent 50%),
-    radial-gradient(at 65% 14%, hsla(273, 100%, 68%, 0.83) 0px, transparent 50%),
-    radial-gradient(at 14% 14%, rgb(255, 153, 116) 0px, transparent 50%);
-}
-
 .box {
   width: 150px;
   height: 150px;

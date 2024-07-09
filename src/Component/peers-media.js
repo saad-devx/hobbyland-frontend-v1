@@ -14,7 +14,7 @@ const PeersMedia = (props) => {
         if (vidStream && videoRef.current) videoRef.current.srcObject = vidStream;
     }, [audioStream, vidStream]);
 
-    return <div key={props.index} className="relative h-full aspect-video rounded-xl flex flex-col justify-center items-center bg-black/40 backdrop-blur overflow-hidden">
+    return <div key={props.index} className="peer-container">
         {audioStream && <audio
             ref={audioRef}
             onLoadedMetadata={() => audioRef.current.play()}
@@ -30,8 +30,8 @@ const PeersMedia = (props) => {
             autoPlay
             playsInline
             controls={false}
-        /> : <div className="w-32 aspect-square flex justify-center items-center rounded-full text-3xl text-gray-200 border-4 border-gray-400 font-bold uppercase">--</div>}
-        <span className="absolute left-1/2 -translate-x-1/2 bottom-4 text-xl text-white">{name}</span>
+        /> : <div className="peer-avatar">--</div>}
+        <span className="peer-title">{name}</span>
     </div>
 }
 export default PeersMedia;
