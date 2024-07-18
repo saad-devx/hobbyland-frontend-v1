@@ -16,18 +16,18 @@ function Index() {
   const [singleData, setSingleData] = useState({
     user_id: {
       _id: "",
-      username: "shahbazali",
-      email: "shahbazali",
-      register_provider: "student",
-      firstname: "shahbazali",
+      username: "",
+      email: "",
+      register_provider: "",
+      firstname: "",
     },
     _id: "",
-    title: "My Course",
-    description: "i want ot bance  a docter a say of the ke nhi yar this is not validing preocvedd and xuyz and etc..",
+    title: "",
+    description: "",
     portfolio: [
       {
-        media_url: "fgdfgdf",
-        description: "gfgh",
+        media_url: "",
+        description: "",
       },
     ],
     category: "",
@@ -257,25 +257,19 @@ function Index() {
               Price : ${singleData.pricing[0].price}
             </div>
             <div className="mt-3">{singleData.description}</div>
-            <div className="w-100 mt-5 d-flex gap-3">
-
+            <div className="w-100 mt-5">
               {singleData.user_id?._id === medata?._id ? null : (
-                <div style={{ width: "48%" }}>
-                  <button
-                    className="btn_Green_Size_Full_outline mb-3"
-                    onClick={handleCreateRoom}
-                  >
-                    Contact With Mentor
-                  </button>
-                </div>
-
-              )}
-              <div style={{ width: "48%" }}>
-
-                <button className="btn_Green_Size_Full" onClick={handleAddToCart}>
-                  Enrolled Now
+                <button
+                  className="btn_Green_Size_Full_outline mb-3"
+                  onClick={handleCreateRoom}
+                >
+                  Contact With Mentor
                 </button>
-              </div>
+              )}
+
+              <button className="btn_Green_Size_Full" onClick={handleAddToCart}>
+                Enrolled Now
+              </button>
             </div>
           </div>
         </div>
@@ -307,7 +301,7 @@ function Index() {
         </div>
       </div>
       <Footer />
-    </div >
+    </div>
   );
 }
 

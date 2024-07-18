@@ -254,8 +254,8 @@ function Header() {
                     color="white"
                   />
                 </div>
+                <NotificationDropdown iconColor="white" />
 
-                <NotificationDropdown />
 
                 <div
                   onClick={handleFaverioteCLick}

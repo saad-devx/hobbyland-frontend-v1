@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { FetchMeNotification, UpdateNotificationCategory } from '@/config/Axiosconfig/AxiosHandle/user';
 import { useSocket } from '@/config/contextapi/socket';
 
-const NotificationDropdown = () => {
+const NotificationDropdown = (props) => {
     const [expanded, setExpanded] = useState({});
     const dropdownRef = useRef(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -87,11 +87,9 @@ const NotificationDropdown = () => {
                 type="button"
                 id="dropdownMenuButton"
                 onClick={handleDropdownToggle}
-
                 aria-expanded={isDropdownOpen}
             >
-                <Icon
-                    fontSize={25} icon="mingcute:notification-fill" color="white" />
+                <Icon fontSize={25} icon="mingcute:notification-fill" color={props.iconColor} />
             </button>
             {isDropdownOpen && (
                 <>

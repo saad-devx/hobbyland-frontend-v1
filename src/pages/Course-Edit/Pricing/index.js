@@ -104,7 +104,7 @@ function Index() {
             <div className="title_">Pricing</div>
           </div>
           <div className="p-2">
-            <div className="card2 p-3">
+            <div className=" p-3">
               <div className="fw-bold fs-5">Set a price for your course</div>
               <div className="mt-3">
                 Please select the currency and the price tier for your course.
@@ -116,9 +116,8 @@ function Index() {
                 <div className="row">
                   <div className="col-md-6 mt-5">
                     <input
-                      className={`${
-                        errors.plan ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                      className={`${errors.plan ? "errTimezoneInput" : "Input_dark"
+                        }`}
                       placeholder="Enter Your plan name"
                       name="plan"
                       value={formData.plan}
@@ -130,9 +129,8 @@ function Index() {
                   </div>
                   <div className="col-md-6 mt-5">
                     <input
-                      className={`${
-                        errors.title ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                      className={`${errors.title ? "errTimezoneInput" : "Input_dark"
+                        }`}
                       placeholder="Enter Your plan title"
                       name="title"
                       value={formData.title}
@@ -144,9 +142,8 @@ function Index() {
                   </div>
                   <div className="col-md-6 mt-5">
                     <input
-                      className={`${
-                        errors.description ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                      className={`${errors.description ? "errTimezoneInput" : "Input_dark"
+                        }`}
                       placeholder="Enter Your description"
                       name="description"
                       value={formData.description}
@@ -158,9 +155,8 @@ function Index() {
                   </div>
                   <div className="col-md-6 mt-5">
                     <input
-                      className={`${
-                        errors.price ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                      className={`${errors.price ? "errTimezoneInput" : "Input_dark"
+                        }`}
                       placeholder="Enter Your price"
                       name="price"
                       type="number"
@@ -172,9 +168,8 @@ function Index() {
                   </div>
                   <div className="col-md-6 mt-5">
                     <input
-                      className={`${
-                        errors.delivery_time ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                      className={`${errors.delivery_time ? "errTimezoneInput" : "Input_dark"
+                        }`}
                       placeholder="Enter Your delivery time"
                       name="delivery_time"
                       value={formData.delivery_time}
@@ -187,9 +182,8 @@ function Index() {
                   <div className="col-md-6 mt-5">
                     <select
                       // className="Input_dark"
-                      className={`${
-                        errors.features ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                      className={`${errors.features ? "errTimezoneInput" : "Input_dark"
+                        }`}
                       placeholder="Select features"
                       name="features"
                       onChange={handleFeaturesChange}

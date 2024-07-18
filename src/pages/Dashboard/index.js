@@ -1,4 +1,5 @@
 import { Footer } from "@/Component";
+import NotificationDropdown from "@/Component/Notificationdrowpdown";
 import {
   DeleteService,
   FetchServices,
@@ -95,13 +96,15 @@ function Index() {
           <div>
             <div className="TOP_HEader mb-3">
               <div>
+                <NotificationDropdown iconColor="black" />
+
+              </div>
+              <div>
                 <Link className="Link" href="./StudentHome">
                   <div className="Link">Student</div>
                 </Link>
               </div>
-              <div>
-                <Icon className="Icon" icon="carbon:notification-filled" />
-              </div>
+
               <div
                 onClick={() => {
                   route.push("/profile");
