@@ -27,7 +27,7 @@ function Index() {
     <div>
       <Header />
       <Student_Header />
-      <h1 className="Heading text-center">Find Course</h1>
+      <h1 className="Heading text-center fw-bold">Find Course</h1>
       <div className="underLine mb-3"></div>
       <div className="container">
         <div className="row">

@@ -26,15 +26,15 @@ function Index() {
             return (
               <div className="col-md-4 mt-3 p-2" key={i}>
                 <Card
-                  title={e.title}
+                  title={e?.title}
                   AllObject={e}
-                  price={`$ ${e.pricing[0].price}`}
-                  desc={e.description}
-                  category={e.category}
-                  image={e.portfolio.map((e) => {
-                    return e.media_url;
+                  price={`$ ${e?.pricing[0].price}`}
+                  desc={e?.description}
+                  category={e?.category}
+                  image={e?.portfolio.map((e) => {
+                    return e?.media_url;
                   })}
-                  id={e._id}
+                  id={e?._id}
                 />
               </div>
             );
