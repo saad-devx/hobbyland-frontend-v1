@@ -8,6 +8,7 @@ import {
 } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
 import { UserContext } from "@/config/contextapi/user";
+import { Autocomplete, TextField } from "@mui/material";
 
 function Index() {
   const [error, setError] = useState("");
@@ -63,6 +64,10 @@ function Index() {
       },
     }));
   };
+  const handleDropdownChange = (event, value, name) => {
+    const newData = { ...formData, [name]: value?.label }
+    setFormData(newData)
+  }
   useEffect(() => {
     setFormData({
       email: fecthmeData?.email,
@@ -101,13 +106,21 @@ function Index() {
     }
   };
 
+  const genderOption = [
+    {
+      label: "Male"
+    },
+    {
+      label: "Female"
+    },
+  ]
   return (
     <div>
       <ProfileLayout>
         <div className="profile_Container">
           <div className="container">
             <div className="row">
-              <h3 className="my-3 mx-3 fw-bold mt-5">Profile</h3>
+              <h3 style={{ marginTop: "75px" }} className="fs-1 fw-bold" >Profile</h3>
               {error && (
                 <div
                   style={{
@@ -150,83 +163,108 @@ function Index() {
               )}
               <div className="col-md-6 my-3">
                 <div>
-                  <div className="label">Full Name</div>
-                  <input
+                  {/* <input
                     placeholder="First Name"
                     value={formData.firstname}
                     onChange={handleInputChange}
                     name="firstname"
                     className="Input"
-                  />
+                  /> */}
+                  <TextField
+                    id="outlined-basic"
+                    placeholder="First Name"
+                    onChange={handleInputChange}
+                    value={formData?.firstname}
+                    focused={formData?.firstname}
+                    sx={{ mt: 3 }}
+                    label="First Name"
+                    name="firstname"
+                    fullWidth
+                    variant="outlined" />
                 </div>
               </div>
               <div className="col-md-6 my-3">
                 <div>
-                  <div className="label">Last Name</div>
-                  <input
+                  <TextField
+                    id="outlined-basic"
                     placeholder="Last Name"
-                    className="Input"
-                    value={formData.lastname}
                     onChange={handleInputChange}
+                    value={formData?.lastname}
+                    focused={formData?.lastname}
+                    sx={{ mt: 3 }}
+                    label="Last Name"
                     name="lastname"
-                  />
+                    fullWidth
+                    variant="outlined" />
                 </div>
               </div>
 
               <div className="col-md-6 my-3">
                 <div>
-                  <div className="label">Email</div>
-                  <input
-                    disabled={true}
+                  <TextField
+                    id="outlined-basic"
                     placeholder="Email"
-                    className="Input"
-                    value={formData.email}
                     onChange={handleInputChange}
+                    value={formData?.email}
+                    focused={formData?.email}
+                    sx={{ mt: 3 }}
+                    label="Email"
                     name="email"
-                  />
+                    fullWidth
+                    variant="outlined" />
                 </div>
               </div>
 
               <div className="col-md-6 my-3">
                 <div>
-                  <div className="label">Gender</div>
-                  <select
-                    onChange={handleInputChange}
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    className="w-100"
+                    options={genderOption}
+                    sx={{ mt: 3 }}
+                    fullWidth
                     name="gender"
-                    className="Input"
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Custom">Custom</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="col-md-6 my-3">
-                <div>
-                  <div className="label">Timezone</div>
-                  <input
-                    className="Input"
-                    placeholder="Timezone"
-                    value={formData.timezone}
-                    onChange={handleInputChange}
-                    name="timezone"
+                    onChange={(event, value) => handleDropdownChange(event, value, 'gender')}
+                    value={genderOption.find((opt) => opt.label == formData?.gender) || null}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Gender" focused={formData?.gender ? true : false} />
+                    )}
                   />
                 </div>
               </div>
+
+
               <div className="col-md-6 my-3">
                 <div>
-                  <div className="label">Phone Number</div>
-                  <input
+                  <TextField
+                    id="outlined-basic"
+                    placeholder="Timezone"
+                    onChange={handleInputChange}
+                    value={formData?.timezone}
+                    focused={formData?.timezone}
+                    sx={{ mt: 3 }}
+                    label="Timezone"
+                    name="timezone"
+                    fullWidth
+                    variant="outlined" />
+                </div>
+              </div>
+              <div className="col-md-6 my-3">
+                <div>
+                  <TextField
+                    id="outlined-basic"
                     placeholder="Phone Number"
-                    // value={formData.phone_number.suffix}
+                    type="number"
+                    onChange={handlePhoneNumberChange}
                     value={
                       formData.phone_number ? formData.phone_number.suffix : ""
                     }
-                    onChange={handlePhoneNumberChange}
+                    sx={{ mt: 3 }}
+                    label="Phone"
                     name="suffix"
-                    className="Input"
-                  />
+                    fullWidth
+                    variant="outlined" />
                 </div>
               </div>
             </div>

@@ -31,14 +31,14 @@ function Footer() {
           setData({ ...response.data.user });
         }
       }
-    } catch (e) { }
+    } catch (e) {}
   };
   useEffect(() => {
     FetchMedata();
   }, []);
   const router = useRouter();
   return (
-    <div className="Footer_Container mt-5">
+    <div className="Footer_Container">
       <div>
         <div className="container">
           <div className="row">
