@@ -1,17 +1,21 @@
 .Massage_sideBare {
   width: 250px;
+
   .sidebare {
     width: 100%;
     height: 100vh;
     background-color: #003a55;
     border-top-right-radius: 8px;
     overflow-y: scroll;
+
     &::-webkit-scrollbar {
       width: 0px;
       background: transparent;
     }
+
     border-bottom-right-radius: 8px;
     padding: 10px;
+
     .title_sidebare {
       padding: 15px 0px;
       margin: auto !important;
@@ -21,6 +25,7 @@
       color: white;
       border-bottom: 1px solid white;
     }
+
     .Chips__ {
       width: 100%;
       height: 40px;
@@ -32,6 +37,7 @@
       cursor: pointer;
       position: relative;
       margin-top: 25px !important;
+
       .position_absolute {
         position: absolute;
         right: -8px;

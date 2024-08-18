@@ -145,10 +145,13 @@
   width: auto;
 
   .SideBare {
-    width: 250px;
+    width: 275px;
+    border-top-right-radius: 20px;
+    border-top-right-radius: 20px;
+
 
     &::-webkit-scrollbar {
-      width: 10px;
+      width: 0px;
       background-color: #002333;
     }
 
@@ -158,12 +161,15 @@
         transform 0.15s, width 0.35s, z-index 0s ease 0.35s;
     }
 
+
+
+
     padding: 10px;
     overflow-y: scroll;
     background-color: #002333;
     border-top-right-radius: 8px;
     height: 100%;
-    border-bottom-right-radius: 8px;
+    border-bottom-right-radius: 20px;
 
     .User_Profile_Circle {
       width: 150px;

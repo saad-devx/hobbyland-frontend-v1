@@ -191,14 +191,16 @@ function Index() {
             <div className="p-2">
               {navigateLink.map((e, i) => {
                 return (
-                  <button
+                  <div
                     onClick={() => {
                       router.push(e.path);
                     }}
-                    className="Button"
+                    className="chips_"
                   >
-                    {e.title}
-                  </button>
+                    <div className="title_">
+                      {e.title}
+                    </div>
+                  </div>
                 );
               })}
 
