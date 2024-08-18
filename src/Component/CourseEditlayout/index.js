@@ -65,19 +65,23 @@ function Index() {
                   <div className="mb-5 fs-3 text-white">Plan your course</div>
                   <div
                     style={{
-                      width: "45px",
-                      height: "45px",
-                      borderRadius: "50%",
-                      backgroundColor: "white",
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <Icon
-                      onClick={() => {
-                        sidebare ? setSidebare(false) : setSidebare(true);
+
+                    <div
+                      style={{
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        backgroundColor: "white",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                       className="Icon"
                       icon="uiw:left"

@@ -1,32 +1,37 @@
 .Student_home {
   .logo_item {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     background-color: #002333;
     color: white;
-    border-radius: 100%;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
   }
+
   @keyframes slide {
     from {
       transform: translateX(0);
     }
+
     to {
       transform: translateX(-100%);
     }
   }
+
   .logos {
     overflow-x: hidden;
     position: relative;
     display: flex;
     gap: 35px;
   }
+
   .logos:hover .logo-slider {
     // animation-play-state: paused;
   }
+
   .logos::before,
   .logos::after {
     position: absolute;
@@ -38,20 +43,25 @@
     content: "";
     z-index: 2;
   }
+
   .logos::before {
     left: 0;
     background: linear-gradient(to left, rgba(255, 255, 255, 0), white);
   }
+
   .logos::after {
     right: 0;
     background: linear-gradient(to right, rgba(255, 255, 255, 0), white);
   }
+
   .logo-slider {
     display: flex;
     gap: 35px;
     animation: 35s slide infinite linear;
   }
+
   @media only screen and (max-width: 500px) {
+
     .logos::before,
     .logos::after {
       position: absolute;
@@ -64,6 +74,7 @@
       content: "";
       z-index: 2;
     }
+
     .logo_item {
       width: 150px !important;
       height: 150px !important;
@@ -75,10 +86,12 @@
       align-items: center;
       cursor: pointer;
     }
+
     .logos::before {
       left: 0;
       background: transparent;
     }
+
     .logos::after {
       right: 0;
       background: transparent;

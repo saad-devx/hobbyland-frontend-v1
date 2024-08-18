@@ -114,16 +114,15 @@ function Index() {
         );
         setTimeout(() => {
           router.push(
-            `${
-              error.response
-                ? error.response.data.field
-                  ? error.response.data.field === "pricing"
-                    ? "/Course-Edit/Pricing"
-                    : error.response.data.field === "FAQ"
+            `${error.response
+              ? error.response.data.field
+                ? error.response.data.field === "pricing"
+                  ? "/Course-Edit/Pricing"
+                  : error.response.data.field === "FAQ"
                     ? "/Course-Edit/F&A"
                     : "/Course-Edit/Pricing"
-                  : "/Course-Edit/Pricing"
                 : "/Course-Edit/Pricing"
+              : "/Course-Edit/Pricing"
             }`
           );
         }, 1500);
@@ -145,20 +144,14 @@ function Index() {
             <div className="title_">F&A</div>
           </div>
           <div className="p-2">
-            <div className="card2 p-3">
-              <div className="fw-bold fs-5">Set a price for your course</div>
-              <div className="mt-3">
-                Please select the currency and the price tier for your course.
-                If you’d like to offer your course for free, it must have a
-                total video length of less than 2 hours. Also, courses with
-                practice tests can not be free.
-              </div>
+            <div className=" p-3">
+              <div className="fw-bold fs-5">Set a F&A for your course</div>
+
               <div className="row">
                 <div className="col-md-6 mt-4">
                   <input
-                    className={`${
-                      errors.question ? "errTimezoneInput" : "Input_dark"
-                    }`}
+                    className={`${errors.question ? "errTimezoneInput" : "Input_dark"
+                      }`}
                     placeholder="Enter Your Question"
                     name="question"
                     value={formData.question}
@@ -170,9 +163,8 @@ function Index() {
                 </div>
                 <div className="col-md-6 mt-4">
                   <input
-                    className={`${
-                      errors.answer ? "errTimezoneInput" : "Input_dark"
-                    }`}
+                    className={`${errors.answer ? "errTimezoneInput" : "Input_dark"
+                      }`}
                     placeholder="Enter Your Answer"
                     name="answer"
                     value={formData.answer}
