@@ -1,9 +1,9 @@
 import { Footer, Header } from "@/Component";
-import { signup } from "@/config/Axiosconfig/AxiosHandle/auth";
 import { Icon } from "@iconify/react";
 import React, { useState, useEffect } from "react";
 import moment from "moment-timezone";
 import { useRouter } from "next/router";
+import { CreateAcount } from "@/config/Axiosconfig/AxiosHandle/auth";
 function Index() {
   const [inputType, setInputType] = useState(true);
   const [accecptPolicies, setAccecptPolicies] = useState(true);
@@ -12,13 +12,13 @@ function Index() {
   const { query } = router.query;
   console.log(query);
   const Acounttype = query;
-  const [acountType, setAcountType] = useState()
+  const [acountType, setAcountType] = useState();
   useEffect(() => {
-    const data = localStorage.getItem("acountType")
-    setAcountType(data)
+    const data = localStorage.getItem("acountType");
+    setAcountType(data);
 
-    console.log(acountType, 'acoht type')
-  }, [query])
+    console.log(acountType, "acoht type");
+  }, [query]);
   const [signupData, setSignupData] = useState({
     username: "",
     email: "",
@@ -83,12 +83,12 @@ function Index() {
         setErrors("");
         console.log(signupData);
         console.log(newErrors);
-        const data = await signup(signupData);
+        const data = await CreateAcount(signupData);
         if (data) {
           console.log(data.data.msg);
           setSuccess(data.data.msg);
           setError("");
-          localStorage.removeItem("acountType")
+          localStorage.removeItem("acountType");
 
           setTimeout(() => {
             router.push("./otp");
@@ -96,7 +96,6 @@ function Index() {
         } else {
         }
       } catch (error) {
-
         setError(error.response ? error.response.data.msg : error.message);
         console.log(error);
         setSuccess("");
