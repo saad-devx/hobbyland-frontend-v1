@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BASEURL } from "..";
 
-export const signup = (data) => {
+export const CreateAcount = (data) => {
   const responseData = axios.post(`${BASEURL}auth/signup`, data, {
     withCredentials: true,
   });
