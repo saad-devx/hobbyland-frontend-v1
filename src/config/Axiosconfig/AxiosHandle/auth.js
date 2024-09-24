@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASEURL } from "..";
 
 export const CreateAcount = (data) => {
+  console.log(data, "acountCreateing");
   const responseData = axios.post(`${BASEURL}auth/signup`, data, {
     withCredentials: true,
   });

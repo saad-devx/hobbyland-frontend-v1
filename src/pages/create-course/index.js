@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import { categrios } from "@/constant/categrios";
 
 function Index() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(6);
   const Router = useRouter();
   const [error, setError] = useState({
     title: "",
@@ -16,6 +16,10 @@ function Index() {
       },
     ],
     category: "",
+    targetedArea: "",
+    courseType: "",
+    country: "",
+    city: "",
     tags: "",
   });
   const [data, setData] = useState({
@@ -30,6 +34,22 @@ function Index() {
     category: "",
     tags: [],
   });
+  const countryArra = [
+    {
+      title: "Pakistan",
+    },
+    {
+      title: "India",
+    },
+  ];
+  const cityAra = [
+    {
+      title: "karachi",
+    },
+    {
+      title: "Hyderabade",
+    },
+  ];
   const step1onCLick = () => {
     if (data.title === "") {
       setError((prevState) => ({
@@ -71,6 +91,18 @@ function Index() {
     setError((prev) => ({ ...prev, title: "" }));
   };
 
+  const courseTargetedArea = [
+    {
+      title: "All",
+    },
+    {
+      title: "Specific Country",
+    },
+    {
+      title: "Specific City",
+    },
+  ];
+
   const step5onCLick = () => {
     if (data.category === "") {
       setError((prevState) => ({
@@ -84,9 +116,49 @@ function Index() {
         ...prevState,
         category: "",
       }));
+      setStep(6);
+
       console.log(data);
       console.log(error);
+    }
+  };
 
+  const step6onCLick = () => {
+    if (data.courseType === "") {
+      setError((prevState) => ({
+        ...prevState,
+        courseType: "Select Your Course Type",
+      }));
+    } else if (data.targetedArea == "") {
+      setError((prevState) => ({
+        ...prevState,
+        targetedArea: "Select Your Targeted Area",
+      }));
+    } else if (data.targetedArea == "Specific Country" && data.country == "") {
+      setError((prevState) => ({
+        ...prevState,
+        country: "Select Your Country",
+      }));
+    } else if (data.targetedArea == "Specific City" && data.country == "") {
+      setError((prevState) => ({
+        ...prevState,
+        country: "Select Your country",
+      }));
+    } else if (data.targetedArea == "Specific City" && data.city == "") {
+      setError((prevState) => ({
+        ...prevState,
+        city: "Select Your city",
+      }));
+    } else {
+      console.log("okay");
+      console.log(data);
+      setError((prevState) => ({
+        ...prevState,
+        courseType: "",
+        targetedArea: "",
+      }));
+      console.log(data);
+      console.log(error);
       handleSubmit();
     }
   };
@@ -96,6 +168,20 @@ function Index() {
       category: e.target.value,
     }));
     setError((prev) => ({ ...prev, category: "" }));
+  };
+  const handleCategriosType = (e) => {
+    setData((prevState) => ({
+      ...prevState,
+      courseType: e.target.value,
+    }));
+    setError((prev) => ({ ...prev, courseType: "" }));
+  };
+  const handleSpefice = (e) => {
+    setData((prevState) => ({
+      ...prevState,
+      targetedArea: e.target.value,
+    }));
+    setError((prev) => ({ ...prev, targetedArea: "" }));
   };
 
   const handleImageUrl = (e) => {
@@ -110,7 +196,14 @@ function Index() {
       portfolio: [{ ...prev.portfolio[0], media_url: "" }],
     }));
   };
-
+  const courseTypeOption = [
+    {
+      title: "Physical",
+    },
+    {
+      title: "Online",
+    },
+  ];
   const handlePortFoliaDescrion = (e) => {
     const description = e.target.value;
     setData((prevState) => ({
@@ -351,6 +444,103 @@ function Index() {
             </div>
           </div>
         </div>
+      ) : step == 6 ? (
+        <div className="main_container_">
+          <div>
+            <h3 className="fw-bold text-center mb-3">
+              How Type a working Servies
+            </h3>
+            <div className="my-5">
+              <select
+                className={`${
+                  error.courseType ? "errTimezoneInput" : "Input_dark"
+                }`}
+                placeholder="Select Yout Course Type"
+                onChange={handleCategriosType}
+                value={data.courseType}
+              >
+                {courseTypeOption.map((e) => {
+                  return <option value={e.title}>{e.title}</option>;
+                })}
+              </select>
+              {error.courseType && (
+                <div className="text-danger">{error.courseType}</div>
+              )}
+            </div>
+            {data.courseType == "Online" ? (
+              <div className="">
+                <div className="my-3">
+                  <select
+                    className={`${
+                      error.targetedArea ? "errTimezoneInput" : "Input_dark"
+                    }`}
+                    placeholder="S"
+                    onChange={handleSpefice}
+                    value={data.targetedArea}
+                  >
+                    {courseTargetedArea.map((e) => {
+                      return <option value={e.title}>{e.title}</option>;
+                    })}
+                  </select>
+                  {error.targetedArea && (
+                    <div className="text-danger">{error.targetedArea}</div>
+                  )}
+                </div>
+                {data.targetedArea == "Specific Country" ||
+                data.targetedArea == "Specific City" ? (
+                  <div className="my-3">
+                    <select
+                      className={`${
+                        error.country ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="S"
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          [e.target.name]: e.target.value,
+                        }));
+                      }}
+                      value={data.country}
+                    >
+                      {countryArra.map((e) => {
+                        return <option value={e.title}>{e.title}</option>;
+                      })}
+                    </select>
+                    {error.country && (
+                      <div className="text-danger">{error.country}</div>
+                    )}
+                    <div>
+                      {data.targetedArea == "Specific City" ? (
+                        <div className="my-3">
+                          <select
+                            className={`${
+                              error.city ? "errTimezoneInput" : "Input_dark"
+                            }`}
+                            placeholder="S"
+                            onChange={(e) => {
+                              setData((prev) => ({
+                                ...prev,
+                                [e.target.name]: e.target.value,
+                              }));
+                            }}
+                            value={data.city}
+                          >
+                            {cityAra.map((e) => {
+                              return <option value={e.title}>{e.title}</option>;
+                            })}
+                          </select>
+                          {error.city && (
+                            <div className="text-danger">{error.city}</div>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        </div>
       ) : null}
 
       {step == 1 ? (
@@ -385,7 +575,7 @@ function Index() {
             </button>
           </div>
           <div className="Text_">
-            <span className="Current_Step">{step}</span> / 5
+            <span className="Current_Step">{step}</span> / 6
           </div>
           <div>
             <button
@@ -400,6 +590,8 @@ function Index() {
                   step4onCLick();
                 } else if (step === 5) {
                   step5onCLick();
+                } else if (step == 6) {
+                  step6onCLick();
                 }
               }}
               className="dark_btn"
