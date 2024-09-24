@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import { CreateAcount } from "@/config/Axiosconfig/AxiosHandle/auth";
+import citiesData from "@/constant/country";
 function Index() {
   const [inputType, setInputType] = useState(true);
   const [accecptPolicies, setAccecptPolicies] = useState(true);
@@ -29,6 +30,8 @@ function Index() {
     account_type: acountType ? acountType : query,
     accept_policies: accecptPolicies,
     register_provider: "hobbyland",
+    city: "",
+    country: "",
   });
   const [errors, setErrors] = useState({});
   const [timezones, setTimezones] = useState([]);
@@ -39,12 +42,94 @@ function Index() {
     setSignupData({ ...signupData, timezone: currentTimezone });
   }, []);
 
+  const [countries, setCountries] = useState([]);
+  useEffect(() => {
+    fetch("https://restcountries.com/v3.1/all")
+      .then((response) => response.json())
+      .then((data) => {
+        const countryNames = data.map((country) => country.name.common);
+        setCountries(countryNames);
+      })
+      .catch((error) => {
+        console.error("Error fetching countries:", error);
+      });
+  }, []);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignupData({ ...signupData, [name]: value });
   };
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  // async function fetchCitiesByCountry(countryName) {
+  //   try {
+  //     // Make an API request to fetch country data
+  //     const response = await fetch(
+  //       `https://countriesnow.space/api/v0.1/countries`
+  //     );
+  //     const data = await response.json();
+
+  //     // Find the country data by matching country name
+  //     const countryData = data.data.find(
+  //       (country) => country.country.toLowerCase() === countryName.toLowerCase()
+  //     );
+
+  //     if (countryData) {
+  //       // Get the array of cities
+  //       const cities = countryData.cities;
+
+  //       // Console log all the cities in the array
+  //       console.log(`Cities in ${countryName}:`, cities);
+  //     } else {
+  //       console.log(`No cities found for ${countryName}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching cities:", error);
+  //   }
+  // }
+
+  // Call the function and pass the country name
+  // fetchCitiesByCountry("Pakistan");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (signupData.country.toLowerCase() !== "pakistan") {
+          const response = await fetch(
+            `https://countriesnow.space/api/v0.1/countries`
+          );
+          const data = await response.json();
+          const countryData = data.data.find(
+            (country) =>
+              country.country.toLowerCase() === signupData.country.toLowerCase()
+          );
+
+          if (countryData) {
+            const cities = countryData.cities;
+            setCity(cities);
+            console.log(`Cities in ${signupData.country}:`, cities);
+          } else {
+            console.log(`No cities found for ${signupData.country}`);
+          }
+        } else {
+          // If the country is Pakistan, set cities to the local data
+          setCity(citiesData);
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+      }
+    };
+
+    // Fetch data only if signupData.country is defined
+    if (signupData.country) {
+      fetchData();
+    } else {
+      // Set default country to Pakistan if not defined
+      signupData.country = "Pakistan";
+      setCity(citiesData);
+    }
+  }, [signupData.country]);
+
+  const [city, setCity] = useState([]);
+  console.log(signupData, "singupData");
   const SubmitData = async () => {
     const newErrors = {};
     console.log(newErrors);
@@ -58,6 +143,7 @@ function Index() {
     if (!signupData.email) {
       newErrors.email = "Email is required";
     }
+
     if (!signupData.password) {
       newErrors.password = "Password should be greater than 8 characters";
     } else if (signupData.password.length < 8) {
@@ -69,6 +155,12 @@ function Index() {
 
     if (!signupData.lastname) {
       newErrors.lastname = "lastname is required";
+    }
+    if (!signupData.country) {
+      newErrors.country = "Select Your Country";
+    }
+    if (!signupData.city) {
+      newErrors.city = "Select Your City";
     }
     if (!signupData.timezone) {
       newErrors.timezone = "timezone is required";
@@ -247,7 +339,57 @@ function Index() {
             ) : null}
           </div>
           <div className="w-100 mt-3">
-            <div className="label">select Your Country</div>
+            <div className="label">Select Your Country</div>
+            {/* <input
+              value={signupData.country}
+              onChange={handleChange}
+              className={errors.country ? "errTimezoneInput" : "Input"}
+              placeholder="Your Country"
+              name="country"
+            /> */}
+            <select
+              value={signupData.country}
+              onChange={handleChange}
+              name="country"
+              className={errors.country ? "errTimezoneInput" : "Input"}
+            >
+              {countries.map((country, index) => (
+                <option key={index} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+            {errors.country ? (
+              <div className="ErrorMessage">{errors.country}</div>
+            ) : null}
+          </div>
+          <div className="w-100 mt-3">
+            <div className="label">Select Your City</div>
+            {/* <input
+              value={signupData.country}
+              onChange={handleChange}
+              className={errors.country ? "errTimezoneInput" : "Input"}
+              placeholder="Your Country"
+              name="country"
+            /> */}
+            <select
+              value={signupData.city}
+              onChange={handleChange}
+              name="city"
+              className={errors.city ? "errTimezoneInput" : "Input"}
+            >
+              {city.map((country, index) => (
+                <option key={index} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+            {errors.city ? (
+              <div className="ErrorMessage">{errors.city}</div>
+            ) : null}
+          </div>
+          <div className="w-100 mt-3">
+            <div className="label">select Your Timezone</div>
             <select
               value={signupData.timezone}
               className={errors.timezone ? "errTimezoneInput" : "Input"}
@@ -261,6 +403,7 @@ function Index() {
               ))}
             </select>
           </div>
+
           {errors.timezone ? (
             <div className="ErrorMessage">{errors.timezone}</div>
           ) : null}

@@ -15,7 +15,7 @@ function Index() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
   const [fecthmeData, setFecthmeData] = useState({});
-  const { fetchUserData } = useContext(UserContext)
+  const { fetchUserData } = useContext(UserContext);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -23,6 +23,8 @@ function Index() {
     gender: "Male",
     timezone: "",
     password: "",
+    country: "",
+    city: "",
     phone_number: {
       prefix: "+92",
       suffix: "",
@@ -65,9 +67,9 @@ function Index() {
     }));
   };
   const handleDropdownChange = (event, value, name) => {
-    const newData = { ...formData, [name]: value?.label }
-    setFormData(newData)
-  }
+    const newData = { ...formData, [name]: value?.label };
+    setFormData(newData);
+  };
   useEffect(() => {
     setFormData({
       email: fecthmeData?.email,
@@ -77,6 +79,9 @@ function Index() {
       account_type: fecthmeData.account_type ? fecthmeData.account_type : "",
       timezone: fecthmeData.timezone,
       password: fecthmeData.password,
+      country: fecthmeData.country,
+      city: fecthmeData.city,
+
       phone_number: {
         prefix: "+92",
         suffix: fecthmeData.phone_number ? fecthmeData.phone_number.suffix : "",
@@ -98,7 +103,7 @@ function Index() {
       if (response) {
         console.log(response, "profile updated");
         setSuccess("Profile Updated Succesfully");
-        fetchUserData()
+        fetchUserData();
       }
     } catch (error) {
       console.log(error, "err");
@@ -108,19 +113,21 @@ function Index() {
 
   const genderOption = [
     {
-      label: "Male"
+      label: "Male",
     },
     {
-      label: "Female"
+      label: "Female",
     },
-  ]
+  ];
   return (
     <div>
       <ProfileLayout>
         <div className="profile_Container">
           <div className="container">
             <div className="row">
-              <h3 style={{ marginTop: "75px" }} className="fs-1 fw-bold" >Profile</h3>
+              <h3 style={{ marginTop: "75px" }} className="fs-1 fw-bold">
+                Profile
+              </h3>
               {error && (
                 <div
                   style={{
@@ -180,7 +187,8 @@ function Index() {
                     label="First Name"
                     name="firstname"
                     fullWidth
-                    variant="outlined" />
+                    variant="outlined"
+                  />
                 </div>
               </div>
               <div className="col-md-6 my-3">
@@ -195,7 +203,8 @@ function Index() {
                     label="Last Name"
                     name="lastname"
                     fullWidth
-                    variant="outlined" />
+                    variant="outlined"
+                  />
                 </div>
               </div>
 
@@ -211,7 +220,42 @@ function Index() {
                     label="Email"
                     name="email"
                     fullWidth
-                    variant="outlined" />
+                    variant="outlined"
+                  />
+                </div>
+              </div>
+              <div className="col-md-6 my-3">
+                <div>
+                  <TextField
+                    id="outlined-basic"
+                    placeholder="Country"
+                    onChange={handleInputChange}
+                    disabled={true}
+                    value={formData?.country}
+                    focused={formData?.country}
+                    sx={{ mt: 3 }}
+                    label="country"
+                    name="country"
+                    fullWidth
+                    variant="outlined"
+                  />
+                </div>
+              </div>
+              <div className="col-md-6 my-3">
+                <div>
+                  <TextField
+                    id="outlined-basic"
+                    placeholder="city"
+                    onChange={handleInputChange}
+                    disabled={true}
+                    value={formData?.city}
+                    focused={formData?.city}
+                    sx={{ mt: 3 }}
+                    label="city"
+                    name="city"
+                    fullWidth
+                    variant="outlined"
+                  />
                 </div>
               </div>
 
@@ -225,15 +269,24 @@ function Index() {
                     sx={{ mt: 3 }}
                     fullWidth
                     name="gender"
-                    onChange={(event, value) => handleDropdownChange(event, value, 'gender')}
-                    value={genderOption.find((opt) => opt.label == formData?.gender) || null}
+                    onChange={(event, value) =>
+                      handleDropdownChange(event, value, "gender")
+                    }
+                    value={
+                      genderOption.find(
+                        (opt) => opt.label == formData?.gender
+                      ) || null
+                    }
                     renderInput={(params) => (
-                      <TextField {...params} label="Gender" focused={formData?.gender ? true : false} />
+                      <TextField
+                        {...params}
+                        label="Gender"
+                        focused={formData?.gender ? true : false}
+                      />
                     )}
                   />
                 </div>
               </div>
-
 
               <div className="col-md-6 my-3">
                 <div>
@@ -247,7 +300,8 @@ function Index() {
                     label="Timezone"
                     name="timezone"
                     fullWidth
-                    variant="outlined" />
+                    variant="outlined"
+                  />
                 </div>
               </div>
               <div className="col-md-6 my-3">
@@ -264,7 +318,8 @@ function Index() {
                     label="Phone"
                     name="suffix"
                     fullWidth
-                    variant="outlined" />
+                    variant="outlined"
+                  />
                 </div>
               </div>
             </div>

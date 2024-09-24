@@ -34,7 +34,7 @@ function Index(props) {
           setToken(true);
         }
       }
-    } catch (e) { }
+    } catch (e) {}
     setToken(false);
   };
   const GetService = async () => {
@@ -70,7 +70,7 @@ function Index(props) {
   console.log(courseData, "coursedata");
   const datamap =
     courseData.length >= 1 ? courseData : findData.slice(0, MAX_ITEMS);
-
+  console.log(datamap, "couseCard");
   return (
     <div className="Container_Card_Section">
       <div className="my-5">

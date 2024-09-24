@@ -1,5 +1,6 @@
 import { Card, Footer, Header } from "@/Component";
 import { FindService } from "@/config/Axiosconfig/AxiosHandle/service";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Student_Header } from "@/layout/Student_portal";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -13,8 +14,27 @@ function Index() {
     try {
       const response = await FindService(title);
       if (response) {
-        console.log(response, "serach data")
-        setData([...response.data.services]);
+        console.log(response, "serach data");
+        console.log(response.data.services, "services");
+        const fetchMedata = await FetchMe();
+        console.log(fetchMedata, "medata");
+        if (fetchMedata) {
+          const countryFind = response.data.services?.filter(
+            (e) => e.user_id.country === fetchMedata.data.user.country
+          );
+          if (countryFind.length > 0) {
+            const cityFind = countryFind.filter(
+              (e) => e.user_id.city === fetchMedata.data.user.city
+            );
+            if (cityFind.length > 0) {
+              setData(cityFind);
+            } else {
+              setData(countryFind);
+            }
+          } else {
+            setData(response.data.services);
+          }
+        }
       }
     } catch (e) {
       console.log(e);
