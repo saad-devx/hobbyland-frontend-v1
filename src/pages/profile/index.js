@@ -23,8 +23,6 @@ function Index() {
     gender: "Male",
     timezone: "",
     password: "",
-    country: "",
-    city: "",
     phone_number: {
       prefix: "+92",
       suffix: "",
@@ -79,8 +77,6 @@ function Index() {
       account_type: fecthmeData.account_type ? fecthmeData.account_type : "",
       timezone: fecthmeData.timezone,
       password: fecthmeData.password,
-      country: fecthmeData.country,
-      city: fecthmeData.city,
 
       phone_number: {
         prefix: "+92",
@@ -219,40 +215,6 @@ function Index() {
                     sx={{ mt: 3 }}
                     label="Email"
                     name="email"
-                    fullWidth
-                    variant="outlined"
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 my-3">
-                <div>
-                  <TextField
-                    id="outlined-basic"
-                    placeholder="Country"
-                    onChange={handleInputChange}
-                    disabled={true}
-                    value={formData?.country}
-                    focused={formData?.country}
-                    sx={{ mt: 3 }}
-                    label="country"
-                    name="country"
-                    fullWidth
-                    variant="outlined"
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 my-3">
-                <div>
-                  <TextField
-                    id="outlined-basic"
-                    placeholder="city"
-                    onChange={handleInputChange}
-                    disabled={true}
-                    value={formData?.city}
-                    focused={formData?.city}
-                    sx={{ mt: 3 }}
-                    label="city"
-                    name="city"
                     fullWidth
                     variant="outlined"
                   />

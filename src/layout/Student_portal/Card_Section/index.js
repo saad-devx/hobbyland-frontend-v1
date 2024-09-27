@@ -88,6 +88,7 @@ function Index(props) {
                     title={e.title}
                     price={`$ ${e.pricing[0].price}`}
                     desc={e.description}
+                    type={e.courseType}
                     category={e.category}
                     AllObject={e}
                     image={e.portfolio.map((e) => {

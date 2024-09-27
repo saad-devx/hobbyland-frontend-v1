@@ -24,6 +24,8 @@ function Index() {
     _id: "",
     title: "",
     description: "",
+    courseType: "",
+
     portfolio: [
       {
         media_url: "",
@@ -256,7 +258,9 @@ function Index() {
             <div className="fw-bold">
               Price : ${singleData.pricing[0].price}
             </div>
-            <div className="mt-3">{singleData.description}</div>
+            <div className="mt-3">Desc : {singleData.description}</div>
+            <div className="mt-3">Course Type : {singleData.courseType}</div>
+
             <div className="w-100 mt-5">
               {singleData.user_id?._id === medata?._id ? null : (
                 <button

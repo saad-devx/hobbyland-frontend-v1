@@ -97,7 +97,6 @@ function Index() {
             <div className="TOP_HEader mb-3">
               <div>
                 <NotificationDropdown iconColor="black" />
-
               </div>
               <div>
                 <Link className="Link" href="./StudentHome">
@@ -154,6 +153,10 @@ function Index() {
                           <div className=" mt-1">
                             <span className="fw-bold">price</span>:&nbsp; $
                             {e.pricing[0].price}
+                          </div>
+                          <div className=" mt-1">
+                            <span className="fw-bold">Course Type</span>:&nbsp;
+                            {e.courseType}
                           </div>
                         </div>
                       </div>

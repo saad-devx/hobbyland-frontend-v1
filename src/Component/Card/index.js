@@ -64,6 +64,9 @@ function Index(props) {
         <div className="text-white d-flex gap-3 ">
           <div style={{ fontSize: "15px" }}>Categrios : {props.category}</div>
         </div>
+        <div className="text-white d-flex gap-3 ">
+          <div style={{ fontSize: "15px" }}>Type : {props.type}</div>
+        </div>
       </div>
     </div>
   );
