@@ -2,9 +2,17 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { categrios } from "@/constant/categrios";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Autocomplete,
+} from "@react-google-maps/api";
+import VideoRecorder from "./Recorded";
+
+const libraries = ["places"];
 
 function Index() {
-  const [step, setStep] = useState(6);
+  const [step, setStep] = useState(1);
   const Router = useRouter();
   const [error, setError] = useState({
     title: "",
@@ -18,10 +26,35 @@ function Index() {
     category: "",
     targetedArea: "",
     courseType: "",
-    country: "",
-    city: "",
+    longitude: "",
+    latitude: "",
+    location: "",
     tags: "",
   });
+  const [autocomplete, setAutocomplete] = useState(null);
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyA1lurRRYuP5JyVNVNsjHvNgDiq7TBtNhU", // Your API Key here
+    libraries, // Needed for places library
+  });
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+
+      // Extracting latitude and longitude
+      const lat = place.geometry?.location?.lat();
+      const lng = place.geometry?.location?.lng();
+
+      setData((prev) => ({
+        ...prev,
+        location: place.formatted_address || "",
+        latitude: lat || "",
+        longitude: lng || "",
+      }));
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -31,25 +64,15 @@ function Index() {
         description: "",
       },
     ],
+    targetedArea: "",
+    location: "",
+    courseType: "",
+
     category: "",
+
     tags: [],
   });
-  const countryArra = [
-    {
-      title: "Pakistan",
-    },
-    {
-      title: "India",
-    },
-  ];
-  const cityAra = [
-    {
-      title: "karachi",
-    },
-    {
-      title: "Hyderabade",
-    },
-  ];
+
   const step1onCLick = () => {
     if (data.title === "") {
       setError((prevState) => ({
@@ -66,6 +89,40 @@ function Index() {
       }));
     }
   };
+
+  const targetedLimitArrat = [
+    {
+      title: "5km",
+    },
+    {
+      title: "10km",
+    },
+    {
+      title: "15km",
+    },
+    {
+      title: "20km",
+    },
+    {
+      title: "25km",
+    },
+    {
+      title: "30km",
+    },
+    {
+      title: "35km",
+    },
+    {
+      title: "40km",
+    },
+    {
+      title: "45km",
+    },
+    {
+      title: "50km",
+    },
+  ];
+  console.log(data, "data");
 
   const step2onCLick = () => {
     if (data.description === "") {
@@ -129,25 +186,21 @@ function Index() {
         ...prevState,
         courseType: "Select Your Course Type",
       }));
-    } else if (data.targetedArea == "") {
+    } else if (
+      (data.courseType == "Phiscal" || data.courseType == "Hybird") &&
+      data.location == ""
+    ) {
       setError((prevState) => ({
         ...prevState,
-        targetedArea: "Select Your Targeted Area",
+        location: "Location Required",
       }));
-    } else if (data.targetedArea == "Specific Country" && data.country == "") {
+    } else if (
+      (data.courseType == "Phiscal" || data.courseType == "Hybird") &&
+      data.targetedArea == ""
+    ) {
       setError((prevState) => ({
         ...prevState,
-        country: "Select Your Country",
-      }));
-    } else if (data.targetedArea == "Specific City" && data.country == "") {
-      setError((prevState) => ({
-        ...prevState,
-        country: "Select Your country",
-      }));
-    } else if (data.targetedArea == "Specific City" && data.city == "") {
-      setError((prevState) => ({
-        ...prevState,
-        city: "Select Your city",
+        targetedArea: "Select Your Targeted Area ",
       }));
     } else {
       console.log("okay");
@@ -156,10 +209,15 @@ function Index() {
         ...prevState,
         courseType: "",
         targetedArea: "",
+        location: "",
       }));
       console.log(data);
       console.log(error);
-      handleSubmit();
+      if (data.courseType == "Online") {
+        setStep(7);
+      } else {
+        handleSubmit();
+      }
     }
   };
   const handleCategrios = (e) => {
@@ -202,6 +260,9 @@ function Index() {
     },
     {
       title: "Online",
+    },
+    {
+      title: "Hybird",
     },
   ];
   const handlePortFoliaDescrion = (e) => {
@@ -467,18 +528,63 @@ function Index() {
                 <div className="text-danger">{error.courseType}</div>
               )}
             </div>
-            {data.courseType == "Online" ? (
-              <div className="">
+            {data.courseType == "Physical" || data.courseType == "Hybird" ? (
+              <div className="my-5">
+                {/* <div className="">
+                  <input
+                    className={`${
+                      error.location ? "errTimezoneInput" : "Input_dark"
+                    }`}
+                    placeholder="location"
+                    value={data.location}
+                    name="location"
+                    onChange={(e) => {
+                      setData((prev) => ({
+                        ...prev,
+                        location: e.target.value,
+                      }));
+                    }}
+                  />
+                  {error.location && (
+                    <div className="text-danger">{error.location}</div>
+                  )}
+                </div> */}
+                <div>
+                  <Autocomplete
+                    onLoad={(auto) => setAutocomplete(auto)}
+                    onPlaceChanged={onPlaceChanged}
+                  >
+                    <input
+                      className={`${
+                        error.location ? "errTimezoneInput" : "Input_dark"
+                      }`}
+                      placeholder="location"
+                      value={data.location}
+                      name="location"
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          location: e.target.value,
+                        }));
+                      }}
+                    />
+                  </Autocomplete>
+                </div>
                 <div className="my-3">
                   <select
                     className={`${
                       error.targetedArea ? "errTimezoneInput" : "Input_dark"
                     }`}
-                    placeholder="S"
-                    onChange={handleSpefice}
+                    placeholder="Select Your Targeted Area"
+                    onChange={(e) => {
+                      setData((pre) => ({
+                        ...pre,
+                        targetedArea: e.target.value,
+                      }));
+                    }}
                     value={data.targetedArea}
                   >
-                    {courseTargetedArea.map((e) => {
+                    {targetedLimitArrat.map((e) => {
                       return <option value={e.title}>{e.title}</option>;
                     })}
                   </select>
@@ -486,59 +592,14 @@ function Index() {
                     <div className="text-danger">{error.targetedArea}</div>
                   )}
                 </div>
-                {data.targetedArea == "Specific Country" ||
-                data.targetedArea == "Specific City" ? (
-                  <div className="my-3">
-                    <select
-                      className={`${
-                        error.country ? "errTimezoneInput" : "Input_dark"
-                      }`}
-                      placeholder="S"
-                      onChange={(e) => {
-                        setData((prev) => ({
-                          ...prev,
-                          [e.target.name]: e.target.value,
-                        }));
-                      }}
-                      value={data.country}
-                    >
-                      {countryArra.map((e) => {
-                        return <option value={e.title}>{e.title}</option>;
-                      })}
-                    </select>
-                    {error.country && (
-                      <div className="text-danger">{error.country}</div>
-                    )}
-                    <div>
-                      {data.targetedArea == "Specific City" ? (
-                        <div className="my-3">
-                          <select
-                            className={`${
-                              error.city ? "errTimezoneInput" : "Input_dark"
-                            }`}
-                            placeholder="S"
-                            onChange={(e) => {
-                              setData((prev) => ({
-                                ...prev,
-                                [e.target.name]: e.target.value,
-                              }));
-                            }}
-                            value={data.city}
-                          >
-                            {cityAra.map((e) => {
-                              return <option value={e.title}>{e.title}</option>;
-                            })}
-                          </select>
-                          {error.city && (
-                            <div className="text-danger">{error.city}</div>
-                          )}
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                ) : null}
               </div>
             ) : null}
+          </div>
+        </div>
+      ) : step == 7 ? (
+        <div className="main_container_">
+          <div>
+            <VideoRecorder />
           </div>
         </div>
       ) : null}
@@ -575,7 +636,8 @@ function Index() {
             </button>
           </div>
           <div className="Text_">
-            <span className="Current_Step">{step}</span> / 6
+            <span className="Current_Step">{step}</span> /{" "}
+            {data.courseType === "Online" ? "7" : "6"}
           </div>
           <div>
             <button
@@ -592,6 +654,8 @@ function Index() {
                   step5onCLick();
                 } else if (step == 6) {
                   step6onCLick();
+                } else if (step == 7) {
+                  handleSubmit();
                 }
               }}
               className="dark_btn"

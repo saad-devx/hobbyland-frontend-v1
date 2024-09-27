@@ -5,6 +5,13 @@ import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import { CreateAcount } from "@/config/Axiosconfig/AxiosHandle/auth";
 import citiesData from "@/constant/country";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Autocomplete,
+} from "@react-google-maps/api";
+const libraries = ["places"];
+
 function Index() {
   const [inputType, setInputType] = useState(true);
   const [accecptPolicies, setAccecptPolicies] = useState(true);
@@ -27,11 +34,12 @@ function Index() {
     firstname: "",
     lastname: "",
     timezone: "",
+    longitude: "",
+    latitude: "",
+    location: "",
     account_type: acountType ? acountType : query,
     accept_policies: accecptPolicies,
     register_provider: "hobbyland",
-    city: "",
-    country: "",
   });
   const [errors, setErrors] = useState({});
   const [timezones, setTimezones] = useState([]);
@@ -41,6 +49,31 @@ function Index() {
     setTimezones(timezoneList);
     setSignupData({ ...signupData, timezone: currentTimezone });
   }, []);
+
+  const [autocomplete, setAutocomplete] = useState(null);
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyA1lurRRYuP5JyVNVNsjHvNgDiq7TBtNhU",
+    libraries,
+  });
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+
+      // Extracting latitude and longitude
+      const lat = place.geometry?.location?.lat();
+      const lng = place.geometry?.location?.lng();
+
+      setSignupData((prev) => ({
+        ...prev,
+        location: place.formatted_address || "",
+        latitude: lat || "",
+        longitude: lng || "",
+      }));
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
 
   const [countries, setCountries] = useState([]);
   useEffect(() => {
@@ -89,44 +122,6 @@ function Index() {
 
   // Call the function and pass the country name
   // fetchCitiesByCountry("Pakistan");
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (signupData.country.toLowerCase() !== "pakistan") {
-          const response = await fetch(
-            `https://countriesnow.space/api/v0.1/countries`
-          );
-          const data = await response.json();
-          const countryData = data.data.find(
-            (country) =>
-              country.country.toLowerCase() === signupData.country.toLowerCase()
-          );
-
-          if (countryData) {
-            const cities = countryData.cities;
-            setCity(cities);
-            console.log(`Cities in ${signupData.country}:`, cities);
-          } else {
-            console.log(`No cities found for ${signupData.country}`);
-          }
-        } else {
-          // If the country is Pakistan, set cities to the local data
-          setCity(citiesData);
-        }
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-    };
-
-    // Fetch data only if signupData.country is defined
-    if (signupData.country) {
-      fetchData();
-    } else {
-      // Set default country to Pakistan if not defined
-      signupData.country = "Pakistan";
-      setCity(citiesData);
-    }
-  }, [signupData.country]);
 
   const [city, setCity] = useState([]);
   console.log(signupData, "singupData");
@@ -148,20 +143,16 @@ function Index() {
       newErrors.password = "Password should be greater than 8 characters";
     } else if (signupData.password.length < 8) {
       newErrors.password = "Password should be at least 8 characters long";
-    }
-    if (!signupData.firstname) {
+    } else if (!signupData.location) {
+      newErrors.location = "Location is required";
+    } else if (!signupData.firstname) {
       newErrors.firstname = "firstname is required";
     }
 
     if (!signupData.lastname) {
       newErrors.lastname = "lastname is required";
     }
-    if (!signupData.country) {
-      newErrors.country = "Select Your Country";
-    }
-    if (!signupData.city) {
-      newErrors.city = "Select Your City";
-    }
+
     if (!signupData.timezone) {
       newErrors.timezone = "timezone is required";
     }
@@ -299,6 +290,7 @@ function Index() {
               <div className="ErrorMessage">{errors.email}</div>
             ) : null}
           </div>
+
           <div className="w-100 mt-3">
             <div className="label">Enter Your Password</div>
             <div className={errors.email ? "errTimezoneInput" : "Input"}>
@@ -339,55 +331,34 @@ function Index() {
             ) : null}
           </div>
           <div className="w-100 mt-3">
-            <div className="label">Select Your Country</div>
-            {/* <input
-              value={signupData.country}
-              onChange={handleChange}
-              className={errors.country ? "errTimezoneInput" : "Input"}
-              placeholder="Your Country"
-              name="country"
-            /> */}
-            <select
-              value={signupData.country}
-              onChange={handleChange}
-              name="country"
-              className={errors.country ? "errTimezoneInput" : "Input"}
-            >
-              {countries.map((country, index) => (
-                <option key={index} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-            {errors.country ? (
-              <div className="ErrorMessage">{errors.country}</div>
+            <div>
+              {isLoaded ? (
+                <Autocomplete
+                  onLoad={(auto) => setAutocomplete(auto)}
+                  onPlaceChanged={onPlaceChanged}
+                >
+                  <input
+                    className={`${
+                      error.location ? "errTimezoneInput" : "Input"
+                    }`}
+                    placeholder="location"
+                    value={signupData.location}
+                    name="location"
+                    onChange={(e) => {
+                      setSignupData((prev) => ({
+                        ...prev,
+                        location: e.target.value,
+                      }));
+                    }}
+                  />
+                </Autocomplete>
+              ) : null}
+            </div>
+            {errors.location ? (
+              <div className="ErrorMessage">{errors.location}</div>
             ) : null}
           </div>
-          <div className="w-100 mt-3">
-            <div className="label">Select Your City</div>
-            {/* <input
-              value={signupData.country}
-              onChange={handleChange}
-              className={errors.country ? "errTimezoneInput" : "Input"}
-              placeholder="Your Country"
-              name="country"
-            /> */}
-            <select
-              value={signupData.city}
-              onChange={handleChange}
-              name="city"
-              className={errors.city ? "errTimezoneInput" : "Input"}
-            >
-              {city.map((country, index) => (
-                <option key={index} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-            {errors.city ? (
-              <div className="ErrorMessage">{errors.city}</div>
-            ) : null}
-          </div>
+
           <div className="w-100 mt-3">
             <div className="label">select Your Timezone</div>
             <select
