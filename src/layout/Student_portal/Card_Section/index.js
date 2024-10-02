@@ -75,7 +75,7 @@ function Index(props) {
     <div className="Container_Card_Section">
       <div className="my-5">
         <h1 className="Heading">
-          {courseData.length > 1 ? "My Course" : "Popular Course"}
+          {courseData.length > 0 ? "My Course" : "Popular Course"}
         </h1>
         <div className="underLine"></div>
 

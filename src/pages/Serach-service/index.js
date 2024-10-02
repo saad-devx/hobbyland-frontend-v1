@@ -1,5 +1,8 @@
 import { Card, Footer, Header } from "@/Component";
-import { FindService } from "@/config/Axiosconfig/AxiosHandle/service";
+import {
+  FindService,
+  GetSingleProduct,
+} from "@/config/Axiosconfig/AxiosHandle/service";
 import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Student_Header } from "@/layout/Student_portal";
 import { useRouter } from "next/router";
@@ -7,42 +10,28 @@ import React, { useEffect, useState } from "react";
 
 function Index() {
   const router = useRouter();
-  const [data, setData] = useState();
-  const { title } = router.query;
-  console.log(title);
-  const FetchFindService = async () => {
-    try {
-      const response = await FindService(title);
-      if (response) {
-        console.log(response, "serach data");
-        console.log(response.data.services, "services");
-        const fetchMedata = await FetchMe();
-        console.log(fetchMedata, "medata");
-        if (fetchMedata) {
-          const countryFind = response.data.services?.filter(
-            (e) => e.user_id.country === fetchMedata.data.user.country
-          );
-          if (countryFind.length > 0) {
-            const cityFind = countryFind.filter(
-              (e) => e.user_id.city === fetchMedata.data.user.city
-            );
-            if (cityFind.length > 0) {
-              setData(cityFind);
-            } else {
-              setData(countryFind);
-            }
-          } else {
-            setData(response.data.services);
-          }
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+
+  const [pdata, setPdata] = useState([]);
+  const [singleProduct, setSingleProduct] = useState();
+  const { title, type, _id, data } = router.query;
+  console.log(title, type, _id, data, "querywork");
   useEffect(() => {
-    FetchFindService();
-  }, [title]);
+    const FindServices = async () => {
+      try {
+        const response = await GetSingleProduct(_id);
+        if (response) {
+          console.log(response, "reponse");
+          setSingleProduct(response.data.services);
+        }
+      } catch (e) {
+        console.log(e, "findServe");
+      }
+    };
+    if (type == "Single") {
+      FindServices();
+    }
+  });
+  console.log(singleProduct, "singleProduct");
   return (
     <div>
       <Header />
@@ -51,23 +40,37 @@ function Index() {
       <div className="underLine mb-3"></div>
       <div className="container">
         <div className="row">
-          {data?.map((e, i) => {
-            return (
-              <div className="col-md-4 mt-3 p-2" key={i}>
-                <Card
-                  title={e.title}
-                  price={`$ ${e.pricing[0].price}`}
-                  desc={e.description}
-                  category={e.category}
-                  AllObject={e}
-                  image={e.portfolio.map((e) => {
-                    return e.media_url;
-                  })}
-                  id={e._id}
-                />
-              </div>
-            );
-          })}
+          {type === "Multiple" ? (
+            data ? (
+              JSON.parse(data).map((e, i) => {
+                return (
+                  <div className="col-md-4 mt-3 p-2" key={i}>
+                    <Card
+                      title={e.title}
+                      price={`$ ${e.pricing[0].price}`}
+                      desc={e.description}
+                      category={e.category}
+                      AllObject={e}
+                      image={e.portfolio.map((e) => e.media_url)}
+                      id={e._id}
+                    />
+                  </div>
+                );
+              })
+            ) : null
+          ) : singleProduct ? (
+            <div className="col-md-4 mt-3 p-2">
+              <Card
+                title={singleProduct?.title}
+                price={`$ ${singleProduct?.pricing[0]?.price}`}
+                desc={singleProduct?.description}
+                category={singleProduct?.category}
+                AllObject={singleProduct || {}}
+                image={singleProduct?.portfolio.map((e) => e.media_url)}
+                id={singleProduct?._id}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
       <Footer />

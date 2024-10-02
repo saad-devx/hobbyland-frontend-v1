@@ -75,6 +75,7 @@ function Index() {
         ...fAQ,
         ...pricing,
         ...createForm,
+        status: "Review",
       };
       console.log(obj);
       try {
@@ -114,15 +115,16 @@ function Index() {
         );
         setTimeout(() => {
           router.push(
-            `${error.response
-              ? error.response.data.field
-                ? error.response.data.field === "pricing"
-                  ? "/Course-Edit/Pricing"
-                  : error.response.data.field === "FAQ"
+            `${
+              error.response
+                ? error.response.data.field
+                  ? error.response.data.field === "pricing"
+                    ? "/Course-Edit/Pricing"
+                    : error.response.data.field === "FAQ"
                     ? "/Course-Edit/F&A"
                     : "/Course-Edit/Pricing"
+                  : "/Course-Edit/Pricing"
                 : "/Course-Edit/Pricing"
-              : "/Course-Edit/Pricing"
             }`
           );
         }, 1500);
@@ -150,8 +152,9 @@ function Index() {
               <div className="row">
                 <div className="col-md-6 mt-4">
                   <input
-                    className={`${errors.question ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                    className={`${
+                      errors.question ? "errTimezoneInput" : "Input_dark"
+                    }`}
                     placeholder="Enter Your Question"
                     name="question"
                     value={formData.question}
@@ -163,8 +166,9 @@ function Index() {
                 </div>
                 <div className="col-md-6 mt-4">
                   <input
-                    className={`${errors.answer ? "errTimezoneInput" : "Input_dark"
-                      }`}
+                    className={`${
+                      errors.answer ? "errTimezoneInput" : "Input_dark"
+                    }`}
                     placeholder="Enter Your Answer"
                     name="answer"
                     value={formData.answer}
