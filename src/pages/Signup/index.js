@@ -37,6 +37,7 @@ function Index() {
     longitude: "",
     latitude: "",
     location: "",
+    blocked: false,
     account_type: acountType ? acountType : query,
     accept_policies: accecptPolicies,
     register_provider: "hobbyland",

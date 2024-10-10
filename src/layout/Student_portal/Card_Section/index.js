@@ -41,8 +41,10 @@ function Index(props) {
     try {
       const response = await FindService("&");
       if (response) {
-        setFindData([...response.data.services]);
-        console.log(findData, "all ervice");
+        const filterStatius = response.data.services?.filter(
+          (e) => e.status == "Approved"
+        );
+        setFindData(filterStatius);
       }
     } catch (e) {
       console.log(e);
@@ -54,7 +56,10 @@ function Index(props) {
       if (response) {
         console.log(response.data.services, "g");
         console.log(response.data.services, "my service");
-        setCourseData([...response.data.services]);
+        const filterStatius = response.data.services?.filter(
+          (e) => e.status == "Approved"
+        );
+        setCourseData(filterStatius);
       }
     } catch (er) {
       console.log(er);
@@ -78,7 +83,6 @@ function Index(props) {
           {courseData.length > 0 ? "My Course" : "Popular Course"}
         </h1>
         <div className="underLine"></div>
-
         <div className="container">
           <div className="row">
             {datamap.map((e, i) => {
