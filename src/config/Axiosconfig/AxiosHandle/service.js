@@ -26,7 +26,6 @@ export const GetSingleProduct = (id) => {
       withCredentials: true,
     }
   );
-  console.log(id, "id_");
   return responseData;
 };
 export const DeleteService = (id) => {
@@ -36,7 +35,6 @@ export const DeleteService = (id) => {
       withCredentials: true,
     }
   );
-  console.log(id, "id_");
   return responseData;
 };
 
@@ -47,6 +45,5 @@ export const FindService = (find) => {
       withCredentials: true,
     }
   );
-  console.log(find, "find");
   return responseData;
 };
