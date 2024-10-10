@@ -17,7 +17,7 @@ function Index(props) {
   const FetchMedata = async () => {
     try {
       const cookies = document.cookie.split(";");
-      console.log(cookies, "cokiies");
+
       let isLoggedIn = false;
       cookies.forEach((cookie) => {
         const [name, value] = cookie.split("=");
@@ -28,9 +28,6 @@ function Index(props) {
       if (isLoggedIn) {
         const response = await FetchMe();
         if (response) {
-          console.log(response.data.user);
-          setMeData({ ...response.data.user });
-          console.log(medata, "Medata");
           setToken(true);
         }
       }
@@ -46,24 +43,18 @@ function Index(props) {
         );
         setFindData(filterStatius);
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
   const FetchMeService = async () => {
     try {
       const response = await FetchServices();
       if (response) {
-        console.log(response.data.services, "g");
-        console.log(response.data.services, "my service");
         const filterStatius = response.data.services?.filter(
           (e) => e.status == "Approved"
         );
         setCourseData(filterStatius);
       }
-    } catch (er) {
-      console.log(er);
-    }
+    } catch (er) {}
   };
   useEffect(() => {
     FetchMeService();
@@ -71,11 +62,10 @@ function Index(props) {
     GetService();
   }, []);
   const MAX_ITEMS = 6;
-  console.log(courseData, "coursedata");
-  console.log(courseData, "coursedata");
+
   const datamap =
     courseData.length >= 1 ? courseData : findData.slice(0, MAX_ITEMS);
-  console.log(datamap, "couseCard");
+
   return (
     <div className="Container_Card_Section">
       <div className="my-5">

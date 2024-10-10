@@ -14,24 +14,19 @@ function Index() {
   const [pdata, setPdata] = useState([]);
   const [singleProduct, setSingleProduct] = useState();
   const { title, type, _id, data } = router.query;
-  console.log(title, type, _id, data, "querywork");
   useEffect(() => {
     const FindServices = async () => {
       try {
         const response = await GetSingleProduct(_id);
         if (response) {
-          console.log(response, "reponse");
           setSingleProduct(response.data.services);
         }
-      } catch (e) {
-        console.log(e, "findServe");
-      }
+      } catch (e) {}
     };
     if (type == "Single") {
       FindServices();
     }
   });
-  console.log(singleProduct, "singleProduct");
   return (
     <div>
       <Header />

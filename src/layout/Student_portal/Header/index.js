@@ -40,9 +40,7 @@ function Index() {
           );
           setAllProduct(filterStatius);
         }
-      } catch (error) {
-        console.log(error, "Fetching Err");
-      }
+      } catch (error) {}
     };
     FetchData();
   }, []);
@@ -60,7 +58,6 @@ function Index() {
       const matchesTitle = product.title
         .toLowerCase()
         .includes(value.toLowerCase());
-      console.log(matchesTitle, "matchesTitle", activeCourseTypes);
       const matchesCourseType = activeCourseTypes.includes(product?.courseType);
 
       return matchesTitle && matchesCourseType;
@@ -76,9 +73,7 @@ function Index() {
       [name]: checked,
     }));
   };
-  // const routee = useRouter();
-  // const find = routee.pathname == "Serach-service";
-  // console.log(find);
+
   return (
     <div className="Conatiner_Student_Header">
       <div className="Box">
@@ -102,7 +97,6 @@ function Index() {
                       onChange={(e) => setValue(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          console.log("Enter key pressed!");
                           if (filterData.length > 0) {
                             routee(null, null, "Multiple", filterData);
                           }
