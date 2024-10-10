@@ -35,7 +35,10 @@ function Index() {
       try {
         const response = await FindService("$");
         if (response) {
-          setAllProduct(response.data.services);
+          const filterStatius = response.data.services?.filter(
+            (e) => e.status == "Approved"
+          );
+          setAllProduct(filterStatius);
         }
       } catch (error) {
         console.log(error, "Fetching Err");
