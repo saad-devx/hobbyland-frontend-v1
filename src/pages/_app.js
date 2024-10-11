@@ -43,15 +43,16 @@ import { UserProvider } from "@/config/contextapi/user";
 import Render from "./render";
 import { SocketProvider } from "@/config/contextapi/socket";
 import { PeerProvider } from "@/config/contextapi/peer";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App({ Component, pageProps }) {
-
   useEffect(() => {
-    import('bootstrap/dist/js/bootstrap.bundle.min.js');
-
-  }, [])
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
   return (
     <AuthProvider>
+      <ToastContainer />
       <SocketProvider>
         <UserProvider>
           <Render Component={Component} pageProps={pageProps} />
@@ -60,4 +61,4 @@ function App({ Component, pageProps }) {
     </AuthProvider>
   );
 }
-export default dynamic(() => Promise.resolve(App), { ssr: false })
+export default dynamic(() => Promise.resolve(App), { ssr: false });
