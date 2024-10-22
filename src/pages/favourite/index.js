@@ -1,18 +1,43 @@
 import { Footer, Header } from "@/Component";
 import { Card_Section, Student_Header } from "@/layout/Student_portal";
-import React, { useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import { Card } from "@/Component";
+import { FindService } from "@/config/Axiosconfig/AxiosHandle/service";
+import { UserContext } from "@/config/contextapi/user";
 
 function Index() {
   const [data, setData] = useState([]);
-  const FetchData = () => {
-    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setData([...favorites]);
-    console.log(data);
+  const { user } = useContext(UserContext);
+
+  const FetchFaverouteService = async () => {
+    try {
+      const response = await FindService("&");
+      if (response) {
+        console.log(response, "reponse");
+        const filterService = response.data.services;
+        const filteredServices = filterService
+          .map((service) => {
+            if (
+              service.IsFavoriteUserId &&
+              Array.isArray(service.IsFavoriteUserId)
+            ) {
+              if (service.IsFavoriteUserId.includes(user?._id)) {
+                return service;
+              }
+            }
+            return null; // Return null if 'me' is not found
+          })
+          .filter((data) => data !== null);
+        console.log(filteredServices, "filterSerive");
+        setData(filteredServices);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   useEffect(() => {
-    FetchData();
-  }, []);
+    FetchFaverouteService();
+  }, [user]);
   return (
     <div>
       <Header />

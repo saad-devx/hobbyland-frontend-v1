@@ -56,7 +56,7 @@ function Index() {
   const FetchGetMe = async () => {
     try {
       const cookies = document.cookie.split(";");
-      console.log(cookies, "cokiies");
+
       let isLoggedIn = false;
       cookies.forEach((cookie) => {
         const [name, value] = cookie.split("=");
@@ -67,49 +67,108 @@ function Index() {
       if (isLoggedIn) {
         const response = await FetchMe();
         if (response) {
-          console.log(response.data.user);
           setMedata({ ...response.data.user });
         }
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     FetchGetMe();
   }, []);
+
+  const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+
+  const GetService = async () => {
+    try {
+      const response = await FindService(title);
+      const userData = medata;
+      if (response) {
+        const filterStatius = response.data.services?.filter(
+          (e) => e.status === "Approved"
+        );
+
+        const userLatitude = userData.latitude;
+        const userLongitude = userData.longitude;
+
+        const mergedArray = filterStatius?.filter(
+          (r) => r.courseType === "Online"
+        );
+
+        const filterStatusThird = filterStatius?.filter((r) => {
+          if (r.courseType === "Hybird" || r.courseType === "Physical") {
+            const courseLatitude = r.latitude;
+            const courseLongitude = r.longitude;
+            const targetedAreaString = r.targetedArea;
+            const targetedArea = parseFloat(
+              targetedAreaString.replace("km", "").trim()
+            );
+            const distance = getDistanceFromLatLonInKm(
+              userLatitude,
+              userLongitude,
+              courseLatitude,
+              courseLongitude
+            );
+            return distance <= targetedArea;
+          }
+          return false;
+        });
+
+        const finalArray = [...mergedArray, ...filterStatusThird];
+
+        if (userData?.email) {
+          setAllService(finalArray);
+        } else {
+          setAllService(filterStatius);
+        }
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    GetService();
+  }, [medata]);
+
   const FetchToken = async () => {
     try {
       const response = await AuthToken();
       if (response) {
         setToken(response?.data?.token);
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
   useEffect(() => {
     FetchToken();
   }, []);
   const handleCreateRoom = async () => {
     try {
-      console.log(singleData.user_id._id, "id_user");
       const response = await CreateRoom(singleData.user_id._id, token);
       if (response) {
-        console.log(response, "Roomcreate");
         router.push("./massage");
       }
-    } catch (error) {
-      console.log(error.message);
-      console.log(error, "roomcreate err");
-    }
+    } catch (error) {}
   };
   const [isHovered, setIsHovered] = useState(false);
   const [data, setData] = useState([]);
   const [recentdata, setRecentdata] = useState([]);
   const router = useRouter();
   const queryid = router.query;
-  console.log(queryid, "quesry");
   const [addtocard, setAddtocard] = useState([]);
 
   const handleAddToCart = () => {
@@ -151,17 +210,11 @@ function Index() {
 
   const fetchSingleProduct = async (id) => {
     try {
-      console.log("singleproductdata", id, "gfg");
       const response = await GetSingleProduct(id);
       if (response) {
-        console.log(response, "red");
         setSingleData({ ...response.data.services });
-        console.log(recentdata.data.services, "oneservice");
-        console.log(singleData, "singledata");
       }
-    } catch (error) {
-      console.log(error, "err");
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -175,12 +228,9 @@ function Index() {
     try {
       const response = await FindService("&");
       if (response) {
-        console.log(response.data.services, "singleservice");
         setData([...response.data.services]);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -188,16 +238,12 @@ function Index() {
   }, []);
 
   useEffect(() => {
-    console.log(data, "data");
     const filteredData = data.filter(
       (item) =>
         item.category === singleData.category && item._id !== singleData._id
     );
     setRecentdata(filteredData);
-    console.log(recentdata, "map");
   }, [singleData]);
-  console.log(singleData.portfolio[0].media_url);
-  console.log(singleData, "singledata");
   return (
     <div className="conatiner_single_Product">
       <Header />
@@ -292,10 +338,12 @@ function Index() {
                       price={`$ ${e.pricing[0].price}`}
                       desc={e.description}
                       category={e.category}
+                      AllObject={e}
                       image={e.portfolio.map((e) => {
                         return e.media_url;
                       })}
                       id={e._id}
+                      type={e.courseType}
                     />
                   </div>
                 </div>
