@@ -1,4 +1,5 @@
 import { FindService } from "@/config/Axiosconfig/AxiosHandle/service";
+import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -9,14 +10,60 @@ function Index() {
   const [allProdduct, setAllProduct] = useState([]);
   const [filterData, setFilterData] = useState([]);
 
-  // Checkbox states
+  // Checkbox
+  const [token, setToken] = useState(false);
+  const [medata, setMeData] = useState({});
+
+  const FetchMedata = async () => {
+    try {
+      const cookies = document.cookie.split(";");
+
+      let isLoggedIn = false;
+      cookies.forEach((cookie) => {
+        const [name, value] = cookie.split("=");
+        if (name.trim() === "is_logged_in" && value.trim() === "true") {
+          isLoggedIn = true;
+        }
+      });
+      if (isLoggedIn) {
+        const response = await FetchMe();
+        if (response) {
+          setToken(true);
+          setMeData(response.data.user);
+        }
+      } else {
+        setToken(false);
+      }
+    } catch (e) {}
+  };
+
+  const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+  useEffect(() => {
+    FetchMedata();
+  }, []);
+
   const [courseTypes, setCourseTypes] = useState({
     Hybird: false,
-    Physical: true, // Physical is selected by default
+    Physical: true,
     Online: false,
   });
-
-  // Fetch Data from API
 
   const routee = (title, id, type, data) => {
     router.push({
@@ -30,22 +77,54 @@ function Index() {
     });
   };
 
-  useEffect(() => {
-    const FetchData = async () => {
-      try {
-        const response = await FindService("$");
-        if (response) {
-          const filterStatius = response.data.services?.filter(
-            (e) => e.status == "Approved"
-          );
+  const GetService = async () => {
+    try {
+      const response = await FindService("&");
+      const userData = medata;
+      if (response) {
+        const filterStatius = response.data.services?.filter(
+          (e) => e.status === "Approved"
+        );
+
+        const userLatitude = userData.latitude;
+        const userLongitude = userData.longitude;
+
+        const mergedArray = filterStatius?.filter(
+          (r) => r.courseType === "Online"
+        );
+
+        const filterStatusThird = filterStatius?.filter((r) => {
+          if (r.courseType === "Hybird" || r.courseType === "Physical") {
+            const courseLatitude = r.latitude;
+            const courseLongitude = r.longitude;
+            const targetedAreaString = r.targetedArea;
+            const targetedArea = parseFloat(
+              targetedAreaString.replace("km", "").trim()
+            );
+            const distance = getDistanceFromLatLonInKm(
+              userLatitude,
+              userLongitude,
+              courseLatitude,
+              courseLongitude
+            );
+            return distance <= targetedArea;
+          }
+          return false;
+        });
+
+        const finalArray = [...mergedArray, ...filterStatusThird];
+
+        if (userData?.email) {
+          setAllProduct(finalArray);
+        } else {
           setAllProduct(filterStatius);
         }
-      } catch (error) {}
-    };
-    FetchData();
-  }, []);
-
-  // Handle search input and checkbox filter logic
+      }
+    } catch (error) {}
+  };
+  useEffect(() => {
+    GetService();
+  }, [medata]);
   useEffect(() => {
     const { Hybird, Physical, Online } = courseTypes;
     const activeCourseTypes = [];

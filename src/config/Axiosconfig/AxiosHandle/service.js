@@ -38,6 +38,17 @@ export const DeleteService = (id) => {
   return responseData;
 };
 
+export const UpdateService = (id, body) => {
+  const responseData = axios.put(
+    `${BASEURL}user/mentor/service/update?service_id=${id}`,
+    body,
+    {
+      withCredentials: true,
+    }
+  );
+  return responseData;
+};
+
 export const FindService = (find) => {
   const responseData = axios.get(
     `${BASEURL}user/mentor/service/search?query=${find}`,
