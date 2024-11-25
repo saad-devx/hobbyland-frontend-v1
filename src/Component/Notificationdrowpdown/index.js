@@ -85,11 +85,11 @@ const NotificationDropdown = (props) => {
         <div className="dropdown" ref={dropdownRef}>
             <button
                 type="button"
-                id="dropdownMenuButton"
+                className='text-slate-900 text-xl'
                 onClick={handleDropdownToggle}
                 aria-expanded={isDropdownOpen}
             >
-                <Icon fontSize={25} icon="mingcute:notification-fill" color={props.iconColor} />
+                <Icon icon="ion:notifications" />
             </button>
             {isDropdownOpen && (
                 <>

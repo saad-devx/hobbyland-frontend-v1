@@ -1,5 +1,5 @@
 import "@/styles/globals.scss";
-import "@/styles/navebar.scss";
+// import "@/styles/navebar.scss";
 import "@/styles/AddToCard.scss";
 import "@/styles/adminProfileQuestion.scss";
 import "@/styles/Signup.scss";
@@ -33,31 +33,32 @@ import "@/styles/home/CourseMember.scss";
 import "@/styles/home/Features.scss";
 import "@/styles/checkout/index.scss";
 import "@/styles/Auth/signupDetail.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { AuthToken } from "@/config/Axiosconfig/AxiosHandle/chat";
+// import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
 import { AuthProvider } from "@/config/contextapi/auth";
-import { FetchMe } from "@/config/Axiosconfig/AxiosHandle/user";
 import { UserProvider } from "@/config/contextapi/user";
-import Render from "./render";
+// import Render from "./render";
 import { SocketProvider } from "@/config/contextapi/socket";
 import { PeerProvider } from "@/config/contextapi/peer";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { gendy } from "@/config";
 
 function App({ Component, pageProps }) {
-  useEffect(() => {
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
+  // useEffect(() => {
+  //   import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  // }, []);
   return (
     <AuthProvider>
       <ToastContainer />
-      <SocketProvider>
-        <UserProvider>
-          <Render Component={Component} pageProps={pageProps} />
-        </UserProvider>
-      </SocketProvider>
+      {/* <SocketProvider> */}
+      <UserProvider>
+        <main className={gendy.className}>
+          {/* <Render Component={Component} pageProps={pageProps} /> */}
+          <Component pageProps={pageProps} />
+        </main>
+      </UserProvider>
+      {/* </SocketProvider> */}
     </AuthProvider>
   );
 }
