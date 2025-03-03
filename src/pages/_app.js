@@ -1,5 +1,4 @@
 import "@/styles/globals.scss";
-// import "@/styles/navebar.scss";
 import "@/styles/AddToCard.scss";
 import "@/styles/adminProfileQuestion.scss";
 import "@/styles/Signup.scss";
@@ -35,9 +34,11 @@ import "@/styles/checkout/index.scss";
 import "@/styles/Auth/signupDetail.scss";
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { AuthProvider } from "@/config/contextapi/auth";
 import { UserProvider } from "@/config/contextapi/user";
+import { initializeGlobalState, registerPersistCallback } from "@/lib/global-states";
 // import Render from "./render";
 import { SocketProvider } from "@/config/contextapi/socket";
 import { PeerProvider } from "@/config/contextapi/peer";
@@ -45,9 +46,10 @@ import { ToastContainer } from "react-toastify";
 import { gendy } from "@/config";
 
 function App({ Component, pageProps }) {
-  // useEffect(() => {
-  //   import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  // }, []);
+  useEffect(() => {
+    initializeGlobalState();
+    registerPersistCallback();
+  }, []);
   return (
     <AuthProvider>
       <ToastContainer />
