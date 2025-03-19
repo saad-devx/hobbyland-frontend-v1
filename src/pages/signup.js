@@ -3,9 +3,11 @@ import moment from "moment-timezone";
 import { CreateAcount } from "@/config/Axiosconfig/AxiosHandle/auth";
 import { Icon } from "@iconify/react";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { useRouter } from 'next/router';
 const libraries = ["places"];
 
 const SignupPage = () => {
+    const router = useRouter();
     const [step, setStep] = useState(1);
     const [role, setRole] = useState('');
     const [showPassword, setShowPassword] = useState(false);

@@ -1,10 +1,18 @@
 import axios from "axios";
 import { BASEURL } from "..";
 
-export const FetchMe = () => {
-  const responseData = axios.get(`${BASEURL}user/get/me`, {
+export const FetchMe = async () => {
+  const responseData = await axios.get(`${BASEURL}user/get/me`, {
     withCredentials: true,
   });
+  return responseData;
+};
+
+export const FetchMe2 = async (cb) => {
+  const responseData = await axios.get(`${BASEURL}user/get/me`, {
+    withCredentials: true,
+  });
+  if (cb) cb(responseData);
   return responseData;
 };
 

@@ -77,9 +77,7 @@ const NotificationDropdown = (props) => {
     useEffect(() => {
         FetchNotification();
     }, [refresh]);
-    console.log(notifications)
     const filteredNotifications = notifications?.filter(notif => notif.category === tab);
-    console.log(filteredNotifications, "filter")
 
     return (
         <div className="dropdown" ref={dropdownRef}>

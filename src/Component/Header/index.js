@@ -163,7 +163,7 @@ function Header({ margin }) {
                         <aside className=" !absolute -bottom-1 w-[150px] p-5 bg-white card_boxshadow flex flex-col transition-all space-y-8 origin-top-right scale-0 group-focus-within:scale-100 duration-300 translate-y-full translate-x-[-25%] rounded-[15px]">
                             <div className="flex flex-col gap-3 text-sm" >
                                 <Link href="/profile/myprofile">My Profile</Link>
-                                <Link href="/profile/authentication">Settings</Link>
+                                <Link href="/user">Settings</Link>
                                 <button onClick={handleLogout} className="text-left">Log out</button>
                             </div>
                         </aside>
