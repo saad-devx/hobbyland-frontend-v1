@@ -35,11 +35,14 @@ export default function Index() {
 
         try {
             const response = await Login(data);
-            if (response) {
+            console.log("HERE is the login res: ", response)
+            if (response?.data) {
                 setSuccess(response.data.msg);
+                console.log("Log 1")
                 if (response.data.verify_totp) {
                     router.push("./authentication-2fa");
                 } else {
+                    console.log("Log 2")
                     router.push("./StudentHome");
                 }
                 setErrors("");
@@ -48,16 +51,11 @@ export default function Index() {
                 let isLoggedIn = false;
                 cookies.forEach((cookie) => {
                     const [name, value] = cookie.split("=");
-                    if (name.trim() === "is_logged_in" && value.trim() === "true") {
-                        isLoggedIn = true;
-                    }
+                    if (name.trim() === "is_logged_in" && value.trim() === "true") isLoggedIn = true
                 });
 
-                if (isLoggedIn) {
-                    localStorage.setItem("is_logged_in", true);
-                } else {
-                    localStorage.removeItem("is_logged_in");
-                }
+                if (isLoggedIn) localStorage.setItem("is_logged_in", true);
+                else localStorage.removeItem("is_logged_in");
             }
         } catch (error) {
             setErrors(error.response ? error.response.data.msg : error.message);
@@ -147,7 +145,7 @@ export default function Index() {
                     </div>
 
                     <button type="submit" className="w-full bg-gradient-to-tr from-slate-950 to-slate-700 text-white py-3 rounded-3xl hover:bg-slate-700 hover:shadow-xl transition-all flex items-center justify-center gap-2">
-                        Sign In
+                        Sign In YOO
                         <Icon icon="tabler:chevron-right" />
                     </button>
 
