@@ -16,7 +16,7 @@ const CTASection = () => {
                     Join Hobbyland
                 </h2>
                 <p className="text-gray-300 text-lg">
-                    Join this growing community and thrive together. We're excited to have you on board.
+                    Join this growing community and thrive together. We&apos;re excited to have you on board.
                 </p>
 
                 <button>

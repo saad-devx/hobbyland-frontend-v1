@@ -18,11 +18,11 @@ function index() {
                 <div className="row">
                   <div className="col-md-8 p-3">
                     <div className="fs-3 fw-bold">
-                      You’re ready to share your knowledge.
+                      You&apos;re ready to share your knowledge.
                     </div>
                     <div className="mt-3 ">
-                      This is your moment! If you’ve structured your course and
-                      used our guides, you're well prepared for the actual
+                      This is your moment! If you&apos;ve structured your course and
+                      used our guides, you&apos;re well prepared for the actual
                       shoot. Pace yourself, take time to make it just right, and
                       fine-tune when you edit.
                     </div>
@@ -34,7 +34,7 @@ function index() {
                         src="https://s.udemycdn.com/instructor/manage/video-help.jpg"
                       />
                       <div className="fs-3 mt-3 fw-bold text-center">
-                        You’re in good company
+                        You&apos;re in good company
                       </div>
                       <div className="pt-3 text-center">
                         Chat and get production help with other Udemy
@@ -61,7 +61,7 @@ function index() {
                 </div>
                 <div className="Heading_smalll mt-4">Build rapport.</div>
                 <div className="mt-3">
-                  Students want to know who’s teaching them. Even for a course
+                  Students want to know who&apos;s teaching them. Even for a course
                   that is mostly screencasts, film yourself for your
                   introduction. Or go the extra mile and film yourself
                   introducing each section!

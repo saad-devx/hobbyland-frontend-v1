@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
-function index() {
+function LandingPage() {
   const inputRef = useRef();
 
   useEffect(() => {
@@ -97,7 +97,7 @@ function index() {
               <div className="mt-5">
                 <span>
                   Your course landing page is crucial to your success on Udemy.
-                  If it’s done right, it can also help you gain visibility in
+                  If it's done right, it can also help you gain visibility in
                   search engines like Google. As you complete this section,
                   think about creating a compelling Course Landing Page that
                   demonstrates why someone would want to enroll in your course.
@@ -158,7 +158,7 @@ function index() {
                   <div className="col-md-4 mt-3">
                     <select placeholder="-- select level ---" className="Input">
                       {levelDropdwon.map((e, i) => {
-                        return <option value={e.title}>{e.title}</option>;
+                        return <option key={`level-${i}`} value={e.title}>{e.title}</option>;
                       })}
                     </select>
                   </div>
@@ -213,7 +213,7 @@ function index() {
                     </div>
                     <div className="mt-3">
                       Your promo video is a quick and compelling way for
-                      students to preview what they’ll learn in your course.
+                      students to preview what they'll learn in your course.
                       Students considering your course are more likely to enroll
                       if your promo video is well-made. Learn how to make your
                       promo video awesome!
@@ -229,4 +229,4 @@ function index() {
   );
 }
 
-export default index;
+export default LandingPage;

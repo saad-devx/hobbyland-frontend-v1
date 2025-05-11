@@ -97,6 +97,7 @@ function Index() {
               {navigateLink.map((e, i) => {
                 return (
                   <button
+                    key={`nav-link-${i}`}
                     onClick={() => {
                       router.push(e.path);
                     }}
@@ -110,6 +111,7 @@ function Index() {
               {navigateLink2.map((e, i) => {
                 return (
                   <button
+                    key={`nav-link2-${i}`}
                     onClick={() => {
                       router.push(e.path);
                     }}
@@ -123,6 +125,7 @@ function Index() {
               {navigateLink3.map((e, i) => {
                 return (
                   <button
+                    key={`nav-link3-${i}`}
                     onClick={() => {
                       router.push(e.path);
                     }}

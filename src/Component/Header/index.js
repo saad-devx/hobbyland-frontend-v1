@@ -1,5 +1,6 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { FetchMe, FetchMeNotification } from "@/config/Axiosconfig/AxiosHandle/user";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";

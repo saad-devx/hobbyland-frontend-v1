@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/Component/Header';
 import Footer from '@/Component/Footer';
-import { User as UserIcon, LogOut, ChevronRight, KeyRound, Fingerprint, Bolt } from 'lucide-react';
+import { User as UserIcon, LogOut, LogoutIcon, ChevronRight, KeyRound, Fingerprint, Bolt, Camera as CameraIcon, Gift as GiftBoxIcon, Diamond as DiamondIcon, HelpCircle as HelpCenterIcon, Heart as HeartShopListIcon, Package as PackageBagIcon, Mail as EmailIcon, Shield as SecurityIcon, Star as ReviewsIcon, Truck as TrackOrderIcon, ShoppingBag as OrderListIcon, Settings as ProcessIcon, CreditCard as UfPointsIcon } from 'lucide-react';
 import { FetchMe } from '@/config/Axiosconfig/AxiosHandle/user';
 import { UserLogout } from '@/config/Axiosconfig/AxiosHandle/auth';
 

@@ -18,14 +18,14 @@ function index() {
                 <div className="row">
                   <div className="col-md-8 p-3">
                     <div className="fs-3 fw-bold">
-                      There's a course in you. Plan it out.
+                      There&apos;s a course in you. Plan it out.
                     </div>
                     <div className="mt-3 ">
                       Planning your course carefully will create a clear
                       learning path for students and help you once you film.
                       Think down to the details of each lecture including the
-                      skill you’ll teach, estimated video length, practical
-                      activities to include, and how you’ll create introductions
+                      skill you&apos;ll teach, estimated video length, practical
+                      activities to include, and how you&apos;ll create introductions
                       and summaries.
                     </div>
                   </div>
@@ -64,7 +64,7 @@ function index() {
                 </div>
                 <div className="Heading_smalll mt-4">Create an outline.</div>
                 <div className="mt-3">
-                  Decide what skills you’ll teach and how you’ll teach them.
+                  Decide what skills you&apos;ll teach and how you&apos;ll teach them.
                   Group related lectures into sections. Each section should have
                   at least 3 lectures, and include at least one assignment or
                   practical activity. Learn more.
@@ -81,8 +81,8 @@ function index() {
                   Sections have a clear learning objective.
                 </div>
                 <div className="mt-3">
-                  Introduce each section by describing the section's goal and
-                  why it’s important. Give lectures and sections titles that
+                  Introduce each section by describing the section&apos;s goal and
+                  why it&apos;s important. Give lectures and sections titles that
                   reflect their content and have a logical flow.
                 </div>
                 <div className="Heading_smalll mt-4">
